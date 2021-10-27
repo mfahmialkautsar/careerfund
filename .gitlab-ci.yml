@@ -1,0 +1,23 @@
+before_script:
+  - gem install dpl
+  - curl https://cli-assets.heroku.com/install.sh | sh
+
+stages:
+  - staging
+  - production
+
+staging:
+  stage: staging
+  image: ruby:2.4
+  script:
+    - dpl --provider=heroku --app=$HEROKU_APP_STAGING --api-key=$HEROKU_API_KEY
+  only:
+    - staging
+
+production:
+  stage: production
+  image: ruby:2.4
+  script:
+    - dpl --provider=heroku --app=$HEROKU_APP_PRODUCTION --api-key=$HEROKU_API_KEY
+  only:
+    - main
