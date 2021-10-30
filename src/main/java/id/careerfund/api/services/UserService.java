@@ -9,7 +9,11 @@ import java.util.List;
 public interface UserService {
     void registerUser(UserRegister userRegister) throws Exception;
 
+    void registerUserIfNotExists(UserRegister userRegister);
+
     Role saveRole(Role role);
+
+    Role saveRoleIfNotExists(Role role);
 
     User getUser(String email);
 

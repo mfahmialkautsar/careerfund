@@ -56,9 +56,28 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
+    public void registerUserIfNotExists(UserRegister userRegister) {
+        if (getIsEmailAvailable(userRegister.getEmail())) {
+            try {
+                registerUser(userRegister);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
     public Role saveRole(Role role) {
         log.info("Saving new role {}", role.getName());
         return roleRepo.save(role);
+    }
+
+    @Override
+    public Role saveRoleIfNotExists(Role role) {
+        if (roleRepo.findByName(role.getName()) == null) {
+            return saveRole(role);
+        }
+        return null;
     }
 
     @Override
