@@ -41,7 +41,7 @@ public class AuthController {
     }
 
     @PostMapping("/email-availability")
-    public ResponseEntity<Boolean> checkEmailAvailability(@RequestBody EmailAvailability availability) {
+    public ResponseEntity<Boolean> checkEmailAvailability(@Valid @RequestBody EmailAvailability availability) {
         boolean getIsAvailable = userService.getIsEmailAvailable(availability.getEmail());
         return ResponseEntity.ok(getIsAvailable);
     }
