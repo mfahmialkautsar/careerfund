@@ -26,11 +26,25 @@ public class AuthController {
         return ResponseEntity.ok(userService.getUsers());
     }
 
-    @PostMapping("")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody UserRegister user) {
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/").toUriString());
+    @PostMapping("/lender")
+    public ResponseEntity<?> registerLender(@Valid @RequestBody UserRegister user) {
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/lender").toUriString());
         try {
-            userService.registerUser(user);
+            userService.registerLender(user);
+        } catch (Exception e) {
+            if (e.getMessage().equals("EMAIL_UNAVAILABLE")) {
+                return ResponseEntity.badRequest().body(new ErrorResponse("Email is taken"));
+            }
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).build();
+        }
+        return ResponseEntity.created(uri).build();
+    }
+
+    @PostMapping("/borrower")
+    public ResponseEntity<?> registerBorrower(@Valid @RequestBody UserRegister user) {
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/borrower").toUriString());
+        try {
+            userService.registerBorrower(user);
         } catch (Exception e) {
             if (e.getMessage().equals("EMAIL_UNAVAILABLE")) {
                 return ResponseEntity.badRequest().body(new ErrorResponse("Email is taken"));

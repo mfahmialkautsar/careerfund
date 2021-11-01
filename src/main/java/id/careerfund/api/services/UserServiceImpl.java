@@ -45,21 +45,53 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public void registerUser(UserRegister userRegister) throws Exception {
+    public void registerLender(UserRegister userRegister) throws Exception {
         User user = UserMapper.userRegisterToUser(userRegister);
         if (!getIsEmailAvailable(user.getEmail())) throw new Exception("EMAIL_UNAVAILABLE");
         saveUser(user);
-        if (userRegister.getRole().equals(ERole.ROLE_LENDER) || userRegister.getRole().equals(ERole.ROLE_BORROWER)) {
-            addRoleToUser(user.getEmail(), ERole.ROLE_USER);
-        }
-        addRoleToUser(user.getEmail(), userRegister.getRole());
+        addRoleToUser(user.getEmail(), ERole.ROLE_LENDER);
+        addRoleToUser(user.getEmail(), ERole.ROLE_USER);
     }
 
     @Override
-    public void registerUserIfNotExists(UserRegister userRegister) {
+    public void registerBorrower(UserRegister userRegister) throws Exception {
+        User user = UserMapper.userRegisterToUser(userRegister);
+        if (!getIsEmailAvailable(user.getEmail())) throw new Exception("EMAIL_UNAVAILABLE");
+        saveUser(user);
+        addRoleToUser(user.getEmail(), ERole.ROLE_BORROWER);
+        addRoleToUser(user.getEmail(), ERole.ROLE_USER);
+    }
+
+    @Override
+    public void registerLenderIfNotExists(UserRegister userRegister) {
         if (getIsEmailAvailable(userRegister.getEmail())) {
             try {
-                registerUser(userRegister);
+                registerLender(userRegister);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void registerBorrowerIfNotExists(UserRegister userRegister) {
+        if (getIsEmailAvailable(userRegister.getEmail())) {
+            try {
+                registerBorrower(userRegister);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void registerAdminIfNotExist(UserRegister userRegister) {
+        if (getIsEmailAvailable(userRegister.getEmail())) {
+            try {
+                User user = UserMapper.userRegisterToUser(userRegister);
+                if (!getIsEmailAvailable(user.getEmail())) throw new Exception("EMAIL_UNAVAILABLE");
+                saveUser(user);
+                addRoleToUser(user.getEmail(), ERole.ROLE_ADMIN);
             } catch (Exception e) {
                 e.printStackTrace();
             }
