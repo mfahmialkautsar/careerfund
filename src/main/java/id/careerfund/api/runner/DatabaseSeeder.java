@@ -17,10 +17,10 @@ public class DatabaseSeeder implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-        userService.saveRole(new Role(null, ERole.ROLE_ADMIN));
-        userService.saveRole(new Role(null, ERole.ROLE_USER));
-        userService.saveRole(new Role(null, ERole.ROLE_LENDER));
-        userService.saveRole(new Role(null, ERole.ROLE_BORROWER));
+        userService.saveRoleIfNotExists(new Role(null, ERole.ROLE_ADMIN));
+        userService.saveRoleIfNotExists(new Role(null, ERole.ROLE_USER));
+        userService.saveRoleIfNotExists(new Role(null, ERole.ROLE_LENDER));
+        userService.saveRoleIfNotExists(new Role(null, ERole.ROLE_BORROWER));
 
         userService.registerAdminIfNotExist(new UserRegister("Fahmi Al", "aal@email.com", "tothemars"));
         userService.registerLenderIfNotExists(new UserRegister("Invoker", "invoker@email.com", "1234"));
