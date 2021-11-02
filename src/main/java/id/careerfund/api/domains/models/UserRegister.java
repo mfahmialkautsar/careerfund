@@ -1,16 +1,11 @@
 package id.careerfund.api.domains.models;
 
-import id.careerfund.api.domains.ERole;
-import id.careerfund.api.utils.validators.ValidEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor
