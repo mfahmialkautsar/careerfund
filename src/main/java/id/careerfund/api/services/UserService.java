@@ -7,15 +7,11 @@ import id.careerfund.api.domains.models.UserRegister;
 import java.util.List;
 
 public interface UserService {
-    void registerLender(UserRegister userRegister) throws Exception;
+    void registerUser(UserRegister userRegister) throws Exception;
 
-    void registerBorrower(UserRegister userRegister) throws Exception;
+    void registerUserIfNotExists(UserRegister userRegister);
 
-    void registerLenderIfNotExists(UserRegister userRegister);
-
-    void registerBorrowerIfNotExists(UserRegister userRegister);
-
-    void registerAdminIfNotExist(UserRegister userRegister);
+    void registerAdminIfNotExists(User userRegister);
 
     Role saveRole(Role role);
 

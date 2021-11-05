@@ -1,7 +1,9 @@
 package id.careerfund.api.runner;
 
 import id.careerfund.api.domains.ERole;
+import id.careerfund.api.domains.ERoleRegister;
 import id.careerfund.api.domains.entities.Role;
+import id.careerfund.api.domains.entities.User;
 import id.careerfund.api.domains.models.UserRegister;
 import id.careerfund.api.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +24,12 @@ public class DatabaseSeeder implements ApplicationRunner {
         userService.saveRoleIfNotExists(new Role(null, ERole.ROLE_LENDER));
         userService.saveRoleIfNotExists(new Role(null, ERole.ROLE_BORROWER));
 
-        userService.registerAdminIfNotExist(new UserRegister("Fahmi Al", "aal@email.com", "tothemars"));
-        userService.registerLenderIfNotExists(new UserRegister("Invoker", "invoker@email.com", "1234"));
-        userService.registerBorrowerIfNotExists(new UserRegister("Meepo", "meep@email.com", "1234"));
+        User admin = new User();
+        admin.setName("Fahmi Al");
+        admin.setEmail("aal@email.com");
+        admin.setPassword("tothemoon");
+        userService.registerAdminIfNotExists(admin);
+        userService.registerUserIfNotExists(new UserRegister("Invoker", "invoker@email.com", "1234", ERoleRegister.LENDER));
+        userService.registerUserIfNotExists(new UserRegister("Meepo", "meep@email.com", "1234", ERoleRegister.BORROWER));
     }
 }

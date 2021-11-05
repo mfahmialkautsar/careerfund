@@ -17,34 +17,19 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/auth")
 public class AuthController {
     private final UserService userService;
 
-    @GetMapping("")
+    @GetMapping("/users")
     public ResponseEntity<List<User>> getUsers() {
         return ResponseEntity.ok(userService.getUsers());
     }
 
-    @PostMapping("/lender")
-    public ResponseEntity<?> registerLender(@Valid @RequestBody UserRegister user) {
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/lender").toUriString());
+    @PostMapping("/register")
+    public ResponseEntity<?> registerUser(@Valid @RequestBody UserRegister user) {
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/register").toUriString());
         try {
-            userService.registerLender(user);
-        } catch (Exception e) {
-            if (e.getMessage().equals("EMAIL_UNAVAILABLE")) {
-                return ResponseEntity.badRequest().body(new ErrorResponse("Email is taken"));
-            }
-            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).build();
-        }
-        return ResponseEntity.created(uri).build();
-    }
-
-    @PostMapping("/borrower")
-    public ResponseEntity<?> registerBorrower(@Valid @RequestBody UserRegister user) {
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/borrower").toUriString());
-        try {
-            userService.registerBorrower(user);
+            userService.registerUser(user);
         } catch (Exception e) {
             if (e.getMessage().equals("EMAIL_UNAVAILABLE")) {
                 return ResponseEntity.badRequest().body(new ErrorResponse("Email is taken"));
