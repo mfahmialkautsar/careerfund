@@ -8,13 +8,11 @@ import id.careerfund.api.configurations.ResponseDetailConfig;
 import id.careerfund.api.domains.models.ResponseTemplate;
 import id.careerfund.api.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.ObjectUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -32,7 +30,11 @@ public class ForgetPasswordController {
 
     private final PasswordEncoder passwordEncoder;
 
-    public int expiredToken = 1200;
+    @Value("${security.token.expired.minute:}")
+    public int expiredToken;
+
+    @Value("${url:}")
+    public String url;
 
     @Autowired
     public ForgetPasswordController(EmailSenderConfig emailSenderConfig,
@@ -45,9 +47,8 @@ public class ForgetPasswordController {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @PostMapping("/forgot-password")//send OTP
+    @PostMapping("/forgot")//send OTP
     public ResponseEntity<Object> sendEmailPassword(@RequestBody RequestOtpPassword user) {
-        String message = "Thanks, please check your email";
 
         if (ObjectUtils.isEmpty(user.getEmail()))
             return ResponseEntity.badRequest().body(new ResponseTemplate("Email required",  responseDetailConfig.getCodeRequired()));
@@ -71,25 +72,28 @@ public class ForgetPasswordController {
 
             found.setOtp(otp);
             found.setOtpExpiredDate(expirationDate);
-            template = template.replaceAll("\\{\\{PASS_TOKEN}}", otp);
+            template = template.replaceAll("\\{\\{RESET_LINK}}", url + "/v1/password/update?token=" + otp);
             userRepository.save(found);
         } else {
-            template = template.replaceAll("\\{\\{PASS_TOKEN}}", found.getOtp());
+            template = template.replaceAll("\\{\\{RESET_LINK}}", found.getOtp());
         }
         emailSenderConfig.sendAsync(found.getUsername(), "Forget Password", template);
 
         return ResponseEntity.ok(new ResponseTemplate(responseDetailConfig.getMessageSuccess(), responseDetailConfig.getCodeSuccess()));
     }
 
-    @PostMapping("/forgot-password-update")
-    public ResponseEntity<Object> resetPassword(@RequestBody UpdatePassword model) {
-        if (model.getOtp() == null) return ResponseEntity.badRequest().body(new ResponseTemplate("Token is required",  responseDetailConfig.getCodeRequired()));
-
+    @PutMapping("/update")
+    public ResponseEntity<Object> resetPassword(@RequestParam String token, @RequestBody UpdatePassword model) {
         if (model.getNewpassword() == null) return ResponseEntity.badRequest().body(new ResponseTemplate("New password is required",  responseDetailConfig.getCodeRequired()));
 
-        User user = userRepository.findOneByOTP(model.getOtp());
+        User user = userRepository.findOneByOTP(token);
+        Date dateNow = new Date();
 
         if (user == null) return ResponseEntity.status(Integer.parseInt(responseDetailConfig.getCodeNotFound())).body(new ResponseTemplate("Token not valid", responseDetailConfig.getCodeNotFound()));
+
+        if (!user.getOtpExpiredDate().after(dateNow)) {
+            return ResponseEntity.status(Integer.parseInt(responseDetailConfig.getCodeNotFound())).body(new ResponseTemplate("Token not valid", responseDetailConfig.getCodeNotFound()));
+        }
 
         user.setPassword(passwordEncoder.encode(model.getNewpassword().replaceAll("\\s+", "")));
         user.setOtpExpiredDate(null);
@@ -101,7 +105,5 @@ public class ForgetPasswordController {
             return ResponseEntity.badRequest().body(new ResponseTemplate(e.getMessage(), responseDetailConfig.getCodeRequired()));
         }
         return ResponseEntity.ok(new ResponseTemplate(responseDetailConfig.getMessageSuccess(), responseDetailConfig.getCodeSuccess()));
-
     }
-
 }

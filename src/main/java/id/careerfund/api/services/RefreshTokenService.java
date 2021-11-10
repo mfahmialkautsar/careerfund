@@ -5,7 +5,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import id.careerfund.api.domains.entities.RefreshToken;
-import id.careerfund.api.configurations.exceptions.TokenRefreshException;
 import id.careerfund.api.repositories.RefreshTokenRepository;
 import id.careerfund.api.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +43,7 @@ public class RefreshTokenService {
     public RefreshToken verifyExpiration(RefreshToken token) {
         if (token.getExpiryDate().compareTo(Instant.now()) < 0) {
             refreshTokenRepository.delete(token);
-            throw new TokenRefreshException(token.getToken(), "Refresh token was expired. Please make a new signin request");
+            throw null;
         }
         return token;
     }

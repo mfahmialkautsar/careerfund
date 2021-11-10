@@ -118,13 +118,15 @@ public class EmailTemplate {
                 "</head>\n" +
                 "<body>\n" +
                 "\t<div class=\"email-container\">\n" +
-                "\t\t<p>Masukkan kode OTP dibawah ini untuk reset password!</p>\n" +
+                "\t\t<p><strong>Dear customer!</strong></p>\n" +
                 "\t\t\n" +
-                "\t\tKode otp: <b>{{PASS_TOKEN}}</b>\n" +
+                "\t\t<p>Click link below to reset the password</p>\n" +
                 "\t\t\n" +
-                "\t\t<p class=\"mt--15\">Masa berlaku kode 10 menit </p>\n" +
+                "\t\t<a href='{{RESET_LINK}}' >Reset Password</a>\n" +
                 "\t\t\n" +
-                "\t\t<p>PT,</p>\n" +
+                "\t\t<p class=\"mt--15\">Valid for only 5 minutes</p>\n" +
+                "\t\t\n" +
+                "\t\t<p><strong>CareerFund Team</strong></p>\n" +
                 "\t\t<p class=\"mt--15\".....</p>\n" +
                 "\n" +
                 "\t\t\n" +

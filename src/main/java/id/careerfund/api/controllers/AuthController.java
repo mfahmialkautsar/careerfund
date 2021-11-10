@@ -1,13 +1,11 @@
 package id.careerfund.api.controllers;
 
-import id.careerfund.api.configurations.exceptions.TokenRefreshException;
 import id.careerfund.api.configurations.jwt.JwtService;
 import id.careerfund.api.domains.entities.RefreshToken;
 import id.careerfund.api.domains.entities.User;
 import id.careerfund.api.domains.models.*;
 import id.careerfund.api.configurations.ResponseDetailConfig;
 import id.careerfund.api.domains.models.ResponseTemplate;
-import id.careerfund.api.domains.models.ResponseCollectionsDataTemplate;
 import id.careerfund.api.services.RefreshTokenService;
 import id.careerfund.api.utils.converters.ModelConverter;
 import id.careerfund.api.repositories.UserRepository;
@@ -25,6 +23,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 @RestController
@@ -41,12 +40,8 @@ public class AuthController {
     RefreshTokenService refreshTokenService;
 
     @GetMapping("/users")
-    public ResponseEntity<Object> getUsers() {
-        try {
-            return ResponseEntity.ok(new ResponseCollectionsDataTemplate(responseDetailConfig.getMessageSuccess(), responseDetailConfig.getCodeSuccess(), userService.getUsers()));
-        } catch (Exception e) {
-            return ResponseEntity.status(Integer.parseInt(responseDetailConfig.codeNotFound)).body(new ResponseTemplate(responseDetailConfig.messageNotFound, responseDetailConfig.getCodeNotFound()));
-        }
+    public ResponseEntity<List<User>> getUsers() {
+        return ResponseEntity.ok(userService.getUsers());
     }
 
     @PostMapping("/register")
@@ -101,6 +96,7 @@ public class AuthController {
 
     @PostMapping("/refreshtoken")
     public ResponseEntity<?> refreshtoken(@Valid @RequestBody TokenRefreshRequest request) {
+
         String requestRefreshToken = request.getRefreshtoken();
             return refreshTokenService.findByToken(requestRefreshToken)
                     .map(refreshTokenService::verifyExpiration)
@@ -109,8 +105,7 @@ public class AuthController {
                         String token = jwtService.generateToken(user.getUsername());
                         return ResponseEntity.ok(new TokenRefreshResponse(token, requestRefreshToken));
                     })
-                    .orElseThrow(() -> new TokenRefreshException(requestRefreshToken,
-                            "Refresh token is not found or invalid!"));
+                    .orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping("/signout")

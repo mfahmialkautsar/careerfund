@@ -25,3 +25,5 @@ public class ResponseDetailConfig {
     public String statusDraft = "draft";
 
 }
+
+
