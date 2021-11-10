@@ -1,17 +1,26 @@
 package id.careerfund.api.domains.entities;
 
-import id.careerfund.api.domains.entities.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import java.io.Serializable;
 import java.time.Instant;
 
 import javax.persistence.*;
 
-@Entity(name = "refreshtoken")
-    public class RefreshToken {
+@Setter
+@Getter
+@Entity
+@NoArgsConstructor
+@Table(name = "refreshtoken")
+public class RefreshToken implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
@@ -21,40 +30,5 @@ import javax.persistence.*;
 
     @Column(nullable = false)
     private Instant expiryDate;
-
-    public RefreshToken() {
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public Instant getExpiryDate() {
-        return expiryDate;
-    }
-
-    public void setExpiryDate(Instant expiryDate) {
-        this.expiryDate = expiryDate;
-    }
 }
 

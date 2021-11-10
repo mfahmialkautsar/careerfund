@@ -1,22 +1,11 @@
 package id.careerfund.api.domains.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 
-@Setter
-@Getter
+@Data
 public class TokenRefreshRequest {
     @NotBlank
     private String refreshtoken;
-
-    public String getRefreshtoken() {
-        return refreshtoken;
-    }
-
-    public void setRefreshtoken(String refreshtoken) {
-        this.refreshtoken = refreshtoken;
-    }
 }
