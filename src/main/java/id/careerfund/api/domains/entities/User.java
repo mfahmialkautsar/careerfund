@@ -1,5 +1,6 @@
 package id.careerfund.api.domains.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,6 +10,8 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 @Table(name = "users")
 @Entity
@@ -16,7 +19,8 @@ import java.util.Collection;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class User extends Auditable<Long> implements UserDetails {
+public class User extends Auditable<Long>  implements UserDetails {
+    @JsonIgnore
     @Id
     @GeneratedValue
     @Column(name = "id", nullable = false)
@@ -31,6 +35,7 @@ public class User extends Auditable<Long> implements UserDetails {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
+    @JsonIgnore
     @NotEmpty(message = "Password is mandatory")
     @Column(name = "password", nullable = false)
     private String password;
@@ -52,6 +57,8 @@ public class User extends Auditable<Long> implements UserDetails {
 
     @Column(name = "is_enabled", nullable = false)
     private Boolean isEnabled = true;
+
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -82,4 +89,55 @@ public class User extends Auditable<Long> implements UserDetails {
     public boolean isEnabled() {
         return isEnabled;
     }
+
+    //    Forget Pass here
+    @JsonIgnore
+    private String verifyToken;
+
+    @JsonIgnore
+    private Date expiredVerifyToken;
+
+    @Column(length = 100, nullable = true)
+    private String otp;
+
+    private Date otpExpiredDate;
+
+    public String getVerifyToken() {
+        return verifyToken;
+    }
+
+    public void setVerifyToken(String verifyToken) {
+        this.verifyToken = verifyToken;
+    }
+
+    public Date getExpiredVerifyToken() {
+        return expiredVerifyToken;
+    }
+
+    public void setExpiredVerifyToken(Date expiredVerifyToken) {
+        this.expiredVerifyToken = expiredVerifyToken;
+    }
+
+    public String getOtp() {
+        return otp;
+    }
+
+    public void setOtp(String otp) {
+        this.otp = otp;
+    }
+
+    public Date getOtpExpiredDate() {
+        return otpExpiredDate;
+    }
+
+    public void setOtpExpiredDate(Date otpExpiredDate) {
+        this.otpExpiredDate = otpExpiredDate;
+    }
+
+    //add one to many users
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private List<RefreshToken> refreshTokens;
+    // add here
+
+
 }

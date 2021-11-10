@@ -1,5 +1,6 @@
 package id.careerfund.api.domains.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import id.careerfund.api.domains.ERole;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,6 +17,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Role extends Auditable<Long> implements GrantedAuthority {
+    @JsonIgnore
     @Id
     @GeneratedValue
     @Column(name = "id", nullable = false)
