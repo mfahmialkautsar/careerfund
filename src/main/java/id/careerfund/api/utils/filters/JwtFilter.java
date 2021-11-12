@@ -1,7 +1,7 @@
 package id.careerfund.api.utils.filters;
 
 import id.careerfund.api.configurations.jwt.JwtConfig;
-import id.careerfund.api.configurations.jwt.JwtService;
+import id.careerfund.api.configurations.jwt.JwtServiceImpl;
 import id.careerfund.api.services.UserServiceImpl;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,13 +20,13 @@ import java.io.IOException;
 public class JwtFilter extends OncePerRequestFilter {
     private final JwtConfig jwtConfig;
 
-    private final JwtService jwtService;
+    private final JwtServiceImpl jwtServiceImpl;
 
     private final UserServiceImpl userService;
 
-    public JwtFilter(JwtConfig jwtConfig, JwtService jwtService, UserServiceImpl userService) {
+    public JwtFilter(JwtConfig jwtConfig, JwtServiceImpl jwtServiceImpl, UserServiceImpl userService) {
         this.jwtConfig = jwtConfig;
-        this.jwtService = jwtService;
+        this.jwtServiceImpl = jwtServiceImpl;
         this.userService = userService;
     }
 
@@ -38,12 +38,12 @@ public class JwtFilter extends OncePerRequestFilter {
         String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader != null && authorizationHeader.startsWith(jwtConfig.getToken_prefix())) {
             token = authorizationHeader.substring(7);
-            email = jwtService.extractUsername(token);
+            email = jwtServiceImpl.extractUsername(token);
         }
 
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userService.loadUserByUsername(email);
-            if (jwtService.validateToken(token, userDetails)) {
+            if (jwtServiceImpl.validateToken(token, userDetails)) {
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 usernamePasswordAuthenticationToken

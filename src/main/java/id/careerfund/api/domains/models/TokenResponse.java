@@ -3,20 +3,20 @@ package id.careerfund.api.domains.models;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Collection;
+import java.util.List;
 
 @Setter
 @Getter
-public class TokenResponse extends ResponseTemplate {
+public class TokenResponse {
+
     private String jwttoken;
     private String tokentype;
     private String refreshtoken;
-    private Collection roles;
+    private List<String> roles;
 
-    public TokenResponse(String statusMessage, String statusCode, String jwtToken, String tokenType, Collection roles, String refreshtoken) {
-        super(statusMessage, statusCode);
+    public TokenResponse(String jwtToken, List<String> roles, String refreshtoken) {
         this.jwttoken = jwtToken;
-        this.tokentype = tokenType;
+        this.tokentype = "Bearer ";
         this.roles = roles;
         this.refreshtoken = refreshtoken;
     }

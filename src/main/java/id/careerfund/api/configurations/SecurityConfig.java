@@ -11,7 +11,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
@@ -25,19 +24,30 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserServiceImpl userService;
-
-    @Autowired
-    private JwtFilter jwtFilter;
+    private final JwtFilter jwtFilter;
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userService);
-    }
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception { auth.userDetailsService(userService); }
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+    private static final String[] AUTH_WHITELIST = {
+            "/v2/api-docs",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui.html",
+            "/webjars/**",
+            "/",
+            "index",
+            "/password/**",
+            "/signin", "/signout"
+            , "/register", "/email-availability"
+    };
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -47,8 +57,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().authorizeRequests()
-//                .antMatchers(  "/",   "index", "/password/**",  "/signin", "/signout" , "/register", "/email-availability", "/swagger-ui").permitAll()
-                .anyRequest().permitAll()
+//                .antMatchers( AUTH_WHITELIST ).permitAll()
+                .anyRequest()
+                .permitAll()
 //                .authenticated()
                 .and().exceptionHandling()
                 .and().addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

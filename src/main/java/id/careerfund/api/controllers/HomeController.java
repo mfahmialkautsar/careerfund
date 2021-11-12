@@ -10,14 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 
 @RestController
 public class HomeController {
-    ResponseDetailConfig responseDetailConfig = new ResponseDetailConfig();
-
     @GetMapping("")
-    public ResponseEntity<Object> getDeviceInfo(@RequestHeader("User-Agent") String userAgent, HttpServletRequest request) {
-        try {
-            return ResponseEntity.ok(new DeviceInfo(responseDetailConfig.getMessageSuccess(), responseDetailConfig.getCodeSuccess(), userAgent, request.getRemoteAddr()));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseTemplate(e.getMessage(), responseDetailConfig.getCodeRequired()));
-        }
+    public ResponseEntity<DeviceInfo> getDeviceInfo(@RequestHeader("User-Agent") String userAgent, HttpServletRequest request) {
+        return ResponseEntity.ok(new DeviceInfo(userAgent, request.getRemoteAddr()));
     }
 }

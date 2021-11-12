@@ -63,6 +63,5 @@ public class EmailSenderConfig {
     public void sendAsync(final String to, final String subject, final String message) {
         taskExecutor.execute(() -> send(to, subject, message));
     }
-
 }
 

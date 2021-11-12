@@ -4,14 +4,15 @@ import id.careerfund.api.domains.entities.Role;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class ModelConverter  {
-    public static Collection<String> toStringRoleList (Collection<Role> roles) {
-        Collection<String> stringCollection = new ArrayList<>();
+    public static List<String> toStringRoleList (Collection<Role> roles) {
+        List<String> stringList = new ArrayList<>();
 
         for (Role role: roles) {
-            stringCollection.add(role.getName().name());
+            stringList.add(role.getName().name());
         }
-        return stringCollection;
+        return stringList;
     }
 }
