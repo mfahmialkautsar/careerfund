@@ -31,5 +31,6 @@ public class DatabaseSeeder implements ApplicationRunner {
         userService.registerAdminIfNotExists(admin);
         userService.registerUserIfNotExists(new UserRegister("Invoker", "invoker@email.com", "1234", ERoleRegister.LENDER));
         userService.registerUserIfNotExists(new UserRegister("Meepo", "meep@email.com", "1234", ERoleRegister.BORROWER));
+        userService.registerUserIfNotExists(new UserRegister("Meepo", "dump.file17@gmail.com", "1234", ERoleRegister.BORROWER));
     }
 }

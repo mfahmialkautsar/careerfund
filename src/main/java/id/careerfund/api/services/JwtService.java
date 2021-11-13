@@ -1,4 +1,4 @@
-package id.careerfund.api.configurations.jwt;
+package id.careerfund.api.services;
 
 import io.jsonwebtoken.Claims;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.function.Function;
 
-public interface jwtService {
+public interface JwtService {
     String extractUsername(String token);
 
     Date extractExpiration(String token);

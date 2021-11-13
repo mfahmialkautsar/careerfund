@@ -1,8 +1,6 @@
 package id.careerfund.api.controllers;
 
 import id.careerfund.api.domains.models.DeviceInfo;
-import id.careerfund.api.configurations.ResponseDetailConfig;
-import id.careerfund.api.domains.models.ResponseTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

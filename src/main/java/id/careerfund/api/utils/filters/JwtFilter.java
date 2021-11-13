@@ -1,7 +1,7 @@
 package id.careerfund.api.utils.filters;
 
-import id.careerfund.api.configurations.jwt.JwtConfig;
-import id.careerfund.api.configurations.jwt.JwtServiceImpl;
+import id.careerfund.api.configurations.JwtConfig;
+import id.careerfund.api.services.JwtServiceImpl;
 import id.careerfund.api.services.UserServiceImpl;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;

@@ -1,5 +1,6 @@
-package id.careerfund.api.configurations.jwt;
+package id.careerfund.api.services;
 
+import id.careerfund.api.configurations.JwtConfig;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -13,7 +14,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Service
-public class JwtServiceImpl implements jwtService {
+public class JwtServiceImpl implements JwtService {
     private final JwtConfig jwtConfig;
 
     public JwtServiceImpl(JwtConfig jwtConfig) {

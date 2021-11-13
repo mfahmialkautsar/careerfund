@@ -12,7 +12,7 @@ import org.springframework.util.ObjectUtils;
 
 import javax.mail.internet.MimeMessage;
 
-@SuppressWarnings({"WeakerAccess", "ConstantConditions"})
+@SuppressWarnings({"WeakerAccess"})
 @Component("emailSender")
 public class EmailSenderConfig {
     private final static Logger logger = LoggerFactory.getLogger(EmailSenderConfig.class);
@@ -32,11 +32,11 @@ public class EmailSenderConfig {
         this.taskExecutor = taskExecutor;
     }
 
-    public boolean send(String email, String subject, String message) {
-        return send(null, email, subject, message);
+    public void send(String email, String subject, String message) {
+        send(null, email, subject, message);
     }
 
-    public boolean send(String from, String email, String subject, String message) {
+    public void send(String from, String email, String subject, String message) {
         MimeMessage mime = mailSender.createMimeMessage();
         if (ObjectUtils.isEmpty(from)) {
             from = senderEmail;
@@ -57,7 +57,6 @@ public class EmailSenderConfig {
             logger.error("error: " + e.getMessage());
         }
 
-        return success;
     }
 
     public void sendAsync(final String to, final String subject, final String message) {

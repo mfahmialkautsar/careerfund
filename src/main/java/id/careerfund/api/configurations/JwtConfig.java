@@ -1,4 +1,4 @@
-package id.careerfund.api.configurations.jwt;
+package id.careerfund.api.configurations;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
