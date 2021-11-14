@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
@@ -29,17 +30,17 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody UserRegister user) {
+    public ResponseEntity<TokenResponse> registerUser(@Valid @RequestBody UserRegister user) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/register").toUriString());
         try {
-            userService.registerUser(user);
+            TokenResponse tokenResponse = userService.registerUser(user);
+            return ResponseEntity.created(uri).body(tokenResponse);
         } catch (Exception e) {
             if (e.getMessage().equals("EMAIL_UNAVAILABLE")) {
-                return ResponseEntity.badRequest().body(new ErrorResponse("Email is taken"));
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email is taken");
             }
-            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).build();
+            throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, e.getMessage());
         }
-        return ResponseEntity.created(uri).build();
     }
 
     @PostMapping("/email-availability")

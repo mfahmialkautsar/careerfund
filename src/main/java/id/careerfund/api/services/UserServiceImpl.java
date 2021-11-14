@@ -3,6 +3,8 @@ package id.careerfund.api.services;
 import id.careerfund.api.domains.ERole;
 import id.careerfund.api.domains.entities.Role;
 import id.careerfund.api.domains.entities.User;
+import id.careerfund.api.domains.models.SignInRequest;
+import id.careerfund.api.domains.models.TokenResponse;
 import id.careerfund.api.domains.models.UserRegister;
 import id.careerfund.api.repositories.RoleRepository;
 import id.careerfund.api.repositories.UserRepository;
@@ -10,6 +12,7 @@ import id.careerfund.api.utils.mappers.RoleMapper;
 import id.careerfund.api.utils.mappers.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -30,6 +33,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserRepository userRepo;
     private final RoleRepository roleRepo;
     private final PasswordEncoder passwordEncoder;
+    private final TokenService tokenService;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -46,12 +50,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public void registerUser(UserRegister userRegister) throws Exception {
+    public TokenResponse registerUser(UserRegister userRegister) throws Exception {
         User user = UserMapper.userRegisterToUser(userRegister);
         if (!getIsEmailAvailable(user.getEmail())) throw new Exception("EMAIL_UNAVAILABLE");
         saveUser(user);
         addRoleToUser(user.getEmail(), RoleMapper.mapRole(userRegister.getRole()));
         addRoleToUser(user.getEmail(), ERole.ROLE_USER);
+        return tokenService.signIn(new SignInRequest(userRegister.getEmail(), userRegister.getPassword()));
     }
 
     @Override

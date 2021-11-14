@@ -2,12 +2,13 @@ package id.careerfund.api.services;
 
 import id.careerfund.api.domains.entities.Role;
 import id.careerfund.api.domains.entities.User;
+import id.careerfund.api.domains.models.TokenResponse;
 import id.careerfund.api.domains.models.UserRegister;
 
 import java.util.List;
 
 public interface UserService {
-    void registerUser(UserRegister userRegister) throws Exception;
+    TokenResponse registerUser(UserRegister userRegister) throws Exception;
 
     void registerUserIfNotExists(UserRegister userRegister);
 
