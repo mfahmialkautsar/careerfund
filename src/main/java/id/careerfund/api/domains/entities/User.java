@@ -19,7 +19,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class User extends Auditable<Long> implements UserDetails {
+public class User extends Auditable implements UserDetails {
     @JsonIgnore
     @Id
     @GeneratedValue

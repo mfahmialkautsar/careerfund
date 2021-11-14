@@ -15,6 +15,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -23,6 +24,11 @@ public class AuthController extends HandlerController {
     private final UserService userService;
     private final TokenService tokenService;
     private final RefreshTokenService refreshTokenService;
+
+    @GetMapping("/user")
+    public ResponseEntity<Principal> getUser(Principal principal) {
+        return ResponseEntity.ok(principal);
+    }
 
     @GetMapping("/users")
     public ResponseEntity<List<User>> getUsers() {

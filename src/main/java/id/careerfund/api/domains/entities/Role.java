@@ -16,7 +16,7 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Role extends Auditable<Long> implements GrantedAuthority {
+public class Role extends Auditable implements GrantedAuthority {
     @JsonIgnore
     @Id
     @GeneratedValue

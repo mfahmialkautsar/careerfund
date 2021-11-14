@@ -8,27 +8,27 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.Column;
-import javax.persistence.EntityListeners;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @EntityListeners(AuditingEntityListener.class)
 @MappedSuperclass
-public abstract class Auditable<U> {
+public abstract class Auditable {
     @CreatedBy
-    @Column(name = "created_by", updatable = false)
-    private U createdBy;
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "created_by", updatable = false)
+    private User createdBy;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @LastModifiedBy
-    @Column(name = "updated_by")
-    private U updatedBy;
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "updated_by")
+    private User updatedBy;
 
     @LastModifiedDate
     @Column(name = "updated_at")
