@@ -1,23 +1,17 @@
 package id.careerfund.api.domains.models;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
 
 @Setter
 @Getter
+@RequiredArgsConstructor
 public class TokenResponse {
-
-    private String jwttoken;
-    private String tokentype;
-    private String refreshtoken;
-    private List<String> roles;
-
-    public TokenResponse(String jwtToken, List<String> roles, String refreshtoken) {
-        this.jwttoken = jwtToken;
-        this.tokentype = "Bearer ";
-        this.roles = roles;
-        this.refreshtoken = refreshtoken;
-    }
+    private final String accessToken;
+    private String tokenType = "Bearer ";
+    private final String refreshToken;
+    private final List<String> roles;
 }

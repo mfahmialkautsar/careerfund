@@ -8,5 +8,4 @@ import javax.validation.constraints.NotEmpty;
 public class RequestOtpPassword {
     @NotEmpty(message = "Name is mandatory")
     public String email;
-
 }

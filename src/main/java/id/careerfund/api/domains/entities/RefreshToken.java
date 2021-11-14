@@ -14,7 +14,7 @@ import javax.persistence.*;
 @Getter
 @Entity
 @NoArgsConstructor
-@Table(name = "refreshtoken")
+@Table(name = "refreshtokens")
 public class RefreshToken implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

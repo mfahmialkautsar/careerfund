@@ -58,7 +58,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     @Override
     public ResponseTemplate signOut(SignOutRequest signOutRequest) throws Exception {
-        String token = signOutRequest.getRefreshtoken();
+        String token = signOutRequest.getRefreshToken();
 
         if (ObjectUtils.isEmpty(token)) {
             throw new Exception("Bad Request");
@@ -70,7 +70,9 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         try {
             deleteByToken(token);
             return new ResponseTemplate().responseSuccess();
-        } catch (Exception e) { throw new Exception("Bad Request"); }
+        } catch (Exception e) {
+            throw new Exception("Bad Request");
+        }
 
     }
 }

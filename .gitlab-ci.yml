@@ -31,4 +31,7 @@ mr-develop:
   script:
     - mvn test
   only:
-    - merge_requests
+    refs:
+      - merge_requests
+    variables:
+      - $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"

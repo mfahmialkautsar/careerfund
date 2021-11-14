@@ -19,7 +19,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class User extends Auditable<Long>  implements UserDetails {
+public class User extends Auditable<Long> implements UserDetails {
     @JsonIgnore
     @Id
     @GeneratedValue
@@ -59,7 +59,6 @@ public class User extends Auditable<Long>  implements UserDetails {
     private Boolean isEnabled = true;
 
 
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles;
@@ -97,42 +96,10 @@ public class User extends Auditable<Long>  implements UserDetails {
     @JsonIgnore
     private Date expiredVerifyToken;
 
-    @Column(length = 100, nullable = true)
+    @Column(length = 100)
     private String otp;
 
     private Date otpExpiredDate;
-
-    public String getVerifyToken() {
-        return verifyToken;
-    }
-
-    public void setVerifyToken(String verifyToken) {
-        this.verifyToken = verifyToken;
-    }
-
-    public Date getExpiredVerifyToken() {
-        return expiredVerifyToken;
-    }
-
-    public void setExpiredVerifyToken(Date expiredVerifyToken) {
-        this.expiredVerifyToken = expiredVerifyToken;
-    }
-
-    public String getOtp() {
-        return otp;
-    }
-
-    public void setOtp(String otp) {
-        this.otp = otp;
-    }
-
-    public Date getOtpExpiredDate() {
-        return otpExpiredDate;
-    }
-
-    public void setOtpExpiredDate(Date otpExpiredDate) {
-        this.otpExpiredDate = otpExpiredDate;
-    }
 
     //add one to many users
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")

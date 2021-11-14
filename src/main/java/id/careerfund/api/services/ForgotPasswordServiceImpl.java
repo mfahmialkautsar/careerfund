@@ -23,7 +23,7 @@ import java.util.Random;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class ForgotPasswordServiceImpl implements ForgotPasswordService{
+public class ForgotPasswordServiceImpl implements ForgotPasswordService {
     private final UserRepository userRepo;
     private final PasswordEncoder passwordEncoder;
     private final EmailTemplate emailTemplate;
@@ -62,12 +62,12 @@ public class ForgotPasswordServiceImpl implements ForgotPasswordService{
 
     @Override
     public Boolean checkOtp(String email) {
-            String otp = Objects.requireNonNull(userRepo.findByEmail(email)).getOtp();
-            return otp != null;
+        String otp = Objects.requireNonNull(userRepo.findByEmail(email)).getOtp();
+        return otp != null;
     }
 
     @Override
-     public String saveOtp(String email, int expiredToken) {
+    public String saveOtp(String email, int expiredToken) {
         User user = userRepo.findByEmail(email);
 
         User search;
@@ -124,7 +124,7 @@ public class ForgotPasswordServiceImpl implements ForgotPasswordService{
 
     @Override
     public ResponseTemplate resetPassword(String token, UpdatePassword model) throws Exception {
-        String newPassword = model.getNewpassword();
+        String newPassword = model.getNewPassword();
 
         if (ObjectUtils.isEmpty(newPassword)) {
             throw new Exception("Bad Request");

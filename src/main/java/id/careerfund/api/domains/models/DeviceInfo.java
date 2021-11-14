@@ -10,5 +10,4 @@ import lombok.Setter;
 public class DeviceInfo {
     private String userAgent;
     private String remoteAddr;
-
 }

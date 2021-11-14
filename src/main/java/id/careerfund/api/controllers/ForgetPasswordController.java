@@ -17,7 +17,7 @@ public class ForgetPasswordController {
     private final ForgotPasswordService forgotPasswordService;
 
     @PostMapping("/forgot")//send link reset
-    public ResponseEntity<ResponseTemplate>  sendEmailForgot(@RequestBody RequestOtpPassword model) {
+    public ResponseEntity<ResponseTemplate> sendEmailForgot(@RequestBody RequestOtpPassword model) {
         try {
             ResponseTemplate result = forgotPasswordService.sendEmailForgot(model);
             return ResponseEntity.ok(result);
@@ -36,7 +36,8 @@ public class ForgetPasswordController {
         } catch (Exception e) {
             if (e.getMessage().equals("Token Not Found")) {
                 return ResponseEntity.notFound().build();
-            } return ResponseEntity.badRequest().build();
+            }
+            return ResponseEntity.badRequest().build();
         }
     }
 }

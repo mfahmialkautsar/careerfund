@@ -23,7 +23,7 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class TokenServiceImpl implements TokenService{
+public class TokenServiceImpl implements TokenService {
     private final RefreshTokenService refreshTokenService;
     private final UserRepository userRepo;
     private final AuthenticationManager authenticationManager;
@@ -47,13 +47,13 @@ public class TokenServiceImpl implements TokenService{
                 authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
                 return true;
             } else return false;
-        } catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
     }
 
     @Override
-    public List<String> roles(String email) throws Exception  {
+    public List<String> roles(String email) throws Exception {
         Boolean userState = verifyUser(email);
 
         try {
@@ -88,7 +88,7 @@ public class TokenServiceImpl implements TokenService{
             throw new Exception("Bad Request");
         }
 
-        if (!authUser(email, password) ) {
+        if (!authUser(email, password)) {
             throw new NotFoundException("User Not Found");
         }
 
@@ -96,12 +96,12 @@ public class TokenServiceImpl implements TokenService{
         String jwtToken = jwtService.generateToken(email);
         String refreshToken = refreshToken(email);
 
-        return new TokenResponse(jwtToken, roles, refreshToken);
+        return new TokenResponse(jwtToken, refreshToken, roles);
     }
 
     @Override
     public TokenResponse getNewToken(NewTokenRequest request) throws Exception {
-        String refreshToken = request.getRefreshtoken();
+        String refreshToken = request.getRefreshToken();
 
         if (checkObject(refreshToken)) {
             throw new Exception("Bad Request");
@@ -119,6 +119,6 @@ public class TokenServiceImpl implements TokenService{
 
         String newToken = jwtService.generateToken(token.getUser().getUsername());
         List<String> roles = roles(token.getUser().getEmail());
-        return new TokenResponse(newToken,  roles, refreshToken);
+        return new TokenResponse(newToken, refreshToken, roles);
     }
 }

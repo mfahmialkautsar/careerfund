@@ -11,7 +11,7 @@ public interface TokenService {
 
     Boolean authUser(String email, String password);
 
-    List<String> roles(String email) throws Exception  ;
+    List<String> roles(String email) throws Exception;
 
     String refreshToken(String email);
 
