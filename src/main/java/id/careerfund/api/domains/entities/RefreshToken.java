@@ -15,7 +15,7 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor
 @Table(name = "refreshtokens")
-public class RefreshToken implements Serializable {
+public class RefreshToken extends Auditable implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
