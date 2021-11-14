@@ -19,7 +19,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class AuthController {
+public class AuthController extends HandlerController {
     private final UserService userService;
     private final TokenService tokenService;
     private final RefreshTokenService refreshTokenService;
