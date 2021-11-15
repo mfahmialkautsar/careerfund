@@ -43,7 +43,7 @@ public class AuthController extends HandlerController {
             return ResponseEntity.created(uri).body(tokenResponse);
         } catch (Exception e) {
             if (e.getMessage().equals("EMAIL_UNAVAILABLE")) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email is taken");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email is taken", e.getCause());
             }
             throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, e.getMessage());
         }

@@ -10,8 +10,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ResponseTemplate {
-    private String code;
     private String message;
+    private String code;
 
     public ResponseTemplate responseSuccess() {
         return new ResponseTemplate("Success", "200");
