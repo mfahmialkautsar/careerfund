@@ -43,7 +43,7 @@ public class User extends Auditable implements UserDetails {
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "roles_id"))
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Collection<Role> roles = new ArrayList<>();
 
     @Column(name = "is_not_expired", nullable = false)
@@ -104,7 +104,10 @@ public class User extends Auditable implements UserDetails {
     //add one to many users
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private List<RefreshToken> refreshTokens;
-    // add here
 
-
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "users_interests",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "interest_id"))
+    private Collection<Interest> interests;
 }

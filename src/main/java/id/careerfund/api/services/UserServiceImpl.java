@@ -1,11 +1,11 @@
 package id.careerfund.api.services;
 
 import id.careerfund.api.domains.ERole;
+import id.careerfund.api.domains.entities.Interest;
 import id.careerfund.api.domains.entities.Role;
 import id.careerfund.api.domains.entities.User;
-import id.careerfund.api.domains.models.SignInRequest;
-import id.careerfund.api.domains.models.TokenResponse;
-import id.careerfund.api.domains.models.UserRegister;
+import id.careerfund.api.domains.models.*;
+import id.careerfund.api.repositories.InterestRepository;
 import id.careerfund.api.repositories.RoleRepository;
 import id.careerfund.api.repositories.UserRepository;
 import id.careerfund.api.utils.mappers.RoleMapper;
@@ -23,6 +23,8 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +33,7 @@ import java.util.List;
 public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserRepository userRepo;
     private final RoleRepository roleRepo;
+    private final InterestRepository interestRepo;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
 
@@ -110,6 +113,66 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public boolean getIsEmailAvailable(String email) {
         return getUser(email) == null;
+    }
+
+    @Override
+    public Interest saveInterest(User user, Long id) {
+        Collection<Interest> userInterests = user.getInterests();
+        Optional<Interest> interest = interestRepo.findById(id);
+        if (!interest.isPresent()) return null;
+        if (isUserHasInterest(user, interest.get())) return null;
+        userInterests.add(interest.get());
+        return interest.get();
+    }
+
+    @Override
+    public Interest deleteInterest(User user, Long id) {
+        Collection<Interest> userInterests = user.getInterests();
+        Interest interest = interestRepo.getById(id);
+        if (!isUserHasInterest(user, interest)) return null;
+        userInterests.remove(interest);
+        return interest;
+    }
+
+    @Override
+    public void saveInterests(String email, List<Long> id) {
+        User user = getUser(email);
+        for (Long i : id) {
+            saveInterest(user, i);
+        }
+    }
+
+    @Override
+    public void deleteInterests(String email, List<Long> id) {
+        User user = getUser(email);
+        for (Long i : id) {
+            deleteInterest(user, i);
+        }
+    }
+
+    @Override
+    public MyInterestResponse fetchInterests(String email) {
+        User user = getUser(email);
+        return new MyInterestResponse(user.getId(), (List<Interest>) user.getInterests());
+    }
+
+    @Override
+    public UpdateInterest updateInterest(String email, UpdateInterest updateInterest) {
+        User user = getUser(email);
+        if (updateInterest.getAdds() != null && !updateInterest.getAdds().isEmpty()) {
+            List<Long> interestIds = updateInterest.getAdds().stream().filter(id -> !isUserHasInterest(user, interestRepo.getById(id))).collect(Collectors.toList());
+            saveInterests(email, interestIds);
+        }
+        if (updateInterest.getDeletes() != null && !updateInterest.getDeletes().isEmpty()) {
+            List<Long> interestIds = updateInterest.getDeletes().stream().filter(id -> isUserHasInterest(user, interestRepo.getById(id))).collect(Collectors.toList());
+            deleteInterests(email, interestIds);
+        }
+        return updateInterest;
+    }
+
+    @Override
+    public Boolean isUserHasInterest(User user, Interest interest) {
+        return user.getInterests().contains(interest);
     }
 
     private void saveUser(User user) {
