@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class MyInterestResponse {
+public class MyInterests {
     private final Long user;
     private final List<Interest> interests;
 }

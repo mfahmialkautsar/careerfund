@@ -20,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -38,7 +39,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final TokenService tokenService;
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    public User loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepo.findByEmail(email);
         if (user == null) {
             log.error("Email not found {}", email);
@@ -46,9 +47,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         } else {
             log.info("Email found {}", email);
         }
-        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        user.getRoles().forEach(role -> authorities.add(new SimpleGrantedAuthority(role.getName().name())));
-        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), authorities);
+        return user;
     }
 
     @Override
@@ -116,7 +115,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public Interest saveInterest(User user, Long id) {
+    public Interest addInterest(User user, Long id) {
         Collection<Interest> userInterests = user.getInterests();
         Optional<Interest> interest = interestRepo.findById(id);
         if (!interest.isPresent()) return null;
@@ -135,38 +134,33 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public void saveInterests(String email, List<Long> id) {
-        User user = getUser(email);
-        for (Long i : id) {
-            saveInterest(user, i);
+    public void addInterests(Principal principal, UpdateInterest updateInterest) {
+        User user = getUser(principal.getName());
+        for (Long i : updateInterest.getInterestIds()) {
+            addInterest(user, i);
         }
     }
 
     @Override
-    public void deleteInterests(String email, List<Long> id) {
-        User user = getUser(email);
-        for (Long i : id) {
+    public void deleteInterests(Principal principal, UpdateInterest updateInterest) {
+        User user = getUser(principal.getName());
+        for (Long i : updateInterest.getInterestIds()) {
             deleteInterest(user, i);
         }
     }
 
     @Override
-    public MyInterestResponse fetchInterests(String email) {
-        User user = getUser(email);
-        return new MyInterestResponse(user.getId(), (List<Interest>) user.getInterests());
+    public MyInterests getMyInterests(Principal principal) {
+        User user = getUser(principal.getName());
+        return new MyInterests(user.getId(), (List<Interest>) user.getInterests());
     }
 
     @Override
-    public UpdateInterest updateInterest(String email, UpdateInterest updateInterest) {
-        User user = getUser(email);
-        if (updateInterest.getAdds() != null && !updateInterest.getAdds().isEmpty()) {
-            List<Long> interestIds = updateInterest.getAdds().stream().filter(id -> !isUserHasInterest(user, interestRepo.getById(id))).collect(Collectors.toList());
-            saveInterests(email, interestIds);
-        }
-        if (updateInterest.getDeletes() != null && !updateInterest.getDeletes().isEmpty()) {
-            List<Long> interestIds = updateInterest.getDeletes().stream().filter(id -> isUserHasInterest(user, interestRepo.getById(id))).collect(Collectors.toList());
-            deleteInterests(email, interestIds);
-        }
+    public UpdateInterest saveInterests(Principal principal, UpdateInterest updateInterest) {
+        User user = getUser(principal.getName());
+        List<Interest> interests = updateInterest.getInterestIds().stream().map(interestRepo::getById).collect(Collectors.toList());
+        log.info("Saving interests {}", interests);
+        user.setInterests(interests);
         return updateInterest;
     }
 

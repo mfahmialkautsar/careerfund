@@ -1,6 +1,7 @@
 package id.careerfund.api.domains.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedBy;
@@ -18,8 +19,9 @@ import java.util.Date;
 @EntityListeners(AuditingEntityListener.class)
 @MappedSuperclass
 public abstract class Auditable {
+    @JsonIgnore
     @CreatedBy
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @OneToOne(orphanRemoval = true)
     @JoinColumn(name = "created_by", updatable = false)
     private User createdBy;
 
@@ -27,8 +29,9 @@ public abstract class Auditable {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @JsonIgnore
     @LastModifiedBy
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @OneToOne(orphanRemoval = true)
     @JoinColumn(name = "updated_by")
     private User updatedBy;
 

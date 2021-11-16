@@ -16,7 +16,7 @@ import javax.persistence.Table;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Interest {
+public class Interest extends Auditable {
     @Id
     @Column(name = "id", nullable = false)
     private Long id;

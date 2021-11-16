@@ -10,6 +10,6 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class InterestsResponse {
+public class Interests {
     private List<Interest> interests;
 }

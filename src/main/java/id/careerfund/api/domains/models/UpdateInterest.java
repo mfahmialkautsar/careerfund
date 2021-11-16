@@ -2,15 +2,15 @@ package id.careerfund.api.domains.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.springframework.lang.Nullable;
+import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class UpdateInterest {
-    @Nullable
-    private List<Long> adds;
-    @Nullable
-    private List<Long> deletes;
+    @NotNull(message = "Cannot null")
+    private List<Long> interestIds;
 }

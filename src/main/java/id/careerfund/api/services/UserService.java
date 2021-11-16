@@ -3,11 +3,12 @@ package id.careerfund.api.services;
 import id.careerfund.api.domains.entities.Interest;
 import id.careerfund.api.domains.entities.Role;
 import id.careerfund.api.domains.entities.User;
-import id.careerfund.api.domains.models.MyInterestResponse;
+import id.careerfund.api.domains.models.MyInterests;
 import id.careerfund.api.domains.models.TokenResponse;
 import id.careerfund.api.domains.models.UpdateInterest;
 import id.careerfund.api.domains.models.UserRegister;
 
+import java.security.Principal;
 import java.util.List;
 
 public interface UserService {
@@ -27,17 +28,17 @@ public interface UserService {
 
     boolean getIsEmailAvailable(String email);
 
-    Interest saveInterest(User user, Long id);
+    Interest addInterest(User user, Long id);
 
     Interest deleteInterest(User user, Long id);
 
-    void saveInterests(String email, List<Long> id);
+    void addInterests(Principal principal, UpdateInterest updateInterest);
 
-    void deleteInterests(String email, List<Long> id);
+    void deleteInterests(Principal principal, UpdateInterest updateInterest);
 
-    MyInterestResponse fetchInterests(String email);
+    MyInterests getMyInterests(Principal principal);
 
-    UpdateInterest updateInterest(String email, UpdateInterest updateInterest);
+    UpdateInterest saveInterests(Principal principal, UpdateInterest updateInterest);
 
     Boolean isUserHasInterest(User user, Interest interest);
 }
