@@ -12,8 +12,6 @@ import id.careerfund.api.utils.mappers.RoleMapper;
 import id.careerfund.api.utils.mappers.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,11 +19,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -115,58 +109,19 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public Interest addInterest(User user, Long id) {
-        Collection<Interest> userInterests = user.getInterests();
-        Optional<Interest> interest = interestRepo.findById(id);
-        if (!interest.isPresent()) return null;
-        if (isUserHasInterest(user, interest.get())) return null;
-        userInterests.add(interest.get());
-        return interest.get();
-    }
-
-    @Override
-    public Interest deleteInterest(User user, Long id) {
-        Collection<Interest> userInterests = user.getInterests();
-        Interest interest = interestRepo.getById(id);
-        if (!isUserHasInterest(user, interest)) return null;
-        userInterests.remove(interest);
-        return interest;
-    }
-
-    @Override
-    public void addInterests(Principal principal, UpdateInterest updateInterest) {
+    public MyInterest getMyInterest(Principal principal) {
         User user = getUser(principal.getName());
-        for (Long i : updateInterest.getInterestIds()) {
-            addInterest(user, i);
-        }
+        return new MyInterest(user.getId(), user.getInterest());
     }
 
     @Override
-    public void deleteInterests(Principal principal, UpdateInterest updateInterest) {
+    public AddInterest saveInterests(Principal principal, AddInterest addInterest) throws Exception {
         User user = getUser(principal.getName());
-        for (Long i : updateInterest.getInterestIds()) {
-            deleteInterest(user, i);
-        }
-    }
-
-    @Override
-    public MyInterests getMyInterests(Principal principal) {
-        User user = getUser(principal.getName());
-        return new MyInterests(user.getId(), (List<Interest>) user.getInterests());
-    }
-
-    @Override
-    public UpdateInterest saveInterests(Principal principal, UpdateInterest updateInterest) {
-        User user = getUser(principal.getName());
-        List<Interest> interests = updateInterest.getInterestIds().stream().map(interestRepo::getById).collect(Collectors.toList());
-        log.info("Saving interests {}", interests);
-        user.setInterests(interests);
-        return updateInterest;
-    }
-
-    @Override
-    public Boolean isUserHasInterest(User user, Interest interest) {
-        return user.getInterests().contains(interest);
+        if (user.getInterest() != null) throw new Exception("INTEREST_EXISTS");
+        Interest interest = interestRepo.getById(addInterest.getInterestId());
+        log.info("Saving interest {}", interest);
+        user.setInterest(interest);
+        return addInterest;
     }
 
     private void saveUser(User user) {
