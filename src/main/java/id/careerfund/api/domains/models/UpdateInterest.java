@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddInterest {
+public class UpdateInterest {
     @NotNull(message = "Cannot null")
-    private Long interestId;
+    private List<Long> interestIds;
 }

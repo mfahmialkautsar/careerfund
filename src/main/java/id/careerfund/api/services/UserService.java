@@ -1,10 +1,11 @@
 package id.careerfund.api.services;
 
+import id.careerfund.api.domains.entities.Interest;
 import id.careerfund.api.domains.entities.Role;
 import id.careerfund.api.domains.entities.User;
-import id.careerfund.api.domains.models.MyInterest;
+import id.careerfund.api.domains.models.MyInterests;
 import id.careerfund.api.domains.models.TokenResponse;
-import id.careerfund.api.domains.models.AddInterest;
+import id.careerfund.api.domains.models.UpdateInterest;
 import id.careerfund.api.domains.models.UserRegister;
 
 import java.security.Principal;
@@ -27,7 +28,17 @@ public interface UserService {
 
     boolean getIsEmailAvailable(String email);
 
-    MyInterest getMyInterest(Principal principal);
+    Interest addInterest(User user, Long id);
 
-    AddInterest saveInterests(Principal principal, AddInterest addInterest) throws Exception;
+    Interest deleteInterest(User user, Long id);
+
+    void addInterests(Principal principal, UpdateInterest updateInterest);
+
+    void deleteInterests(Principal principal, UpdateInterest updateInterest);
+
+    MyInterests getMyInterests(Principal principal);
+
+    UpdateInterest saveInterests(Principal principal, UpdateInterest updateInterest);
+
+    Boolean isUserHasInterest(User user, Interest interest);
 }
