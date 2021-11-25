@@ -1,6 +1,6 @@
 package id.careerfund.api.services;
 
-import id.careerfund.api.configurations.JwtConfig;
+import id.careerfund.api.domains.models.JwtConfig;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -36,7 +36,7 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public Claims extractAllClaims(String token) {
-        return Jwts.parser().setSigningKey(jwtConfig.getSecret_key()).parseClaimsJws(token).getBody();
+        return Jwts.parser().setSigningKey(jwtConfig.getSecretKey()).parseClaimsJws(token).getBody();
     }
 
     @Override
@@ -53,8 +53,8 @@ public class JwtServiceImpl implements JwtService {
     @Override
     public String createToken(Map<String, Object> claims, String subject) {
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date())
-                .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusDays(jwtConfig.getToken_expired_days())))
-                .signWith(SignatureAlgorithm.HS256, jwtConfig.getSecret_key()).compact();
+                .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusDays(jwtConfig.getTokenExpiredDays())))
+                .signWith(SignatureAlgorithm.HS256, jwtConfig.getSecretKey()).compact();
     }
 
     @Override

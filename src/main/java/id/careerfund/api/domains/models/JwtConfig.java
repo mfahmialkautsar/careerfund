@@ -1,4 +1,4 @@
-package id.careerfund.api.configurations;
+package id.careerfund.api.domains.models;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 @Data
 @NoArgsConstructor
 public class JwtConfig {
-    private String secret_key;
-    private String token_prefix;
-    private Integer token_expired_days;
+    private String secretKey;
+    private String tokenPrefix;
+    private Integer tokenExpiredDays;
 }
 

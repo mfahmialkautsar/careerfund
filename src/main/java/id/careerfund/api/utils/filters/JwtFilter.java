@@ -1,6 +1,6 @@
 package id.careerfund.api.utils.filters;
 
-import id.careerfund.api.configurations.JwtConfig;
+import id.careerfund.api.domains.models.JwtConfig;
 import id.careerfund.api.services.JwtServiceImpl;
 import id.careerfund.api.services.UserServiceImpl;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,7 +36,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String email = null;
 
         String authorizationHeader = request.getHeader("Authorization");
-        if (authorizationHeader != null && authorizationHeader.startsWith(jwtConfig.getToken_prefix())) {
+        if (authorizationHeader != null && authorizationHeader.startsWith(jwtConfig.getTokenPrefix())) {
             token = authorizationHeader.substring(7);
             email = jwtServiceImpl.extractUsername(token);
         }
