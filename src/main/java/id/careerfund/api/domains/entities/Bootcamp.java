@@ -1,13 +1,11 @@
 package id.careerfund.api.domains.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
 
 @Setter
 @Getter
@@ -24,8 +22,4 @@ public class Bootcamp extends Auditable implements Serializable {
 
     @Column(unique = true)
     private String icon;
-
-    @JsonIgnore
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "bootcamp")
-    private List<Class> aClasses;
 }

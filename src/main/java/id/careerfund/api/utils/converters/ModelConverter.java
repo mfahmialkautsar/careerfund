@@ -1,5 +1,6 @@
 package id.careerfund.api.utils.converters;
 
+import id.careerfund.api.domains.entities.Class;
 import id.careerfund.api.domains.entities.Role;
 
 import java.util.ArrayList;
@@ -14,5 +15,14 @@ public class ModelConverter {
             stringList.add(role.getName().name());
         }
         return stringList;
+    }
+
+    public static List<Class> toClass(List<Class> classes) {
+        List<Class> classList = new ArrayList<>();
+
+        for (Class aClass : classes) {
+            classList.add(aClass);
+        }
+        return classList;
     }
 }

@@ -1,13 +1,11 @@
 package id.careerfund.api.domains.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Table(name = "interests")
 @Entity
@@ -22,8 +20,4 @@ public class Interest extends Auditable {
 
     @Column(name = "name", nullable = false, unique = true)
     private String name;
-
-    @JsonIgnore
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "interest")
-    private List<Class> aClasses;
 }
