@@ -1,6 +1,5 @@
 package id.careerfund.api.controllers;
 
-import id.careerfund.api.domains.entities.User;
 import id.careerfund.api.domains.models.*;
 import id.careerfund.api.domains.models.ResponseTemplate;
 import id.careerfund.api.services.RefreshTokenService;
@@ -15,8 +14,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.security.Principal;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,16 +21,6 @@ public class AuthController extends HandlerController {
     private final UserService userService;
     private final TokenService tokenService;
     private final RefreshTokenService refreshTokenService;
-
-    @GetMapping("/user")
-    public ResponseEntity<Principal> getUser(Principal principal) {
-        return ResponseEntity.ok(principal);
-    }
-
-    @GetMapping("/users")
-    public ResponseEntity<List<User>> getUsers() {
-        return ResponseEntity.ok(userService.getUsers());
-    }
 
     @PostMapping("/register")
     public ResponseEntity<TokenResponse> registerUser(@Valid @RequestBody UserRegister user) {
