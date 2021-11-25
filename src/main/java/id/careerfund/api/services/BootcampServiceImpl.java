@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
+import java.util.List;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -31,5 +33,10 @@ public class BootcampServiceImpl implements BootcampService{
         if (!bootcampIsExist(newBootcamp.getName())) {
             saveBootcamp(newBootcamp);
         }
+    }
+
+    @Override
+    public List<Bootcamp> getBootcamp() {
+        return bootcampRepo.findAll();
     }
 }
