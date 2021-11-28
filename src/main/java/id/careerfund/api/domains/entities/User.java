@@ -56,7 +56,7 @@ public class User extends Auditable implements UserDetails {
     private Boolean isCredentialsNotExpired = true;
 
     @Column(name = "is_enabled", nullable = false)
-    private Boolean isEnabled = true;
+    private Boolean isEnabled = false;
 
 
     @Override

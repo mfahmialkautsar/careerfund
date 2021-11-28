@@ -121,4 +121,12 @@ public class TokenServiceImpl implements TokenService {
         List<String> roles = roles(token.getUser().getEmail());
         return new TokenResponse(newToken, refreshToken, roles);
     }
+
+    @Override
+    public TokenResponse getToken(User user) {
+        String jwtToken = jwtService.generateToken(user.getEmail());
+        String refreshToken = refreshToken(user.getEmail());
+
+        return new TokenResponse(jwtToken, refreshToken, null);
+    }
 }

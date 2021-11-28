@@ -1,18 +1,18 @@
 package id.careerfund.api.services;
 
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import id.careerfund.api.domains.entities.Interest;
 import id.careerfund.api.domains.entities.Role;
 import id.careerfund.api.domains.entities.User;
-import id.careerfund.api.domains.models.MyInterests;
-import id.careerfund.api.domains.models.TokenResponse;
-import id.careerfund.api.domains.models.UpdateInterest;
-import id.careerfund.api.domains.models.UserRegister;
+import id.careerfund.api.domains.models.*;
+import javassist.NotFoundException;
 
+import javax.mail.MessagingException;
 import java.security.Principal;
 import java.util.List;
 
 public interface UserService {
-    TokenResponse registerUser(UserRegister userRegister) throws Exception;
+    void registerUser(UserRegister userRegister) throws Exception;
 
     void registerUserIfNotExists(UserRegister userRegister);
 
@@ -41,4 +41,8 @@ public interface UserService {
     UpdateInterest saveInterests(Principal principal, UpdateInterest updateInterest);
 
     Boolean isUserHasInterest(User user, Interest interest);
+
+    void sendVerificationEmail(EmailRequest emailRequest) throws MessagingException, NotFoundException;
+
+    TokenResponse verifyUser(OtpRequest otpRequest) throws NotFoundException, TokenExpiredException;
 }

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title th:remove="all">Verification Email</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    </head>
+    <body>
+        <h1>OTP Verification</h1>
+        <p>Hello, <th:block th:utext="${name}"/></p>
+        <p>Your OTP: <th:block th:utext="${otp}"/></p>
+        <p>Thank you.</p>
+        <br>
+        <p>Sincerely,</p>
+        <p>CareerFund</p>
+    </body>
+</html>

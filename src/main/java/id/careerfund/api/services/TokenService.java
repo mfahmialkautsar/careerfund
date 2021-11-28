@@ -1,5 +1,6 @@
 package id.careerfund.api.services;
 
+import id.careerfund.api.domains.entities.User;
 import id.careerfund.api.domains.models.NewTokenRequest;
 import id.careerfund.api.domains.models.SignInRequest;
 import id.careerfund.api.domains.models.TokenResponse;
@@ -18,4 +19,6 @@ public interface TokenService {
     TokenResponse signIn(SignInRequest signInRequest) throws Exception;
 
     TokenResponse getNewToken(NewTokenRequest request) throws Exception;
+
+    TokenResponse getToken(User user);
 }

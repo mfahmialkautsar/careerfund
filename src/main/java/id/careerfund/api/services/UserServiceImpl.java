@@ -1,7 +1,9 @@
 package id.careerfund.api.services;
 
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import id.careerfund.api.domains.ERole;
 import id.careerfund.api.domains.entities.Interest;
+import id.careerfund.api.domains.entities.OneTimePassword;
 import id.careerfund.api.domains.entities.Role;
 import id.careerfund.api.domains.entities.User;
 import id.careerfund.api.domains.models.*;
@@ -10,18 +12,17 @@ import id.careerfund.api.repositories.RoleRepository;
 import id.careerfund.api.repositories.UserRepository;
 import id.careerfund.api.utils.mappers.RoleMapper;
 import id.careerfund.api.utils.mappers.UserMapper;
+import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -37,6 +38,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final InterestRepository interestRepo;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
+    private final EmailService emailService;
+    private final OneTimePasswordService oneTimePasswordService;
 
     @Override
     public User loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -51,13 +54,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public TokenResponse registerUser(UserRegister userRegister) throws Exception {
+    public void registerUser(UserRegister userRegister) throws Exception {
         User user = UserMapper.userRegisterToUser(userRegister);
         if (!getIsEmailAvailable(user.getEmail())) throw new Exception("EMAIL_UNAVAILABLE");
         saveUser(user);
         addRoleToUser(user.getEmail(), RoleMapper.mapRole(userRegister.getRole()));
         addRoleToUser(user.getEmail(), ERole.ROLE_USER);
-        return tokenService.signIn(new SignInRequest(userRegister.getEmail(), userRegister.getPassword()));
+        sendVerificationEmail(user.getEmail());
     }
 
     @Override
@@ -167,6 +170,26 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public Boolean isUserHasInterest(User user, Interest interest) {
         return user.getInterests().contains(interest);
+    }
+
+    @Override
+    public void sendVerificationEmail(EmailRequest emailRequest) throws MessagingException, NotFoundException {
+        User user = getUser(emailRequest.getEmail());
+        if (user == null) throw new NotFoundException("USER_NOT_FOUND");
+        String otp = oneTimePasswordService.generateOtp(user);
+        emailService.sendVerificationEmail(user, otp);
+    }
+
+    private void sendVerificationEmail(String email) throws MessagingException, NotFoundException {
+        sendVerificationEmail(new EmailRequest(email));
+    }
+
+    @Override
+    public TokenResponse verifyUser(OtpRequest otpRequest) throws NotFoundException, TokenExpiredException {
+        OneTimePassword oneTimePassword = oneTimePasswordService.verifyOtp(otpRequest.getCode());
+        User user = oneTimePassword.getUser();
+        user.setIsEnabled(true);
+        return tokenService.getToken(user);
     }
 
     private void saveUser(User user) {
