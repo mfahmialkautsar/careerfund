@@ -29,7 +29,7 @@ public class AuthController extends HandlerController {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/register").toUriString());
         try {
             userService.registerUser(user);
-            return ResponseEntity.created(uri).body(ApiResponse.success());
+            return ResponseEntity.created(uri).body(ApiResponse.success("Please check your email for OTP verification"));
         } catch (Exception e) {
             if (e.getMessage().equals("EMAIL_UNAVAILABLE")) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email is taken", e.getCause());
@@ -94,7 +94,7 @@ public class AuthController extends HandlerController {
             e.printStackTrace();
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Credential not found", e.getCause());
         }
-        return ResponseEntity.ok(ApiResponse.success());
+        return ResponseEntity.ok(ApiResponse.success("Please check your email for OTP verification"));
     }
 
     @PostMapping("/signup/otp/verify")
