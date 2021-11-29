@@ -9,6 +9,8 @@ import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -47,13 +49,16 @@ public class AuthController extends HandlerController {
     @PostMapping("/signin")
     public ResponseEntity<TokenResponse> signIn(@Valid @RequestBody SignInRequest signInRequest) {
         try {
-            TokenResponse result = tokenService.signIn(signInRequest);
+            TokenResponse result = userService.signIn(signInRequest);
             return ResponseEntity.ok(result);
+        } catch (DisabledException e) {
+            throw new ResponseStatusException(HttpStatus.TEMPORARY_REDIRECT, "Please input OTP sent to your email", e.getCause());
+        } catch (BadCredentialsException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Email or password is incorrect", e.getCause());
+        } catch (NotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found", e.getCause());
         } catch (Exception e) {
-            if (e.getMessage().equals("User Not Found")) {
-                return ResponseEntity.notFound().build();
-            }
-            return ResponseEntity.badRequest().build();
+            throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Failed to login", e.getCause());
         }
     }
 
@@ -65,7 +70,8 @@ public class AuthController extends HandlerController {
         } catch (Exception e) {
             if (e.getMessage().equals("Token Not Found")) {
                 return ResponseEntity.notFound().build();
-            } else return ResponseEntity.badRequest().build();
+            }
+            throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Failed", e.getCause());
         }
     }
 
@@ -84,7 +90,6 @@ public class AuthController extends HandlerController {
 
     @PostMapping("/signup/otp/request-email")
     public ResponseEntity<ApiResponse> requestSignUpOTP(@Valid @RequestBody EmailRequest emailRequest) {
-
         try {
             this.userService.sendVerificationEmail(emailRequest);
         } catch (MessagingException e) {
@@ -104,7 +109,7 @@ public class AuthController extends HandlerController {
             return ResponseEntity.ok(tokenResponse);
         } catch (NotFoundException e) {
             e.printStackTrace();
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Either token not found or expired", e.getCause());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Either OTP not found or expired", e.getCause());
         }
     }
 }

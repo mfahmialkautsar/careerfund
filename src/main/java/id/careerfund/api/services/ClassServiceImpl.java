@@ -3,19 +3,16 @@ package id.careerfund.api.services;
 import id.careerfund.api.domains.entities.Bootcamp;
 import id.careerfund.api.domains.entities.Class;
 import id.careerfund.api.domains.entities.Interest;
-import id.careerfund.api.domains.models.ClassTemplate;
 import id.careerfund.api.domains.models.NewClass;
 import id.careerfund.api.repositories.BootcampRepository;
 import id.careerfund.api.repositories.ClassRepository;
 import id.careerfund.api.repositories.InterestRepository;
-import id.careerfund.api.utils.converters.ModelConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @Transactional
@@ -57,8 +54,7 @@ public class ClassServiceImpl implements ClassService{
 
     @Override
     public List<Class> getAll() {
-        List<Class> classes = classRepo.findAll();
-        return ModelConverter.toClass(Objects.requireNonNull(classes));
+        return classRepo.findAll();
     }
 
 //    @Override

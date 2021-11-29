@@ -1,24 +1,19 @@
 package id.careerfund.api.services;
 
 import id.careerfund.api.domains.entities.RefreshToken;
-import id.careerfund.api.domains.entities.Role;
 import id.careerfund.api.domains.entities.User;
 import id.careerfund.api.domains.models.NewTokenRequest;
-import id.careerfund.api.domains.models.SignInRequest;
 import id.careerfund.api.domains.models.TokenResponse;
 import id.careerfund.api.repositories.UserRepository;
-import id.careerfund.api.utils.converters.ModelConverter;
-import javassist.NotFoundException;
+import id.careerfund.api.utils.mappers.RoleMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import javax.transaction.Transactional;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -39,34 +34,8 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public Boolean authUser(String email, String password) {
-        Boolean user = verifyUser(email);
-
-        try {
-            if (user) {
-                authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
-                return true;
-            } else return false;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    @Override
-    public List<String> roles(String email) throws Exception {
-        Boolean userState = verifyUser(email);
-
-        try {
-            if (userState) {
-                User user = userRepo.findByEmail(email);
-
-                assert user != null;
-                Collection<Role> roles = user.getRoles();
-                return ModelConverter.toStringRoleList(Objects.requireNonNull(roles));
-            } else return null;
-        } catch (Exception e) {
-            throw new Exception();
-        }
+    public void authUser(String email, String password) throws DisabledException {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
     }
 
     @Override
@@ -77,26 +46,6 @@ public class TokenServiceImpl implements TokenService {
             assert user != null;
             return refreshTokenService.createRefreshToken(user.getId()).getToken();
         } else return null;
-    }
-
-    @Override
-    public TokenResponse signIn(SignInRequest signInRequest) throws Exception {
-        String email = signInRequest.getEmail();
-        String password = signInRequest.getPassword();
-
-        if (checkObject(email) || checkObject(password)) {
-            throw new Exception("Bad Request");
-        }
-
-        if (!authUser(email, password)) {
-            throw new NotFoundException("User Not Found");
-        }
-
-        List<String> roles = roles(email);
-        String jwtToken = jwtService.generateToken(email);
-        String refreshToken = refreshToken(email);
-
-        return new TokenResponse(jwtToken, refreshToken, roles);
     }
 
     @Override
@@ -118,8 +67,7 @@ public class TokenServiceImpl implements TokenService {
         }
 
         String newToken = jwtService.generateToken(token.getUser().getUsername());
-        List<String> roles = roles(token.getUser().getEmail());
-        return new TokenResponse(newToken, refreshToken, roles);
+        return new TokenResponse(newToken, refreshToken, RoleMapper.rolesToERoles(token.getUser().getRoles()));
     }
 
     @Override
@@ -127,6 +75,6 @@ public class TokenServiceImpl implements TokenService {
         String jwtToken = jwtService.generateToken(user.getEmail());
         String refreshToken = refreshToken(user.getEmail());
 
-        return new TokenResponse(jwtToken, refreshToken, null);
+        return new TokenResponse(jwtToken, refreshToken, RoleMapper.rolesToERoles(user.getRoles()));
     }
 }

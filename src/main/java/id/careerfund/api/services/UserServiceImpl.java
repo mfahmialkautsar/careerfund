@@ -15,6 +15,7 @@ import id.careerfund.api.utils.mappers.UserMapper;
 import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -180,6 +181,24 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         emailService.sendVerificationEmail(user, otp);
     }
 
+    @Override
+    public TokenResponse signIn(SignInRequest signInRequest) throws Exception {
+        String email = signInRequest.getEmail();
+        String password = signInRequest.getPassword();
+
+        User user = userRepo.findByEmail(email);
+
+        if (user == null) throw new NotFoundException("USER_NOT_FOUND");
+        try {
+            tokenService.authUser(email, password);
+        } catch (DisabledException e) {
+            sendVerificationEmail(email);
+            throw e;
+        }
+
+        return tokenService.getToken(user);
+    }
+
     private void sendVerificationEmail(String email) throws MessagingException, NotFoundException {
         sendVerificationEmail(new EmailRequest(email));
     }
@@ -200,7 +219,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     private void addRoleToUser(String email, ERole roleName) {
         log.info("Adding role {} to user {}", roleName, email);
-        User user = userRepo.findByEmail(email);
+        User user = getUser(email);
         Role role = roleRepo.findByName(roleName);
         user.getRoles().add(role);
     }

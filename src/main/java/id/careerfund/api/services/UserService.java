@@ -44,5 +44,7 @@ public interface UserService {
 
     void sendVerificationEmail(EmailRequest emailRequest) throws MessagingException, NotFoundException;
 
+    TokenResponse signIn(SignInRequest signInRequest) throws Exception;
+
     TokenResponse verifyUser(OtpRequest otpRequest) throws NotFoundException, TokenExpiredException;
 }

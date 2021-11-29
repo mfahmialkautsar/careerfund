@@ -40,33 +40,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     private static final String[] AUTH_WHITELIST = {
-            "/v2/api-docs",
-            "/swagger-resources",
-            "/swagger-resources/**",
-            "/configuration/ui",
-            "/configuration/security",
-            "/swagger-ui.html",
-            "/webjars/**",
-            "/",
-            "index",
-            "/password/**",
-            "/signin", "/signout"
-            , "/register", "/email-availability"
+            "/user"
     };
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .cors()
-                .and()
-                .httpBasic().disable()
+                .and().httpBasic().disable()
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().authorizeRequests()
-//                .antMatchers( AUTH_WHITELIST ).permitAll()
+                .antMatchers(AUTH_WHITELIST).authenticated()
                 .anyRequest()
                 .permitAll()
-//                .authenticated()
                 .and().exceptionHandling()
                 .and().addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
     }

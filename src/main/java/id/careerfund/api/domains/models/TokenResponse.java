@@ -1,10 +1,11 @@
 package id.careerfund.api.domains.models;
 
+import id.careerfund.api.domains.ERole;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
+import java.util.Collection;
 
 @Setter
 @Getter
@@ -13,5 +14,5 @@ public class TokenResponse {
     private final String accessToken;
     private String tokenType = "Bearer ";
     private final String refreshToken;
-    private final List<String> roles;
+    private final Collection<ERole> roles;
 }
