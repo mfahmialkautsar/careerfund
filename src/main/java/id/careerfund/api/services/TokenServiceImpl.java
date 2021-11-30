@@ -8,7 +8,6 @@ import id.careerfund.api.repositories.UserRepository;
 import id.careerfund.api.utils.mappers.RoleMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -34,8 +33,13 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public void authUser(String email, String password) throws DisabledException {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+    public Exception authUser(String email, String password) {
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+            return null;
+        } catch (Exception e) {
+            return e;
+        }
     }
 
     @Override

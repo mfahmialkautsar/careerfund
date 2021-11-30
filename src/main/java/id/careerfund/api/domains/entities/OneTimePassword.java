@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
-public class OneTimePassword {
+public class OneTimePassword extends Auditable {
     @Id
     @GeneratedValue
     @Column(name = "id", nullable = false)

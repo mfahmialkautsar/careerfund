@@ -1,13 +1,19 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
     <head>
         <title th:remove="all">Verification Email</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     </head>
     <body>
-        <h1>OTP Verification</h1>
-        <p>Hello, <th:block th:utext="${name}"/></p>
-        <p>Your OTP: <th:block th:utext="${otp}"/></p>
+        <h3>OTP Verification</h3>
+        <p>Hello,
+            <th:block th:utext="${name}"/>
+        </p>
+        <p>Your OTP:
+            <th:block th:utext="${otp}"/>
+            <br>
+            OTP only valid for 5 minutes.
+        </p>
         <p>Thank you.</p>
         <br>
         <p>Sincerely,</p>

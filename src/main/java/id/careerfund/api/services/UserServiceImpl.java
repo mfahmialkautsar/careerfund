@@ -15,6 +15,7 @@ import id.careerfund.api.utils.mappers.UserMapper;
 import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -189,11 +190,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         User user = userRepo.findByEmail(email);
 
         if (user == null) throw new NotFoundException("USER_NOT_FOUND");
-        try {
-            tokenService.authUser(email, password);
-        } catch (DisabledException e) {
+        if (!passwordEncoder.matches(signInRequest.getPassword(), user.getPassword()))
+            throw new BadCredentialsException("PASSWORD_WRONG");
+
+        Exception exception = tokenService.authUser(email, password);
+        if (exception instanceof DisabledException) {
             sendVerificationEmail(email);
-            throw e;
+            return null;
+        } else if (exception != null) {
+            throw exception;
         }
 
         return tokenService.getToken(user);

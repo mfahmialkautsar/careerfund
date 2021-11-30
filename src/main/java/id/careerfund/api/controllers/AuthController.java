@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.net.URI;
 
@@ -33,6 +32,7 @@ public class AuthController extends HandlerController {
             userService.registerUser(user);
             return ResponseEntity.created(uri).body(ApiResponse.success("Please check your email for OTP verification"));
         } catch (Exception e) {
+            e.printStackTrace();
             if (e.getMessage().equals("EMAIL_UNAVAILABLE")) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email is taken", e.getCause());
             }
@@ -50,6 +50,7 @@ public class AuthController extends HandlerController {
     public ResponseEntity<TokenResponse> signIn(@Valid @RequestBody SignInRequest signInRequest) {
         try {
             TokenResponse result = userService.signIn(signInRequest);
+            if (result == null) throw new DisabledException(null);
             return ResponseEntity.ok(result);
         } catch (DisabledException e) {
             throw new ResponseStatusException(HttpStatus.TEMPORARY_REDIRECT, "Please input OTP sent to your email", e.getCause());
@@ -58,6 +59,7 @@ public class AuthController extends HandlerController {
         } catch (NotFoundException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found", e.getCause());
         } catch (Exception e) {
+            e.printStackTrace();
             throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Failed to login", e.getCause());
         }
     }
@@ -68,6 +70,7 @@ public class AuthController extends HandlerController {
             TokenResponse tokenResponse = tokenService.getNewToken(request);
             return ResponseEntity.ok(tokenResponse);
         } catch (Exception e) {
+            e.printStackTrace();
             if (e.getMessage().equals("Token Not Found")) {
                 return ResponseEntity.notFound().build();
             }
@@ -81,6 +84,7 @@ public class AuthController extends HandlerController {
             ResponseTemplate result = refreshTokenService.signOut(signOutRequest);
             return ResponseEntity.ok(result);
         } catch (Exception e) {
+            e.printStackTrace();
             if (e.getMessage().equals("Token Not Found")) {
                 return ResponseEntity.notFound().build();
             }
@@ -88,19 +92,19 @@ public class AuthController extends HandlerController {
         }
     }
 
-    @PostMapping("/signup/otp/request-email")
-    public ResponseEntity<ApiResponse> requestSignUpOTP(@Valid @RequestBody EmailRequest emailRequest) {
-        try {
-            this.userService.sendVerificationEmail(emailRequest);
-        } catch (MessagingException e) {
-            e.printStackTrace();
-            throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Failed sending email, try again", e.getCause());
-        } catch (NotFoundException e) {
-            e.printStackTrace();
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Credential not found", e.getCause());
-        }
-        return ResponseEntity.ok(ApiResponse.success("Please check your email for OTP verification"));
-    }
+//    @PostMapping("/signup/otp/request-email")
+//    public ResponseEntity<ApiResponse> requestSignUpOTP(@Valid @RequestBody EmailRequest emailRequest) {
+//        try {
+//            this.userService.sendVerificationEmail(emailRequest);
+//        } catch (MessagingException e) {
+//            e.printStackTrace();
+//            throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Failed sending email, try again", e.getCause());
+//        } catch (NotFoundException e) {
+//            e.printStackTrace();
+//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Credential not found", e.getCause());
+//        }
+//        return ResponseEntity.ok(ApiResponse.success("Please check your email for OTP verification"));
+//    }
 
     @PostMapping("/signup/otp/verify")
     public ResponseEntity<TokenResponse> verifySignUpOTP(@Valid @RequestBody OtpRequest otpRequest) {

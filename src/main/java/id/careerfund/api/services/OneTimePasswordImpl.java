@@ -24,18 +24,15 @@ import java.util.Objects;
 public class OneTimePasswordImpl implements OneTimePasswordService {
     private final OneTimePasswordRepository oneTimePasswordRepo;
     private final Environment environment;
-    private TOTPGenerator totpGenerator;
 
     private TOTPGenerator getGenerator() {
-        if (totpGenerator != null) return totpGenerator;
         TOTPGenerator.Builder builder = new TOTPGenerator
                 .Builder(Objects.requireNonNull(this.environment.getProperty("totp.secret")).getBytes());
 
         builder.withPasswordLength(6)
                 .withAlgorithm(HMACAlgorithm.SHA256)
-                .withPeriod(Duration.ofMinutes(2));
-        totpGenerator = builder.build();
-        return totpGenerator;
+                .withPeriod(Duration.ofMinutes(5));
+        return builder.build();
     }
 
     @Override
@@ -51,21 +48,19 @@ public class OneTimePasswordImpl implements OneTimePasswordService {
         oneTimePassword.setExpiredAt(LocalDateTime.now().plusMinutes(5));
         oneTimePassword.setUser(user);
         oneTimePasswordRepo.save(oneTimePassword);
-        log.info("Generating OTP for {}", user.getEmail());
+        log.info("Generating OTP {} for {}", oneTimePassword.getPassword(), user.getEmail());
         return oneTimePassword.getPassword();
     }
 
     @Override
     public OneTimePassword verifyOtp(String otp) throws NotFoundException {
-        log.info(String.valueOf(getGenerator().verify(otp)));
+        log.info("Verifying OTP {}", otp);
         OneTimePassword oneTimePassword = oneTimePasswordRepo.findByPassword(otp);
         if (oneTimePassword == null) throw new NotFoundException("OTP_NOT_FOUND");
         if (oneTimePassword.getExpiredAt().isBefore(LocalDateTime.now()))
             throw new TokenExpiredException("OTP_EXPIRED");
 
         oneTimePasswordRepo.delete(oneTimePassword);
-        log.info("Verifying OTP {}", otp);
-        log.info(String.valueOf(getGenerator().verify(otp)));
         return oneTimePassword;
     }
 }
