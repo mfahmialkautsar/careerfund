@@ -14,8 +14,8 @@ import java.util.List;
 public class BootcampController extends HandlerController{
     private final BootcampService bootcampService;
 
-    @GetMapping("/bootcamp")
-    public ResponseEntity<List<Bootcamp>> getAllClass() {
+    @GetMapping("/bootcamps")
+    public ResponseEntity<List<Bootcamp>> getBootcamps() {
         return ResponseEntity.ok(bootcampService.getBootcamp());
     }
 }

@@ -39,8 +39,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
-    private static final String[] AUTH_WHITELIST = {
-            "/user"
+    private static final String[] AUTH_LIST = {
+            "/user/**", "/my/**"
     };
 
     @Override
@@ -51,7 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().authorizeRequests()
-                .antMatchers(AUTH_WHITELIST).authenticated()
+                .antMatchers(AUTH_LIST).authenticated()
                 .anyRequest()
                 .permitAll()
                 .and().exceptionHandling()

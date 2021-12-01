@@ -16,13 +16,9 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 public class LoanController {
-    @GetMapping("/lender/loans")
+    @GetMapping("/my/loans")
     @Secured({ERole.Constants.LENDER})
     public ResponseEntity<LoansResponse> getLenderLoans(Principal principal) {
-        return getLoansResponseResponseEntity();
-    }
-
-    private ResponseEntity<LoansResponse> getLoansResponseResponseEntity() {
         List<Loan> loans = Arrays.asList(
                 new Loan("Sergio Marquina", 20000000, 9, 5000000, 4.2),
                 new Loan("Raigor", 30000000, 6, 3000000, 6.6),
@@ -30,11 +26,5 @@ public class LoanController {
                 new Loan("Thomas Shelby", 50000000, 24, 0, 6.9)
         );
         return ResponseEntity.ok(new LoansResponse(loans));
-    }
-
-    @GetMapping("/borrower/loans")
-    @Secured({ERole.Constants.BORROWER})
-    public ResponseEntity<LoansResponse> getBorrowerLoans(Principal principal) {
-        return getLoansResponseResponseEntity();
     }
 }
