@@ -2,6 +2,8 @@ package id.careerfund.api.domains.entities;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -23,6 +25,7 @@ public class OneTimePassword extends Auditable {
     private LocalDateTime expiredAt;
 
     @ManyToOne(optional = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 }
