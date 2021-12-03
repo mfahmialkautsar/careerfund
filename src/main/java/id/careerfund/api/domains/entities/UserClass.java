@@ -9,12 +9,12 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
-@Table(name = "users_bootcamps")
+@Table(name = "users_classes")
 @Entity
 @Setter
 @Getter
 @NoArgsConstructor
-public class UserBootcamp extends Auditable {
+public class UserClass extends Auditable {
     @Id
     @GeneratedValue
     @Column(name = "id", nullable = false)

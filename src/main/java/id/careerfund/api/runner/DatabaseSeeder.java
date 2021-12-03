@@ -3,6 +3,7 @@ package id.careerfund.api.runner;
 import id.careerfund.api.domains.ERole;
 import id.careerfund.api.domains.ERoleRegister;
 import id.careerfund.api.domains.entities.*;
+import id.careerfund.api.domains.entities.Class;
 import id.careerfund.api.domains.models.UserRegister;
 import id.careerfund.api.repositories.*;
 import id.careerfund.api.services.UserService;
@@ -33,6 +34,8 @@ public class DatabaseSeeder implements ApplicationRunner {
     InstitutionRepository institutionRepository;
     @Autowired
     BootcampRepository bootcampRepository;
+    @Autowired
+    ClassRepository classRepository;
 
     @Override
     public void run(ApplicationArguments args) {
@@ -42,6 +45,7 @@ public class DatabaseSeeder implements ApplicationRunner {
         saveInterests();
         saveInstitutions();
         saveBootcamps();
+        saveClasses();
     }
 
     private void saveRoles() {
@@ -75,27 +79,38 @@ public class DatabaseSeeder implements ApplicationRunner {
     }
 
     private void saveInstitutions() {
-        saveInstitutionIfNotExists(new Institution(null, "Binar Academy", "https://kerjabilitas.com/user_image/user2/logo_7b6caab85699ca72e06917e9bad7512c.png", new ArrayList<>()));
-        saveInstitutionIfNotExists(new Institution(null, "Apple Developer Academy", "https://logique.s3.ap-southeast-1.amazonaws.com/2020/11/apple-developer-academy.jpg", new ArrayList<>()));
-        saveInstitutionIfNotExists(new Institution(null, "Google Developers", "https://www.its.ac.id/matematika/wp-content/uploads/sites/42/2019/05/google-developers.jpg", new ArrayList<>()));
-        saveInstitutionIfNotExists(new Institution(null, "Hacktiv8", "https://pbs.twimg.com/profile_images/1303645505465974785/BAedfmOT_400x400.jpg", new ArrayList<>()));
+        saveInstitutionIfNotExists(new Institution(1L, "Binar Academy", "https://kerjabilitas.com/user_image/user2/logo_7b6caab85699ca72e06917e9bad7512c.png", new ArrayList<>()));
+        saveInstitutionIfNotExists(new Institution(2L, "Apple Developer Academy", "https://logique.s3.ap-southeast-1.amazonaws.com/2020/11/apple-developer-academy.jpg", new ArrayList<>()));
+        saveInstitutionIfNotExists(new Institution(3L, "Google Developers", "https://www.its.ac.id/matematika/wp-content/uploads/sites/42/2019/05/google-developers.jpg", new ArrayList<>()));
+        saveInstitutionIfNotExists(new Institution(4L, "Hacktiv8", "https://pbs.twimg.com/profile_images/1303645505465974785/BAedfmOT_400x400.jpg", new ArrayList<>()));
     }
 
     private void saveBootcamps() {
-        Bootcamp bed = new Bootcamp(null, "Back End Development", null, LocalDate.of(2021, 4, 1), LocalDate.of(2021, 6, 30), 80, 25000000.0, new ArrayList<>(), new ArrayList<>());
+        Bootcamp bed = new Bootcamp(1L, "Back End Development", null, new ArrayList<>(), new ArrayList<>());
         Bootcamp savedBed = saveBootcampIfNotExists(bed);
-        saveBootcampInstitutionIfNotExists(savedBed, institutionRepository.getByName("Binar Academy"));
+        saveBootcampInstitutionIfNotExists(savedBed, institutionRepository.getById(1L));
         saveBootcampCategoryIfNotExists(savedBed, interestRepository.findByName("Back End Development"));
 
-        Bootcamp ada = new Bootcamp(null, "Apple Developer Academy", null, LocalDate.of(2022, 2, 1), LocalDate.of(2022, 12, 31), 200, 0.0, new ArrayList<>(), new ArrayList<>());
+        Bootcamp ada = new Bootcamp(2L, "Apple Developer Academy", null, new ArrayList<>(), new ArrayList<>());
         Bootcamp savedAda = saveBootcampIfNotExists(ada);
-        saveBootcampInstitutionIfNotExists(savedAda, institutionRepository.getByName("Apple Developer Academy"));
+        saveBootcampInstitutionIfNotExists(savedAda, institutionRepository.getById(2L));
         saveBootcampCategoryIfNotExists(savedAda, interestRepository.findByName("IOS Development"));
 
-        Bootcamp gdk = new Bootcamp(null, "Google Developers Kejar", null, LocalDate.of(2019, 6, 1), LocalDate.of(2019, 12, 31), 100000, 0.0, new ArrayList<>(), new ArrayList<>());
+        Bootcamp gdk = new Bootcamp(3L, "Google Developers Kejar", null, new ArrayList<>(), new ArrayList<>());
         Bootcamp savedGdk = saveBootcampIfNotExists(gdk);
-        saveBootcampInstitutionIfNotExists(savedGdk, institutionRepository.getByName("Google Developers"));
+        saveBootcampInstitutionIfNotExists(savedGdk, institutionRepository.getById(3L));
         saveBootcampCategoryIfNotExists(savedGdk, interestRepository.findByName("Android Development"));
+    }
+
+    private void saveClasses() {
+        Class binarBED2021 = new Class(1L, null, LocalDate.of(2021, 4, 1), LocalDate.of(2021, 6, 30), 80, 25000000.0, bootcampRepository.getById(1L));
+        saveClassIfNotExists(binarBED2021);
+
+        Class ada2022 = new Class(2L, null, LocalDate.of(2022, 2, 1), LocalDate.of(2022, 12, 31), 200, 0.0, bootcampRepository.getById(2L));
+        saveClassIfNotExists(ada2022);
+
+        Class gdk2019 = new Class(3L, null, LocalDate.of(2019, 6, 1), LocalDate.of(2019, 12, 31), 100000, 0.0, bootcampRepository.getById(3L));
+        saveClassIfNotExists(gdk2019);
     }
 
     private void registerUserIfNotExists(UserRegister userRegister) {
@@ -136,10 +151,17 @@ public class DatabaseSeeder implements ApplicationRunner {
     }
 
     private Bootcamp saveBootcampIfNotExists(Bootcamp bootcamp) {
-        if (bootcampRepository.findByName(bootcamp.getName()) == null) {
+        if (!bootcampRepository.existsById(bootcamp.getId())) {
             bootcampRepository.save(bootcamp);
         }
-        return bootcampRepository.findByName(bootcamp.getName());
+        return bootcampRepository.getById(bootcamp.getId());
+    }
+
+    private void saveClassIfNotExists(Class aClass) {
+        if (!classRepository.existsById(aClass.getId())) {
+            classRepository.save(aClass);
+        }
+//        return classRepository.getById(aClass.getId());
     }
 
     private void saveBootcampInstitutionIfNotExists(Bootcamp bootcamp, Institution institution) {

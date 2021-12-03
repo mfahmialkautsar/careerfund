@@ -19,23 +19,11 @@ public class Bootcamp extends Auditable {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "name", nullable = false, unique = true)
+    @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "logo_path")
     private String logoPath;
-
-    @Column(name = "start_date")
-    private LocalDate startDate;
-
-    @Column(name = "end_date")
-    private LocalDate endDate;
-
-    @Column(name = "quota")
-    private Integer quota;
-
-    @Column(name = "fee")
-    private Double fee;
 
     @ManyToMany
     @JoinTable(name = "bootcamps_institutions",
@@ -48,5 +36,4 @@ public class Bootcamp extends Auditable {
             joinColumns = @JoinColumn(name = "bootcamp_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id"))
     private List<Interest> categories = new ArrayList<>();
-
 }
