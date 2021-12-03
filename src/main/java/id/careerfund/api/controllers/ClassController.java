@@ -19,11 +19,11 @@ public class ClassController extends HandlerController {
 
     @GetMapping("/classes")
     public ResponseEntity<ApiResponse<List<Class>>> getClasses() {
-        return ResponseEntity.ok(ApiResponse.success(classService.getClasses()));
+        return ResponseEntity.ok(ApiResponse.<List<Class>>builder().data(classService.getClasses()).build());
     }
 
     @GetMapping("/my/classes")
     public ResponseEntity<ApiResponse<List<UserClass>>> getMyClasses(Principal principal) {
-        return ResponseEntity.ok(ApiResponse.success(classService.getMyClasses(principal)));
+        return ResponseEntity.ok(ApiResponse.<List<UserClass>>builder().data(classService.getMyClasses(principal)).build());
     }
 }

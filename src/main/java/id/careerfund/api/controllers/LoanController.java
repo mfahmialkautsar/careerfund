@@ -25,6 +25,6 @@ public class LoanController extends HandlerController {
                 new Loan("Huskar", 9000000, 12, 500000, 1.5),
                 new Loan("Thomas Shelby", 50000000, 24, 0, 6.9)
         );
-        return ResponseEntity.ok(ApiResponse.success(loans));
+        return ResponseEntity.ok(ApiResponse.<List<Loan>>builder().data(loans).build());
     }
 }

@@ -31,7 +31,7 @@ public class AuthController extends HandlerController {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/register").toUriString());
         try {
             userService.registerUser(user);
-            return ResponseEntity.created(uri).body(ApiResponse.success("Please check your email for OTP verification"));
+            return ResponseEntity.created(uri).body(ApiResponse.builder().message("Please check your email for OTP verification").build());
         } catch (Exception e) {
             e.printStackTrace();
             if (e.getMessage().equals("EMAIL_UNAVAILABLE")) {
