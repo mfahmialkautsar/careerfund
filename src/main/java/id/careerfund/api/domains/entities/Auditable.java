@@ -1,6 +1,5 @@
 package id.careerfund.api.domains.entities;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,6 +24,7 @@ public abstract class Auditable {
     @JoinColumn(name = "created_by", updatable = false)
     private User createdBy;
 
+    @JsonIgnore
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -35,11 +35,12 @@ public abstract class Auditable {
     @JoinColumn(name = "updated_by")
     private User updatedBy;
 
+    @JsonIgnore
     @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @JsonFormat(timezone = "Asia/Jakarta")
+    @JsonIgnore
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "deleted_at")
     private Date deletedAt;

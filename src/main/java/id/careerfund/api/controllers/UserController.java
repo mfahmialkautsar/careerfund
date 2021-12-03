@@ -12,7 +12,7 @@ import java.security.Principal;
 
 @RestController
 @RequiredArgsConstructor
-public class UserController {
+public class UserController extends HandlerController {
     @GetMapping("/user")
     public ResponseEntity<SimpleUser> getUser(Principal principal) {
         return ResponseEntity.ok(UserMapper.principalToSimpleUser(principal));

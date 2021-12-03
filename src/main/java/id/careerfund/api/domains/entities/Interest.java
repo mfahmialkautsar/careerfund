@@ -15,7 +15,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class Interest extends Auditable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "name", nullable = false, unique = true)

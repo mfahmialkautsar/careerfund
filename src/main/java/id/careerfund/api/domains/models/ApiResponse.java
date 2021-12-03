@@ -7,23 +7,32 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ApiResponse {
+public class ApiResponse<T> {
     private final Boolean success;
     private final String message;
+    private final T data;
 
-    public static ApiResponse success(String message) {
-        return new ApiResponse(true, message);
+    public static <T> ApiResponse<T> success(String message, T data) {
+        return new ApiResponse<>(true, message, data);
     }
 
-    public static ApiResponse success() {
+    public static <T> ApiResponse<T> success(String message) {
+        return success(message, null);
+    }
+
+    public static <T> ApiResponse<T> success(T data) {
+        return success(null, data);
+    }
+
+    public static <T> ApiResponse<T> success() {
         return success(null);
     }
 
-    public static ApiResponse error(String message) {
-        return new ApiResponse(false, message);
+    public static <T> ApiResponse<T> error(String message) {
+        return new ApiResponse<>(false, message, null);
     }
 
-    public static ApiResponse error() {
+    public static <T> ApiResponse<T> error() {
         return error(null);
     }
 }

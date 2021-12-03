@@ -25,9 +25,7 @@ import org.springframework.stereotype.Service;
 import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 import java.security.Principal;
-import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -66,93 +64,56 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public void registerUserIfNotExists(UserRegister userRegister) {
-        if (getIsEmailAvailable(userRegister.getEmail())) {
-            try {
-                registerUser(userRegister);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    @Override
-    public void registerAdminIfNotExists(User user) {
-        if (getIsEmailAvailable(user.getEmail())) {
-            try {
-                saveUser(user);
-                addRoleToUser(user.getEmail(), ERole.ROLE_ADMIN);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    @Override
-    public Role saveRole(Role role) {
-        log.info("Saving new role {}", role.getName());
-        return roleRepo.save(role);
-    }
-
-    @Override
-    public Role saveRoleIfNotExists(Role role) {
-        if (roleRepo.findByName(role.getName()) == null) {
-            return saveRole(role);
-        }
-        return null;
-    }
-
-    @Override
     public User getUser(String email) {
         log.info("Fetching user {}", email);
         return userRepo.findByEmail(email);
     }
 
-    @Override
-    public List<User> getUsers() {
-        log.info("Fetching all users");
-        return userRepo.findAll();
-    }
+//    @Override
+//    public List<User> getUsers() {
+//        log.info("Fetching all users");
+//        return userRepo.findAll();
+//    }
 
     @Override
     public boolean getIsEmailAvailable(String email) {
         return getUser(email) == null;
     }
 
-    @Override
-    public Interest addInterest(User user, Long id) {
-        Collection<Interest> userInterests = user.getInterests();
-        Optional<Interest> interest = interestRepo.findById(id);
-        if (!interest.isPresent()) return null;
-        if (isUserHasInterest(user, interest.get())) return null;
-        userInterests.add(interest.get());
-        return interest.get();
-    }
+//    @Override
+//    public Interest addInterest(User user, Long id) {
+//        Collection<Interest> userInterests = user.getInterests();
+//        Optional<Interest> interest = interestRepo.findById(id);
+//        if (!interest.isPresent()) return null;
+//        if (isUserHasInterest(user, interest.get())) return null;
+//        userInterests.add(interest.get());
+//        return interest.get();
+//    }
+//
+//    @Override
+//    public Interest deleteInterest(User user, Long id) {
+//        Collection<Interest> userInterests = user.getInterests();
+//        Interest interest = interestRepo.getById(id);
+//        if (!isUserHasInterest(user, interest)) return null;
+//        userInterests.remove(interest);
+//        return interest;
+//    }
 
-    @Override
-    public Interest deleteInterest(User user, Long id) {
-        Collection<Interest> userInterests = user.getInterests();
-        Interest interest = interestRepo.getById(id);
-        if (!isUserHasInterest(user, interest)) return null;
-        userInterests.remove(interest);
-        return interest;
-    }
-
-    @Override
-    public void addInterests(Principal principal, UpdateInterest updateInterest) {
-        User user = getUser(principal.getName());
-        for (Long i : updateInterest.getInterestIds()) {
-            addInterest(user, i);
-        }
-    }
-
-    @Override
-    public void deleteInterests(Principal principal, UpdateInterest updateInterest) {
-        User user = getUser(principal.getName());
-        for (Long i : updateInterest.getInterestIds()) {
-            deleteInterest(user, i);
-        }
-    }
+//    @Override
+//    public void addInterests(Principal principal, UpdateInterest updateInterest) {
+//        User user = getUser(principal.getName());
+//        for (Long i : updateInterest.getInterestIds()) {
+//            addInterest(user, i);
+//        }
+//    }
+//
+//    @Override
+//    public void deleteInterests(Principal principal, UpdateInterest updateInterest) {
+//        User user = getUser(principal.getName());
+//        for (Long i : updateInterest.getInterestIds()) {
+//            deleteInterest(user, i);
+//        }
+//    }
 
     @Override
     public MyInterests getMyInterests(Principal principal) {
