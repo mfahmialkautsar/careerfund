@@ -2,67 +2,155 @@ package id.careerfund.api.runner;
 
 import id.careerfund.api.domains.ERole;
 import id.careerfund.api.domains.ERoleRegister;
-import id.careerfund.api.domains.entities.Interest;
-import id.careerfund.api.domains.entities.Role;
-import id.careerfund.api.domains.entities.User;
-import id.careerfund.api.domains.models.NewBootcamp;
-import id.careerfund.api.domains.models.NewClass;
-import id.careerfund.api.domains.models.NewInterest;
+import id.careerfund.api.domains.entities.*;
 import id.careerfund.api.domains.models.UserRegister;
-import id.careerfund.api.services.BootcampService;
-import id.careerfund.api.services.ClassService;
-import id.careerfund.api.services.InterestService;
+import id.careerfund.api.repositories.*;
 import id.careerfund.api.services.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 
+import javax.transaction.Transactional;
+import java.time.LocalDate;
+import java.util.ArrayList;
+
+@Slf4j
+@Transactional
 @Component
 public class DatabaseSeeder implements ApplicationRunner {
-
     @Autowired
     UserService userService;
-
     @Autowired
-    InterestService interestService;
-
+    UserRepository userRepository;
     @Autowired
-    BootcampService bootcampService;
-
+    RoleRepository roleRepository;
     @Autowired
-    ClassService classService;
+    InterestRepository interestRepository;
+    @Autowired
+    InstitutionRepository institutionRepository;
+    @Autowired
+    BootcampRepository bootcampRepository;
 
     @Override
     public void run(ApplicationArguments args) {
-        userService.saveRoleIfNotExists(new Role(null, ERole.ROLE_ADMIN));
-        userService.saveRoleIfNotExists(new Role(null, ERole.ROLE_USER));
-        userService.saveRoleIfNotExists(new Role(null, ERole.ROLE_LENDER));
-        userService.saveRoleIfNotExists(new Role(null, ERole.ROLE_BORROWER));
+        log.info("Seeding DB");
+        saveRoles();
+        saveUsers();
+        saveInterests();
+        saveInstitutions();
+        saveBootcamps();
+    }
 
+    private void saveRoles() {
+        saveRoleIfNotExists(new Role(null, ERole.ROLE_ADMIN));
+        saveRoleIfNotExists(new Role(null, ERole.ROLE_USER));
+        saveRoleIfNotExists(new Role(null, ERole.ROLE_LENDER));
+        saveRoleIfNotExists(new Role(null, ERole.ROLE_BORROWER));
+    }
+
+
+    private void saveUsers() {
         User admin = new User();
         admin.setName("Fahmi Al");
         admin.setEmail("aal@email.com");
         admin.setPassword("tothemoon");
-        userService.registerAdminIfNotExists(admin);
-        userService.registerUserIfNotExists(new UserRegister("Invoker", "invoker@email.com", "1234", ERoleRegister.LENDER));
-        userService.registerUserIfNotExists(new UserRegister("Meepo", "meep@email.com", "1234", ERoleRegister.BORROWER));
-        userService.registerUserIfNotExists(new UserRegister("Meepo", "dump.file17@gmail.com", "1234", ERoleRegister.BORROWER));
+        registerAdminIfNotExists(admin);
+        registerUserIfNotExists(new UserRegister("Invoker", "invoker@email.com", "1234", ERoleRegister.LENDER));
+        registerUserIfNotExists(new UserRegister("Meepo", "meep@email.com", "1234", ERoleRegister.BORROWER));
+        registerUserIfNotExists(new UserRegister("Meepo", "dump.file17@gmail.com", "1234", ERoleRegister.BORROWER));
 
-        interestService.saveIfNotExist(new NewInterest("Front End Development"));
-        interestService.saveIfNotExist(new NewInterest("Back End Development"));
-        interestService.saveIfNotExist(new NewInterest("UI UX Design"));
-        interestService.saveIfNotExist(new NewInterest("Data Science"));
-        interestService.saveIfNotExist(new NewInterest("Digital Marketing"));
-        interestService.saveIfNotExist(new NewInterest("Android Development"));
-        interestService.saveIfNotExist(new NewInterest("IOS Development"));
+    }
 
-        bootcampService.saveBootcampIfNotExist(new NewBootcamp("SYNRGY", ""));
-        bootcampService.saveBootcampIfNotExist(new NewBootcamp("HACKTIV-9", ""));
-        bootcampService.saveBootcampIfNotExist(new NewBootcamp("ALTERRY", ""));
+    private void saveInterests() {
+        saveInterestIfNotExists(new Interest(null, "Front End Development"));
+        saveInterestIfNotExists(new Interest(null, "Back End Development"));
+        saveInterestIfNotExists(new Interest(null, "UI UX Design"));
+        saveInterestIfNotExists(new Interest(null, "Data Science"));
+        saveInterestIfNotExists(new Interest(null, "Digital Marketing"));
+        saveInterestIfNotExists(new Interest(null, "Android Development"));
+        saveInterestIfNotExists(new Interest(null, "IOS Development"));
+    }
 
-        classService.saveClassIfNotExist(new NewClass("SYNRGY", "IOS Development", 3, 20, 20000000));
-        classService.saveClassIfNotExist(new NewClass("HACKTIV-9", "IOS Development", 3, 20, 15000000));
-        classService.saveClassIfNotExist(new NewClass("ALTERRY", "IOS Development", 4, 20, 35000000));
+    private void saveInstitutions() {
+        saveInstitutionIfNotExists(new Institution(null, "Binar Academy", "https://kerjabilitas.com/user_image/user2/logo_7b6caab85699ca72e06917e9bad7512c.png", new ArrayList<>()));
+        saveInstitutionIfNotExists(new Institution(null, "Apple Developer Academy", "https://logique.s3.ap-southeast-1.amazonaws.com/2020/11/apple-developer-academy.jpg", new ArrayList<>()));
+        saveInstitutionIfNotExists(new Institution(null, "Google Developers", "https://www.its.ac.id/matematika/wp-content/uploads/sites/42/2019/05/google-developers.jpg", new ArrayList<>()));
+        saveInstitutionIfNotExists(new Institution(null, "Hacktiv8", "https://pbs.twimg.com/profile_images/1303645505465974785/BAedfmOT_400x400.jpg", new ArrayList<>()));
+    }
+
+    private void saveBootcamps() {
+        Bootcamp bed = new Bootcamp(null, "Back End Development", null, LocalDate.of(2021, 4, 1), LocalDate.of(2021, 6, 30), 80, 25000000.0, new ArrayList<>(), new ArrayList<>());
+        Bootcamp savedBed = saveBootcampIfNotExists(bed);
+        saveBootcampInstitutionIfNotExists(savedBed, institutionRepository.getByName("Binar Academy"));
+        saveBootcampCategoryIfNotExists(savedBed, interestRepository.findByName("Back End Development"));
+
+        Bootcamp ada = new Bootcamp(null, "Apple Developer Academy", null, LocalDate.of(2022, 2, 1), LocalDate.of(2022, 12, 31), 200, 0.0, new ArrayList<>(), new ArrayList<>());
+        Bootcamp savedAda = saveBootcampIfNotExists(ada);
+        saveBootcampInstitutionIfNotExists(savedAda, institutionRepository.getByName("Apple Developer Academy"));
+        saveBootcampCategoryIfNotExists(savedAda, interestRepository.findByName("IOS Development"));
+
+        Bootcamp gdk = new Bootcamp(null, "Google Developers Kejar", null, LocalDate.of(2019, 6, 1), LocalDate.of(2019, 12, 31), 100000, 0.0, new ArrayList<>(), new ArrayList<>());
+        Bootcamp savedGdk = saveBootcampIfNotExists(gdk);
+        saveBootcampInstitutionIfNotExists(savedGdk, institutionRepository.getByName("Google Developers"));
+        saveBootcampCategoryIfNotExists(savedGdk, interestRepository.findByName("Android Development"));
+    }
+
+    private void registerUserIfNotExists(UserRegister userRegister) {
+        if (userRepository.findByEmail(userRegister.getEmail()) == null) {
+            try {
+                userService.registerUser(userRegister);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void registerAdminIfNotExists(User user) {
+        if (userRepository.findByEmail(user.getEmail()) == null) {
+            userRepository.save(user);
+            Role role = roleRepository.findByName(ERole.ROLE_ADMIN);
+            user.getRoles().add(role);
+        }
+    }
+
+    private void saveRoleIfNotExists(Role role) {
+        if (roleRepository.findByName(role.getName()) == null) {
+            roleRepository.save(role);
+        }
+    }
+
+    private void saveInterestIfNotExists(Interest newInterest) {
+        Interest interest = interestRepository.findByName(newInterest.getName());
+        if (ObjectUtils.isEmpty(interest)) {
+            interestRepository.save(newInterest);
+        }
+    }
+
+    private void saveInstitutionIfNotExists(Institution institution) {
+        if (institutionRepository.getByName(institution.getName()) == null) {
+            institutionRepository.save(institution);
+        }
+    }
+
+    private Bootcamp saveBootcampIfNotExists(Bootcamp bootcamp) {
+        if (bootcampRepository.findByName(bootcamp.getName()) == null) {
+            bootcampRepository.save(bootcamp);
+        }
+        return bootcampRepository.findByName(bootcamp.getName());
+    }
+
+    private void saveBootcampInstitutionIfNotExists(Bootcamp bootcamp, Institution institution) {
+        if (!bootcamp.getInstitutions().contains(institution)) {
+            bootcamp.getInstitutions().add(institution);
+        }
+    }
+
+    private void saveBootcampCategoryIfNotExists(Bootcamp bootcamp, Interest interest) {
+        if (!bootcamp.getCategories().contains(interest)) {
+            bootcamp.getCategories().add(interest);
+        }
     }
 }
