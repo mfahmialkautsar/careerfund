@@ -53,7 +53,7 @@ public class OneTimePasswordImpl implements OneTimePasswordService {
     }
 
     @Override
-    public OneTimePassword verifyOtp(String otp) throws NotFoundException {
+    public OneTimePassword verifyOtp(String otp) throws NotFoundException, TokenExpiredException {
         log.info("Verifying OTP {}", otp);
         OneTimePassword oneTimePassword = oneTimePasswordRepo.findByPassword(otp);
         if (oneTimePassword == null) throw new NotFoundException("OTP_NOT_FOUND");

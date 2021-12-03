@@ -1,5 +1,6 @@
 package id.careerfund.api.controllers;
 
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import id.careerfund.api.domains.models.*;
 import id.careerfund.api.domains.models.ResponseTemplate;
 import id.careerfund.api.services.RefreshTokenService;
@@ -111,9 +112,11 @@ public class AuthController extends HandlerController {
         try {
             TokenResponse tokenResponse = this.userService.verifyUser(otpRequest);
             return ResponseEntity.ok(tokenResponse);
-        } catch (NotFoundException e) {
+        } catch (Exception e) {
+            if (e instanceof NotFoundException || e instanceof TokenExpiredException)
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Either OTP not found or expired", e.getCause());
             e.printStackTrace();
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Either OTP not found or expired", e.getCause());
+            throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Failed to verify OTP. Please try again later.");
         }
     }
 }
