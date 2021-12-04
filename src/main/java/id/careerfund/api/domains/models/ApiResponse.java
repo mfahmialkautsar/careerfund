@@ -17,5 +17,8 @@ public class ApiResponse<T> {
     private Boolean success = true;
     private String message;
     private T data;
+    private Integer page;
+    private Integer totalPages;
+    private Long totalElements;
 //    private List<Map<String, List<String>>> filters;
 }
