@@ -5,6 +5,7 @@ import id.careerfund.api.domains.entities.UserClass;
 import id.careerfund.api.repositories.ClassRepository;
 import id.careerfund.api.repositories.UserClassRepository;
 import id.careerfund.api.utils.mappers.UserMapper;
+import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,6 +18,7 @@ import java.security.Principal;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -41,6 +43,13 @@ public class ClassServiceImpl implements ClassService {
             pageable = PageRequest.of(0, Integer.MAX_VALUE, sortOrder);
         }
         return classRepo.findByBootcamp_Categories_NameInAndBootcamp_Institutions_NameInAndBootcamp_NameIsLikeIgnoreCaseAndFeeGreaterThanEqualAndFeeLessThanEqual(categories, institutions, name, feeStart, feeEnd, pageable);
+    }
+
+    @Override
+    public Class getClassById(Long id) throws NotFoundException {
+        Optional<Class> aClass = classRepo.findById(id);
+        if (!aClass.isPresent()) throw new NotFoundException("Class not found");
+        return aClass.get();
     }
 
     @Override
