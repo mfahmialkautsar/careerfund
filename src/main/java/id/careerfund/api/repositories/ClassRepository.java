@@ -11,6 +11,6 @@ import org.springframework.lang.Nullable;
 import java.util.Collection;
 
 public interface ClassRepository extends JpaRepository<Class, Long> {
-    @Query("select c from Class c left join c.bootcamp.categories categories left join c.bootcamp.institutions institutions where (:categories is null or categories.name in :categories) and (:institutions is null or institutions.name in :institutions) and upper(c.bootcamp.name) like upper(concat('%', concat(:name, '%') )) and (:feeStart is null or c.fee >= :feeStart) and (:feeEnd is null or c.fee <= :feeEnd)")
+    @Query("select c from Class c left join c.bootcamp.categories categories left join c.bootcamp.institutions institutions where ((:categories) is null or categories.name in (:categories)) and ((:institutions) is null or institutions.name in (:institutions)) and upper(c.bootcamp.name) like upper(concat('%', concat(:name, '%') )) and (:feeStart is null or c.fee >= :feeStart) and (:feeEnd is null or c.fee <= :feeEnd)")
     Page<Class> findByBootcamp_Categories_NameInAndBootcamp_Institutions_NameInAndBootcamp_NameIsLikeIgnoreCaseAndFeeGreaterThanEqualAndFeeLessThanEqual(@Param("categories") @Nullable Collection<String> categories, @Param("institutions") @Nullable Collection<String> institutions, @Param("name") @Nullable String name, @Param("feeStart") @Nullable Double feeStart, @Param("feeEnd") @Nullable Double feeEnd, Pageable pageable);
 }
