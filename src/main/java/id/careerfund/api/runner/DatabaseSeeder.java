@@ -118,7 +118,7 @@ public class DatabaseSeeder implements ApplicationRunner {
         Class gdk2019 = new Class(3L, null, LocalDate.of(2019, 6, 1), LocalDate.of(2019, 12, 31), 100000, 0.0, bootcampRepository.getById(3L));
         saveClassIfNotExists(gdk2019);
 
-        Class hacktiv8Web2022 = new Class(4L, null, LocalDate.of(2019, 6, 1), LocalDate.of(2019, 12, 31), 100000, 20000000.0, bootcampRepository.getById(4L));
+        Class hacktiv8Web2022 = new Class(4L, null, LocalDate.of(2022, 7, 1), LocalDate.of(2024, 6, 30), 10000, 20000000.0, bootcampRepository.getById(4L));
         saveClassIfNotExists(hacktiv8Web2022);
     }
 
