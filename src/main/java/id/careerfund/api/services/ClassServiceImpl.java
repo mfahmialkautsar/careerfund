@@ -42,7 +42,7 @@ public class ClassServiceImpl implements ClassService {
         if (sortOrder != null) {
             pageable = PageRequest.of(0, Integer.MAX_VALUE, sortOrder);
         }
-        return classRepo.findByBootcamp_Categories_IdInAndBootcamp_Institutions_IdInAndBootcamp_NameIsLikeIgnoreCaseAndPriceGreaterThanEqualAndPriceLessThanEqual(categories, institutions, name, priceStart, priceEnd, pageable);
+        return classRepo.findDistinctByBootcamp_Categories_IdInAndBootcamp_Institutions_IdInAndBootcamp_NameIsLikeIgnoreCaseAndPriceGreaterThanEqualAndPriceLessThanEqual(categories, institutions, name, priceStart, priceEnd, pageable);
     }
 
     @Override
