@@ -100,6 +100,12 @@ public class DatabaseSeeder implements ApplicationRunner {
         Bootcamp savedGdk = saveBootcampIfNotExists(gdk);
         saveBootcampInstitutionIfNotExists(savedGdk, institutionRepository.getById(3L));
         saveBootcampCategoryIfNotExists(savedGdk, interestRepository.findByName("Android Development"));
+
+        Bootcamp hacktiv8Web = new Bootcamp(4L, "Hacktiv8 Full Stack", null, new ArrayList<>(), new ArrayList<>());
+        Bootcamp savedHacktiv8Web = saveBootcampIfNotExists(hacktiv8Web);
+        saveBootcampInstitutionIfNotExists(savedHacktiv8Web, institutionRepository.getById(4L));
+        saveBootcampCategoryIfNotExists(savedHacktiv8Web, interestRepository.findByName("Front End Development"));
+        saveBootcampCategoryIfNotExists(savedHacktiv8Web, interestRepository.findByName("Back End Development"));
     }
 
     private void saveClasses() {
@@ -111,6 +117,9 @@ public class DatabaseSeeder implements ApplicationRunner {
 
         Class gdk2019 = new Class(3L, null, LocalDate.of(2019, 6, 1), LocalDate.of(2019, 12, 31), 100000, 0.0, bootcampRepository.getById(3L));
         saveClassIfNotExists(gdk2019);
+
+        Class hacktiv8Web2022 = new Class(4L, null, LocalDate.of(2019, 6, 1), LocalDate.of(2019, 12, 31), 100000, 20000000.0, bootcampRepository.getById(4L));
+        saveClassIfNotExists(hacktiv8Web2022);
     }
 
     private void registerUserIfNotExists(UserRegister userRegister) {
