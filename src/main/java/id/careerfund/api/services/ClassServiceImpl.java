@@ -28,7 +28,7 @@ public class ClassServiceImpl implements ClassService {
     private final UserClassRepository userClassRepo;
 
     @Override
-    public Page<Class> getClasses(Collection<String> categories, Collection<String> institutions, String name, Double feeStart, Double feeEnd, String sort, String order) {
+    public Page<Class> getClasses(Collection<Long> categories, Collection<Long> institutions, String name, Double feeStart, Double feeEnd, String sort, String order) {
         Sort sortOrder = null;
         if (sort != null) {
             if (Objects.equals(order.toLowerCase(), "desc")) {
@@ -42,7 +42,7 @@ public class ClassServiceImpl implements ClassService {
         if (sortOrder != null) {
             pageable = PageRequest.of(0, Integer.MAX_VALUE, sortOrder);
         }
-        return classRepo.findByBootcamp_Categories_NameInAndBootcamp_Institutions_NameInAndBootcamp_NameIsLikeIgnoreCaseAndFeeGreaterThanEqualAndFeeLessThanEqual(categories, institutions, name, feeStart, feeEnd, pageable);
+        return classRepo.findByBootcamp_Categories_IdInAndBootcamp_Institutions_IdInAndBootcamp_NameIsLikeIgnoreCaseAndFeeGreaterThanEqualAndFeeLessThanEqual(categories, institutions, name, feeStart, feeEnd, pageable);
     }
 
     @Override

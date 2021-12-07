@@ -26,16 +26,16 @@ public class ClassController extends HandlerController {
 
     @GetMapping("/classes")
     public ResponseEntity<ApiResponse<List<Class>>> getClasses(
-            @RequestParam(required = false) Collection<String> institutions,
-            @RequestParam(required = false) Collection<String> categories,
+            @RequestParam(required = false) Collection<Long> institution,
+            @RequestParam(required = false) Collection<Long> category,
             @RequestParam(required = false, defaultValue = "") String search,
-            @RequestParam(required = false) Double feeMin,
-            @RequestParam(required = false) Double feeMax,
+            @RequestParam(required = false) Double pmin,
+            @RequestParam(required = false) Double pmax,
             @RequestParam(required = false) String sort,
             @RequestParam(required = false) String order
     ) {
         try {
-            Page<Class> classes = classService.getClasses(categories, institutions, search, feeMin, feeMax, sort, order);
+            Page<Class> classes = classService.getClasses(category, institution, search, pmin, pmax, sort, order);
             return ResponseEntity.ok(ApiResponse.<List<Class>>builder()
                     .data(classes.getContent())
                     .page(classes.getPageable().getPageNumber() + 1)
