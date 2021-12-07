@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.List;
 
 public interface ClassService {
-    Page<Class> getClasses(Collection<Long> categories, Collection<Long> institutions, String name, Double feeStart, Double feeEnd, String sort, String order);
+    Page<Class> getClasses(Collection<Long> categories, Collection<Long> institutions, String name, Double priceStart, Double priceEnd, String sort, String order);
 
     Class getClassById(Long id) throws NotFoundException;
 
