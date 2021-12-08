@@ -1,6 +1,7 @@
 package id.careerfund.api.domains.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -50,5 +51,6 @@ public class Class extends Auditable {
     private List<UserClass> userClass = new ArrayList<>();
 
     @Transient
-    private Boolean registered = false;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Boolean registered;
 }
