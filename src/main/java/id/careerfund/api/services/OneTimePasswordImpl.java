@@ -48,7 +48,7 @@ public class OneTimePasswordImpl implements OneTimePasswordService {
         oneTimePassword.setExpiredAt(LocalDateTime.now().plusMinutes(5));
         oneTimePassword.setUser(user);
         oneTimePasswordRepo.save(oneTimePassword);
-        log.info("Generating OTP {} for {}", oneTimePassword.getPassword(), user.getEmail());
+        log.info("Generating OTP: {} for {}", oneTimePassword.getPassword(), user.getEmail());
         return oneTimePassword.getPassword();
     }
 

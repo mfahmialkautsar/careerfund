@@ -1,12 +1,12 @@
 package id.careerfund.api.services;
 
 import id.careerfund.api.domains.entities.Class;
-import id.careerfund.api.domains.entities.UserClass;
+import id.careerfund.api.domains.entities.User;
 import id.careerfund.api.repositories.ClassRepository;
-import id.careerfund.api.repositories.UserClassRepository;
 import id.careerfund.api.utils.mappers.UserMapper;
 import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,19 +16,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class ClassServiceImpl implements ClassService {
     private final ClassRepository classRepo;
-    private final UserClassRepository userClassRepo;
 
     @Override
-    public Page<Class> getClasses(Collection<Long> categories, Collection<Long> institutions, String name, Double priceStart, Double priceEnd, String sort, String order) {
+    public Page<Class> getClasses(Principal principal, Collection<Long> categories, Collection<Long> institutions, String name, Double priceStart, Double priceEnd, String sort, String order) {
         Sort sortOrder = null;
         if (sort != null) {
             if (Objects.equals(order.toLowerCase(), "desc")) {
@@ -42,18 +41,24 @@ public class ClassServiceImpl implements ClassService {
         if (sortOrder != null) {
             pageable = PageRequest.of(0, Integer.MAX_VALUE, sortOrder);
         }
-        return classRepo.findDistinctByBootcamp_Categories_IdInAndBootcamp_Institutions_IdInAndBootcamp_NameIsLikeIgnoreCaseAndPriceGreaterThanEqualAndPriceLessThanEqual(categories, institutions, name, priceStart, priceEnd, pageable);
+        Page<Class> classes = classRepo.findDistinctByBootcamp_Categories_IdInAndBootcamp_Institutions_IdInAndBootcamp_NameIsLikeIgnoreCaseAndPriceGreaterThanEqualAndPriceLessThanEqual(categories, institutions, name, priceStart, priceEnd, pageable);
+        if (principal != null) {
+            User user = UserMapper.principalToUser(principal);
+            classes.getContent().forEach(aClass -> aClass.setRegistered(aClass.getUserClass().retainAll(user.getUserClasses())));
+        }
+
+        return classes;
     }
 
     @Override
-    public Class getClassById(Long id) throws NotFoundException {
+    public Class getClassById(Principal principal, Long id) throws NotFoundException {
         Optional<Class> aClass = classRepo.findById(id);
         if (!aClass.isPresent()) throw new NotFoundException("Class not found");
-        return aClass.get();
-    }
+        if (principal != null) {
+            User user = UserMapper.principalToUser(principal);
+            aClass.get().setRegistered(aClass.get().getUserClass().retainAll(user.getUserClasses()));
+        }
 
-    @Override
-    public List<UserClass> getMyClasses(Principal principal) {
-        return userClassRepo.findByUser(UserMapper.principalToUser(principal));
+        return aClass.get();
     }
 }

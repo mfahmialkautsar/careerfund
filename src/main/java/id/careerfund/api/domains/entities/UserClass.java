@@ -20,17 +20,22 @@ public class UserClass extends Auditable {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @OneToOne(optional = false, orphanRemoval = true)
-    @JoinColumn(name = "bootcamp_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Bootcamp bootcamp;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "class_id", nullable = false)
+    private Class aClass;
+
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OneToOne(optional = false, orphanRemoval = true)
+    @JoinColumn(name = "loan_id", nullable = false)
+    private Loan loan;
 
     @Column(name = "score")
     private Double score;
 
     @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 }

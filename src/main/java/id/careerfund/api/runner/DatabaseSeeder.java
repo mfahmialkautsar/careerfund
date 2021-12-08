@@ -1,41 +1,40 @@
 package id.careerfund.api.runner;
 
 import id.careerfund.api.domains.ERole;
-import id.careerfund.api.domains.ERoleRegister;
 import id.careerfund.api.domains.entities.*;
 import id.careerfund.api.domains.entities.Class;
-import id.careerfund.api.domains.models.UserRegister;
 import id.careerfund.api.repositories.*;
-import id.careerfund.api.services.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 @Slf4j
 @Transactional
 @Component
 public class DatabaseSeeder implements ApplicationRunner {
     @Autowired
-    UserService userService;
+    private PasswordEncoder passwordEncoder;
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
-    RoleRepository roleRepository;
+    private RoleRepository roleRepository;
     @Autowired
-    InterestRepository interestRepository;
+    private InterestRepository interestRepository;
     @Autowired
-    InstitutionRepository institutionRepository;
+    private InstitutionRepository institutionRepository;
     @Autowired
-    BootcampRepository bootcampRepository;
+    private BootcampRepository bootcampRepository;
     @Autowired
-    ClassRepository classRepository;
+    private ClassRepository classRepository;
 
     @Override
     public void run(ApplicationArguments args) {
@@ -62,10 +61,29 @@ public class DatabaseSeeder implements ApplicationRunner {
         admin.setEmail("aal@email.com");
         admin.setPassword("tothemoon");
         registerAdminIfNotExists(admin);
-        registerUserIfNotExists(new UserRegister("Invoker", "invoker@email.com", "1234", ERoleRegister.LENDER));
-        registerUserIfNotExists(new UserRegister("Meepo", "meep@email.com", "1234", ERoleRegister.BORROWER));
-        registerUserIfNotExists(new UserRegister("Meepo", "dump.file17@gmail.com", "1234", ERoleRegister.BORROWER));
 
+        User invoker = new User();
+        invoker.setIsEnabled(true);
+        invoker.setEmail("invoker@email.com");
+        invoker.setName("Invoker");
+        invoker.setPassword(passwordEncoder.encode("1234"));
+        invoker.setRoles(Arrays.asList(roleRepository.findByName(ERole.ROLE_LENDER), roleRepository.findByName(ERole.ROLE_USER)));
+        registerUserIfNotExists(invoker);
+
+        User meepo = new User();
+        meepo.setIsEnabled(true);
+        meepo.setEmail("meep@email.com");
+        meepo.setName("Meepo");
+        meepo.setPassword(passwordEncoder.encode("1234"));
+        meepo.setRoles(Arrays.asList(roleRepository.findByName(ERole.ROLE_BORROWER), roleRepository.findByName(ERole.ROLE_USER)));
+        registerUserIfNotExists(meepo);
+
+        User dump = new User();
+        dump.setEmail("dump.file17@gmail.com");
+        dump.setName("Dump");
+        dump.setPassword(passwordEncoder.encode("1234"));
+        dump.setRoles(Arrays.asList(roleRepository.findByName(ERole.ROLE_BORROWER), roleRepository.findByName(ERole.ROLE_USER)));
+        registerUserIfNotExists(dump);
     }
 
     private void saveInterests() {
@@ -109,23 +127,23 @@ public class DatabaseSeeder implements ApplicationRunner {
     }
 
     private void saveClasses() {
-        Class binarBED2021 = new Class(1L, null, LocalDate.of(2021, 4, 1), LocalDate.of(2021, 6, 30), 80, 25000000.0, bootcampRepository.getById(1L));
+        Class binarBED2021 = new Class(1L, null, LocalDate.of(2021, 4, 1), LocalDate.of(2021, 6, 30), 80, 25000000.0, 1.3, bootcampRepository.getById(1L), null, null);
         saveClassIfNotExists(binarBED2021);
 
-        Class ada2022 = new Class(2L, null, LocalDate.of(2022, 2, 1), LocalDate.of(2022, 12, 31), 200, 0.0, bootcampRepository.getById(2L));
+        Class ada2022 = new Class(2L, null, LocalDate.of(2022, 2, 1), LocalDate.of(2022, 12, 31), 200, 0.0, 1.4, bootcampRepository.getById(2L), null, null);
         saveClassIfNotExists(ada2022);
 
-        Class gdk2019 = new Class(3L, null, LocalDate.of(2019, 6, 1), LocalDate.of(2019, 12, 31), 100000, 0.0, bootcampRepository.getById(3L));
+        Class gdk2019 = new Class(3L, null, LocalDate.of(2019, 6, 1), LocalDate.of(2019, 12, 31), 100000, 0.0, 1.9, bootcampRepository.getById(3L), null, null);
         saveClassIfNotExists(gdk2019);
 
-        Class hacktiv8Web2022 = new Class(4L, null, LocalDate.of(2022, 7, 1), LocalDate.of(2024, 6, 30), 10000, 20000000.0, bootcampRepository.getById(4L));
+        Class hacktiv8Web2022 = new Class(4L, null, LocalDate.of(2022, 7, 1), LocalDate.of(2024, 6, 30), 10000, 20000000.0, 2.0, bootcampRepository.getById(4L), null, null);
         saveClassIfNotExists(hacktiv8Web2022);
     }
 
-    private void registerUserIfNotExists(UserRegister userRegister) {
-        if (userRepository.findByEmail(userRegister.getEmail()) == null) {
+    private void registerUserIfNotExists(User user) {
+        if (userRepository.findByEmail(user.getEmail()) == null) {
             try {
-                userService.registerUser(userRegister);
+                userRepository.save(user);
             } catch (Exception e) {
                 e.printStackTrace();
             }

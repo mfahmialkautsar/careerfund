@@ -20,7 +20,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User extends Auditable implements UserDetails {
-    @JsonIgnore
     @Id
     @GeneratedValue
     @Column(name = "id", nullable = false)
@@ -40,23 +39,47 @@ public class User extends Auditable implements UserDetails {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Collection<Role> roles = new ArrayList<>();
 
+    @Column(name = "phone_number", unique = true)
+    private Long phoneNumber;
+
+    @Lob
+    @Column(name = "address")
+    private String address;
+
+    @JsonIgnore
     @Column(name = "is_not_expired", nullable = false)
     private Boolean isNotExpired = true;
 
+    @JsonIgnore
     @Column(name = "is_not_locked", nullable = false)
     private Boolean isNotLocked = true;
 
+    @JsonIgnore
     @Column(name = "is_credentials_not_expired", nullable = false)
     private Boolean isCredentialsNotExpired = true;
 
+    @JsonIgnore
     @Column(name = "is_enabled", nullable = false)
     private Boolean isEnabled = false;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "borrower", orphanRemoval = true)
+    private List<Loan> loans = new ArrayList<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "borrower", orphanRemoval = true)
+    private List<Loan> funding = new ArrayList<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", orphanRemoval = true)
+    private List<UserClass> userClasses = new ArrayList<>();
 
 
     @Override
@@ -96,9 +119,11 @@ public class User extends Auditable implements UserDetails {
     @JsonIgnore
     private Date expiredVerifyToken;
 
+    @JsonIgnore
     @Column(length = 100)
     private String otp;
 
+    @JsonIgnore
     private Date otpExpiredDate;
 
     //add one to many users
@@ -106,9 +131,11 @@ public class User extends Auditable implements UserDetails {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private List<RefreshToken> refreshTokens;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonIgnore
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "users_interests",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "interest_id"))
     private Collection<Interest> interests;
+
 }

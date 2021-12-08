@@ -1,5 +1,6 @@
 package id.careerfund.api.domains.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,6 +8,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Table(name = "classes")
 @Setter
@@ -35,7 +38,17 @@ public class Class extends Auditable {
     @Column(name = "price")
     private Double price;
 
+    @Column(name = "interest_percent")
+    private Double interestPercent;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "bootcamp_id", nullable = false)
     private Bootcamp bootcamp;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "aClass", orphanRemoval = true)
+    private List<UserClass> userClass = new ArrayList<>();
+
+    @Transient
+    private Boolean registered = false;
 }
