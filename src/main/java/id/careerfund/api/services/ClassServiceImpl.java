@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
+import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
@@ -60,5 +61,10 @@ public class ClassServiceImpl implements ClassService {
         }
 
         return aClass.get();
+    }
+
+    @Override
+    public Long getMonthDuration(Class aClass) {
+        return aClass.getStartDate().until(aClass.getEndDate(), ChronoUnit.MONTHS);
     }
 }

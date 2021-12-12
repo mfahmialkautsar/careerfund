@@ -39,9 +39,6 @@ public class Class extends Auditable {
     @Column(name = "price")
     private Double price;
 
-    @Column(name = "interest_percent")
-    private Double interestPercent;
-
     @ManyToOne(optional = false)
     @JoinColumn(name = "bootcamp_id", nullable = false)
     private Bootcamp bootcamp;

@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.web.firewall.RequestRejectedException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -81,9 +82,20 @@ public class ClassController extends HandlerController {
     @Secured({ERole.Constants.BORROWER})
     @PostMapping("/my/classes")
     public ResponseEntity<ApiResponse<UserClass>> addMyClass(Principal principal, @Valid @RequestBody UserClassRequest userClassRequest) {
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/my/classes").toUriString());
-        UserClass userClass = userClassService.registerClass(principal, userClassRequest);
-        return ResponseEntity.created(uri).body(ApiResponse.<UserClass>builder().data(userClass).build());
+        try {
+            URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/my/classes").toUriString());
+            UserClass userClass = userClassService.registerClass(principal, userClassRequest);
+            return ResponseEntity.created(uri).body(ApiResponse.<UserClass>builder().data(userClass).build());
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Class not found", e.getCause());
+        } catch (RequestRejectedException e) {
+            if (e.getMessage().equals("DOWNPAYMENT_GREATER"))
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Downpayment greater than expected", e.getCause());
+            else
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Downpayment less than expected", e.getCause());
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Failed to register to a class. Try again next time", e.getCause());
+        }
     }
 
     @Secured({ERole.Constants.BORROWER})

@@ -12,6 +12,7 @@ import id.careerfund.api.utils.mappers.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.web.firewall.RequestRejectedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,20 +28,25 @@ public class UserClassServiceImpl implements UserClassService {
     private final LoanRepository loanRepo;
     private final UserClassRepository userClassRepo;
     private final ClassRepository classRepo;
+    private final LoanService loanService;
 
     @Override
     public UserClass registerClass(Principal principal, UserClassRequest userClassRequest) throws EntityNotFoundException {
         log.info("Registering class {}", userClassRequest.getClassId());
         User user = UserMapper.principalToUser(principal);
         Class aClass = classRepo.getById(userClassRequest.getClassId());
+        if (userClassRequest.getDownPayment() > aClass.getPrice() * 0.3) throw new RequestRejectedException("DOWNPAYMENT_GREATER");
+        if (userClassRequest.getDownPayment() < aClass.getPrice() * 0.1) throw new RequestRejectedException("DOWNPAYMENT_LESS");
         Loan loan = new Loan();
         loan.setBorrower(user);
         loan.setDownPayment(userClassRequest.getDownPayment());
-        loan.setInterestPercent(aClass.getInterestPercent());
         loan.setTenorMonth(userClassRequest.getTenorMonth());
-        Double interestNumber = aClass.getPrice() * userClassRequest.getTenorMonth() * aClass.getInterestPercent();
-        loan.setInterestNumber(interestNumber);
-        loan.setTotalPayment(aClass.getPrice() + interestNumber);
+        loan.setInterestPercent(loanService.getInterestPercent(aClass, userClassRequest.getTenorMonth()));
+        loan.setInterestNumber(loanService.getInterestNumber(aClass, userClassRequest.getTenorMonth(), userClassRequest.getDownPayment()));
+        loan.setMonthlyFee(loanService.getMonthlyAdminFee(aClass, userClassRequest.getTenorMonth(), userClassRequest.getDownPayment()));
+        loan.setFee(loanService.getAdminFee(aClass, userClassRequest.getTenorMonth(), userClassRequest.getDownPayment()));
+        loan.setMonthlyPayment(loanService.getMonthlyPayment(aClass, userClassRequest.getTenorMonth(), userClassRequest.getDownPayment()));
+        loan.setTotalPayment(loanService.getTotalPayment(aClass, userClassRequest.getTenorMonth(), userClassRequest.getDownPayment()));
         loanRepo.save(loan);
         UserClass userClass = new UserClass();
         userClass.setAClass(aClass);

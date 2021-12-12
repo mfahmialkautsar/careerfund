@@ -127,16 +127,16 @@ public class DatabaseSeeder implements ApplicationRunner {
     }
 
     private void saveClasses() {
-        Class binarBED2021 = new Class(1L, null, LocalDate.of(2021, 4, 1), LocalDate.of(2021, 6, 30), 80, 25000000.0, 1.3, bootcampRepository.getById(1L), null, null);
+        Class binarBED2021 = new Class(1L, null, LocalDate.of(2021, 4, 1), LocalDate.of(2021, 6, 30), 80, 25000000.0, bootcampRepository.getById(1L), null, null);
         saveClassIfNotExists(binarBED2021);
 
-        Class ada2022 = new Class(2L, null, LocalDate.of(2022, 2, 1), LocalDate.of(2022, 12, 31), 200, 0.0, 1.4, bootcampRepository.getById(2L), null, null);
+        Class ada2022 = new Class(2L, null, LocalDate.of(2022, 2, 1), LocalDate.of(2022, 12, 31), 200, 0.0, bootcampRepository.getById(2L), null, null);
         saveClassIfNotExists(ada2022);
 
-        Class gdk2019 = new Class(3L, null, LocalDate.of(2019, 6, 1), LocalDate.of(2019, 12, 31), 100000, 0.0, 1.9, bootcampRepository.getById(3L), null, null);
+        Class gdk2019 = new Class(3L, null, LocalDate.of(2019, 6, 1), LocalDate.of(2019, 12, 31), 100000, 0.0, bootcampRepository.getById(3L), null, null);
         saveClassIfNotExists(gdk2019);
 
-        Class hacktiv8Web2022 = new Class(4L, null, LocalDate.of(2022, 7, 1), LocalDate.of(2024, 6, 30), 10000, 20000000.0, 2.0, bootcampRepository.getById(4L), null, null);
+        Class hacktiv8Web2022 = new Class(4L, null, LocalDate.of(2022, 7, 1), LocalDate.of(2024, 6, 30), 10000, 20000000.0, bootcampRepository.getById(4L), null, null);
         saveClassIfNotExists(hacktiv8Web2022);
     }
 

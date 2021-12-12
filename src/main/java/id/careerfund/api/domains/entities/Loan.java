@@ -12,7 +12,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Table(name = "loan")
+@Table(name = "loans")
 @Getter
 @Setter
 @Entity
@@ -29,11 +29,6 @@ public class Loan extends Auditable {
     @JoinColumn(name = "borrower_id", nullable = false)
     private User borrower;
 
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "lender_id")
-    private User lender;
-
     @Column(name = "interest_percent", nullable = false)
     private Double interestPercent;
 
@@ -49,6 +44,15 @@ public class Loan extends Auditable {
     @Column(name = "total_payment")
     private Double totalPayment;
 
+    @Column(name = "monthly_payment", nullable = false)
+    private Double monthlyPayment;
+
+    @Column(name = "monthly_fee", nullable = false)
+    private Double monthlyFee;
+
+    @Column(name = "fee", nullable = false)
+    private Double fee;
+
     @OneToMany(mappedBy = "loan", orphanRemoval = true)
     private List<Payment> payments = new ArrayList<>();
 
@@ -56,4 +60,10 @@ public class Loan extends Auditable {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @OneToOne(mappedBy = "loan", orphanRemoval = true)
     private UserClass userClass;
+
+    @ManyToMany
+    @JoinTable(name = "loans_lenders",
+            joinColumns = @JoinColumn(name = "loan_id"),
+            inverseJoinColumns = @JoinColumn(name = "lender_id"))
+    private List<User> lenders = new ArrayList<>();
 }
