@@ -10,14 +10,11 @@ import javax.validation.constraints.Positive;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class UserClassRequest {
+public class PayMyLoan {
     @NotNull
     @Positive
-    private Long downPayment;
+    private Long paymentAmount;
     @NotNull
     @Positive
-    private Integer tenorMonth;
-    @NotNull
-    @Positive
-    private Long classId;
+    private Long paymentAccountId;
 }

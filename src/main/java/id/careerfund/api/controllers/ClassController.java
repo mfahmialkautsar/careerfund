@@ -4,6 +4,7 @@ import id.careerfund.api.domains.ERole;
 import id.careerfund.api.domains.entities.Class;
 import id.careerfund.api.domains.entities.UserClass;
 import id.careerfund.api.domains.models.ApiResponse;
+import id.careerfund.api.domains.models.requests.PayMyLoan;
 import id.careerfund.api.domains.models.requests.UserClassRequest;
 import id.careerfund.api.services.ClassService;
 import id.careerfund.api.services.UserClassService;
@@ -110,6 +111,26 @@ public class ClassController extends HandlerController {
         } catch (Exception e) {
             e.printStackTrace();
             throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Failed to get class. Try again next time", e.getCause());
+        }
+    }
+
+    @Secured({ERole.Constants.BORROWER})
+    @PostMapping("/my/classes/{classId}/pay")
+    public ResponseEntity<ApiResponse<UserClass>> payMyClass(Principal principal, @PathVariable Long classId, @Valid @RequestBody PayMyLoan payMyLoan) {
+        try {
+            return ResponseEntity.ok(ApiResponse.<UserClass>builder().data(userClassService.payMyClass(principal, classId, payMyLoan)).build());
+        } catch (AccessDeniedException e) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to access this resource", e.getCause());
+        } catch (RequestRejectedException e) {
+            if (e.getMessage().equals("SHOULD_PAY_DOWNPAYMENT"))
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Please pay the amount of down payment", e.getCause());
+            else if (e.getMessage().equals("SHOULD_PAY_MONTHLYPAYMENT"))
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Please pay the amount of monthly payment", e.getCause());
+            else
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Please pay with the right amount", e.getCause());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Failed pay loan. Please try again later", e.getCause());
         }
     }
 }

@@ -74,12 +74,12 @@ public class User extends Auditable implements UserDetails {
     private List<Loan> loans = new ArrayList<>();
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "lenders")
-    private List<Loan> fundings = new ArrayList<>();
-
-    @JsonIgnore
     @OneToMany(mappedBy = "user", orphanRemoval = true)
     private List<UserClass> userClasses = new ArrayList<>();
+
+//    @JsonIgnore
+//    @OneToMany(mappedBy = "lender", orphanRemoval = true)
+//    private List<Funding> fundings = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

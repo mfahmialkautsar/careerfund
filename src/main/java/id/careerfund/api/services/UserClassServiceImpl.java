@@ -1,13 +1,10 @@
 package id.careerfund.api.services;
 
+import id.careerfund.api.domains.entities.*;
 import id.careerfund.api.domains.entities.Class;
-import id.careerfund.api.domains.entities.Loan;
-import id.careerfund.api.domains.entities.User;
-import id.careerfund.api.domains.entities.UserClass;
+import id.careerfund.api.domains.models.requests.PayMyLoan;
 import id.careerfund.api.domains.models.requests.UserClassRequest;
-import id.careerfund.api.repositories.ClassRepository;
-import id.careerfund.api.repositories.LoanRepository;
-import id.careerfund.api.repositories.UserClassRepository;
+import id.careerfund.api.repositories.*;
 import id.careerfund.api.utils.mappers.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +25,14 @@ public class UserClassServiceImpl implements UserClassService {
     private final LoanRepository loanRepo;
     private final UserClassRepository userClassRepo;
     private final ClassRepository classRepo;
+    private final PaymentAccountRepository paymentAccountRepo;
+    private final PaymentRepository paymentRepo;
+//    private final LedgerRepository ledgerRepo;
     private final LoanService loanService;
+
+    private boolean hasPaidDownPayment(Loan loan) {
+        return !loan.getPayments().isEmpty();
+    }
 
     @Override
     public UserClass registerClass(Principal principal, UserClassRequest userClassRequest) throws EntityNotFoundException {
@@ -53,6 +57,7 @@ public class UserClassServiceImpl implements UserClassService {
         userClass.setUser(user);
         userClass.setLoan(loan);
         userClassRepo.save(userClass);
+//        ledgerRepo.save(new Ledger(null, -aClass.getPrice()));
         return userClass;
     }
 
@@ -67,5 +72,40 @@ public class UserClassServiceImpl implements UserClassService {
         User user = UserMapper.principalToUser(principal);
         if (!userClass.getUser().getId().equals(user.getId())) throw new AccessDeniedException("USER_WRONG");
         return userClass;
+    }
+
+    @Override
+    public UserClass payMyClass(Principal principal, Long id, PayMyLoan payMyLoan) throws AccessDeniedException, RequestRejectedException {
+        UserClass userClass = userClassRepo.getById(id);
+        User user = UserMapper.principalToUser(principal);
+        Loan loan = userClass.getLoan();
+        PaymentAccount paymentAccount = paymentAccountRepo.getById(payMyLoan.getPaymentAccountId());
+        int paymentPeriod = loan.getPayments().size();
+        Payment payment = new Payment();
+        payment.setLoan(loan);
+        payment.setPeriod(paymentPeriod);
+        payment.setPaymentAccount(paymentAccount);
+        if (!userClass.getUser().getId().equals(user.getId())) throw new AccessDeniedException("USER_WRONG");
+        if (!hasPaidDownPayment(loan)) {
+            if (payMyLoan.getPaymentAmount().equals(loan.getDownPayment())) {
+                payment.setLoan(loan);
+                paymentRepo.save(payment);
+            } else if (payMyLoan.getPaymentAmount().equals(loan.getMonthlyPayment())) {
+                throw new RequestRejectedException("SHOULD_PAY_DOWNPAYMENT");
+            } else {
+                throw new RequestRejectedException("WRONG_AMOUNT");
+            }
+        } else {
+            if (payMyLoan.getPaymentAmount().equals(loan.getDownPayment())) {
+                throw new RequestRejectedException("SHOULD_PAY_MONTHLYPAYMENT");
+            } else if (payMyLoan.getPaymentAmount().equals(loan.getMonthlyPayment())) {
+                payment.setLoan(loan);
+                paymentRepo.save(payment);
+            } else {
+                throw new RequestRejectedException("WRONG_AMOUNT");
+            }
+        }
+//        ledgerRepo.save(new Ledger(null, payMyLoan.getPaymentAmount()));
+        return userClassRepo.getById(id);
     }
 }

@@ -1,5 +1,6 @@
 package id.careerfund.api.domains.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +10,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Table(name = "payment_account")
+@Table(name = "payment_accounts")
 @Getter
 @Setter
 @Entity
@@ -17,13 +18,14 @@ import java.util.List;
 @AllArgsConstructor
 public class PaymentAccount extends Auditable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
     @Column(name = "name", unique = true, nullable = false)
     private String name;
 
+    @JsonIgnore
     @ManyToOne(optional = false)
     @JoinColumn(name = "payment_type_id", nullable = false)
     private PaymentType paymentType;
@@ -31,7 +33,11 @@ public class PaymentAccount extends Auditable {
     @Column(name = "number", nullable = false)
     private Long number;
 
+    @ManyToOne
+    @JoinColumn(name = "bank_id")
+    private Bank bank;
+
+    @JsonIgnore
     @OneToMany(mappedBy = "paymentAccount", orphanRemoval = true)
     private List<Payment> payments = new ArrayList<>();
-
 }

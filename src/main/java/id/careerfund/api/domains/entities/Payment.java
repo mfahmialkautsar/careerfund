@@ -1,5 +1,6 @@
 package id.careerfund.api.domains.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,7 +8,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
-@Table(name = "payment")
+@Table(name = "payments")
 @Getter
 @Setter
 @Entity
@@ -19,6 +20,7 @@ public class Payment extends Auditable {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @JsonIgnore
     @ManyToOne(optional = false)
     @JoinColumn(name = "loan_id", nullable = false)
     private Loan loan;

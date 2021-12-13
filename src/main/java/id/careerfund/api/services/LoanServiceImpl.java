@@ -12,42 +12,47 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class LoanServiceImpl implements LoanService {
     @Override
-    public Double getPaymentWithoutAdminFee(Class aClass, Double downPayment) {
-        return aClass.getPrice() - downPayment;
-    }
-
-    @Override
     public Double getInterestPercent(Class aClass, Integer tenorMonth) {
         return 5.0 * (tenorMonth/12.0);
     }
 
     @Override
-    public Double getInterestNumber(Class aClass, Integer tenorMonth, Double downPayment) {
-        return getInterestPercent(aClass, tenorMonth) * getPaymentWithoutAdminFee(aClass, downPayment);
+    public Long getInterestNumber(Class aClass, Integer tenorMonth, Long downPayment) {
+        return (long) Math.ceil((getInterestPercent(aClass, tenorMonth)/100) * getTotalPaymentWithoutAdminFeeAndInterest(aClass, downPayment));
     }
 
     @Override
-    public Double getMonthlyAdminFee(Class aClass, Integer tenorMonth, Double downPayment) {
-        return getMonthlyPaymentWithoutAdminFee(aClass, tenorMonth, downPayment) * (0.02);
+    public Long getMonthlyAdminFee(Class aClass, Integer tenorMonth, Long downPayment) {
+        return (long) Math.ceil((double) getMonthlyPaymentWithoutAdminFee(aClass, tenorMonth, downPayment) * 0.02);
     }
 
     @Override
-    public Double getAdminFee(Class aClass, Integer tenorMonth, Double downPayment) {
+    public Long getAdminFee(Class aClass, Integer tenorMonth, Long downPayment) {
         return getMonthlyAdminFee(aClass, tenorMonth, downPayment) * tenorMonth;
     }
 
     @Override
-    public Double getMonthlyPayment(Class aClass, Integer tenorMonth, Double downPayment) {
-        return getMonthlyPaymentWithoutAdminFee(aClass, tenorMonth, downPayment) + getMonthlyAdminFee(aClass, tenorMonth, downPayment);
+    public Long getMonthlyPaymentWithoutAdminFee(Class aClass, Integer tenorMonth, Long downPayment) {
+        return getTotalPaymentWithoutAdminFee(aClass, tenorMonth, downPayment) / tenorMonth;
     }
 
     @Override
-    public Double getMonthlyPaymentWithoutAdminFee(Class aClass, Integer tenorMonth, Double downPayment) {
-        return getPaymentWithoutAdminFee(aClass, downPayment) / tenorMonth;
+    public Long getMonthlyPayment(Class aClass, Integer tenorMonth, Long downPayment) {
+        return getTotalPayment(aClass, tenorMonth, downPayment) / tenorMonth;
     }
 
     @Override
-    public Double getTotalPayment(Class aClass, Integer tenorMonth, Double downPayment) {
-        return getPaymentWithoutAdminFee(aClass, downPayment) + getInterestNumber(aClass, tenorMonth, downPayment);
+    public Long getTotalPaymentWithoutAdminFeeAndInterest(Class aClass, Long downPayment) {
+        return aClass.getPrice() - downPayment;
+    }
+
+    @Override
+    public Long getTotalPaymentWithoutAdminFee(Class aClass, Integer tenorMonth, Long downPayment) {
+        return getTotalPaymentWithoutAdminFeeAndInterest(aClass, downPayment) + getInterestNumber(aClass, tenorMonth, downPayment);
+    }
+
+    @Override
+    public Long getTotalPayment(Class aClass, Integer tenorMonth, Long downPayment) {
+        return getTotalPaymentWithoutAdminFee(aClass, tenorMonth, downPayment) + getAdminFee(aClass, tenorMonth, downPayment);
     }
 }

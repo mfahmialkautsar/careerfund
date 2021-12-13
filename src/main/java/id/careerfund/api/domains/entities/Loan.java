@@ -33,25 +33,25 @@ public class Loan extends Auditable {
     private Double interestPercent;
 
     @Column(name = "interest_number")
-    private Double interestNumber;
+    private Long interestNumber;
 
     @Column(name = "tenor", nullable = false)
     private Integer tenorMonth;
 
     @Column(name = "down_payment", nullable = false)
-    private Double downPayment;
+    private Long downPayment;
 
     @Column(name = "total_payment")
-    private Double totalPayment;
+    private Long totalPayment;
 
     @Column(name = "monthly_payment", nullable = false)
-    private Double monthlyPayment;
+    private Long monthlyPayment;
 
     @Column(name = "monthly_fee", nullable = false)
-    private Double monthlyFee;
+    private Long monthlyFee;
 
     @Column(name = "fee", nullable = false)
-    private Double fee;
+    private Long fee;
 
     @OneToMany(mappedBy = "loan", orphanRemoval = true)
     private List<Payment> payments = new ArrayList<>();
@@ -61,9 +61,7 @@ public class Loan extends Auditable {
     @OneToOne(mappedBy = "loan", orphanRemoval = true)
     private UserClass userClass;
 
-    @ManyToMany
-    @JoinTable(name = "loans_lenders",
-            joinColumns = @JoinColumn(name = "loan_id"),
-            inverseJoinColumns = @JoinColumn(name = "lender_id"))
-    private List<User> lenders = new ArrayList<>();
+//    @OneToMany(mappedBy = "loan", orphanRemoval = true)
+//    private List<Funding> fundings = new ArrayList<>();
+
 }
