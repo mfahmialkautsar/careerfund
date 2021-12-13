@@ -1,30 +1,36 @@
 package id.careerfund.api.controllers;
 
 import id.careerfund.api.domains.ERole;
+import id.careerfund.api.domains.entities.Loan;
 import id.careerfund.api.domains.models.ApiResponse;
-import id.careerfund.api.domains.models.Loan;
+import id.careerfund.api.services.LoanService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
-import java.util.Arrays;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 public class LoanController extends HandlerController {
-    @GetMapping("/my/loans")
+    private final LoanService loanService;
+
     @Secured({ERole.Constants.LENDER})
-    public ResponseEntity<ApiResponse<List<Loan>>> getLenderLoans(Principal principal) {
-        List<Loan> loans = Arrays.asList(
-                new Loan("Sergio Marquina", 20000000, 9, 5000000, 4.2),
-                new Loan("Raigor", 30000000, 6, 3000000, 6.6),
-                new Loan("Huskar", 9000000, 12, 500000, 1.5),
-                new Loan("Thomas Shelby", 50000000, 24, 0, 6.9)
-        );
-        return ResponseEntity.ok(ApiResponse.<List<Loan>>builder().data(loans).build());
+    @GetMapping("/lender/loans")
+    public ResponseEntity<ApiResponse<Page<Loan>>> getLenderMyLoans(
+            Principal principal
+    ) {
+        return ResponseEntity.ok(ApiResponse.<Page<Loan>>builder().data(loanService.getLoans(null, null)).build());
+    }
+
+    @Secured({ERole.Constants.LENDER})
+    @GetMapping("/lender/my/loans")
+    public ResponseEntity<ApiResponse<Page<Loan>>> getLenderLoans(
+            Principal principal
+    ) {
+        return ResponseEntity.ok(ApiResponse.<Page<Loan>>builder().data(loanService.getMyLoans(principal, null, null)).build());
     }
 }

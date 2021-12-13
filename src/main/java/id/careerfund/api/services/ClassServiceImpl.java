@@ -3,6 +3,7 @@ package id.careerfund.api.services;
 import id.careerfund.api.domains.entities.Class;
 import id.careerfund.api.domains.entities.User;
 import id.careerfund.api.repositories.ClassRepository;
+import id.careerfund.api.utils.helpers.PageableHelper;
 import id.careerfund.api.utils.mappers.UserMapper;
 import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -29,19 +30,7 @@ public class ClassServiceImpl implements ClassService {
 
     @Override
     public Page<Class> getClasses(Principal principal, Collection<Long> categories, Collection<Long> institutions, String name, Double priceStart, Double priceEnd, String sort, String order) {
-        Sort sortOrder = null;
-        if (sort != null) {
-            if (Objects.equals(order.toLowerCase(), "desc")) {
-                sortOrder = Sort.by(sort).descending();
-            } else if (Objects.equals(order.toLowerCase(), "asc")) {
-                sortOrder = Sort.by(sort).ascending();
-            }
-        }
-
-        Pageable pageable = PageRequest.of(0, Integer.MAX_VALUE);
-        if (sortOrder != null) {
-            pageable = PageRequest.of(0, Integer.MAX_VALUE, sortOrder);
-        }
+        Pageable pageable = PageableHelper.getPageable(sort, order);
         Page<Class> classes = classRepo.findDistinctByBootcamp_Categories_IdInAndBootcamp_Institutions_IdInAndBootcamp_NameIsLikeIgnoreCaseAndPriceGreaterThanEqualAndPriceLessThanEqual(categories, institutions, name, priceStart, priceEnd, pageable);
         if (principal != null) {
             User user = UserMapper.principalToUser(principal);

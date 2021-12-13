@@ -61,7 +61,6 @@ public class Loan extends Auditable {
     @OneToOne(mappedBy = "loan", orphanRemoval = true)
     private UserClass userClass;
 
-//    @OneToMany(mappedBy = "loan", orphanRemoval = true)
-//    private List<Funding> fundings = new ArrayList<>();
-
+    @OneToMany(mappedBy = "loan", orphanRemoval = true)
+    private List<Funding> fundings = new ArrayList<>();
 }

@@ -88,8 +88,8 @@ public class UserClassServiceImpl implements UserClassService {
         if (!userClass.getUser().getId().equals(user.getId())) throw new AccessDeniedException("USER_WRONG");
         if (!hasPaidDownPayment(loan)) {
             if (payMyLoan.getPaymentAmount().equals(loan.getDownPayment())) {
-                payment.setLoan(loan);
                 paymentRepo.save(payment);
+                userClass.getLoan().getPayments().add(payment);
             } else if (payMyLoan.getPaymentAmount().equals(loan.getMonthlyPayment())) {
                 throw new RequestRejectedException("SHOULD_PAY_DOWNPAYMENT");
             } else {
@@ -99,13 +99,13 @@ public class UserClassServiceImpl implements UserClassService {
             if (payMyLoan.getPaymentAmount().equals(loan.getDownPayment())) {
                 throw new RequestRejectedException("SHOULD_PAY_MONTHLYPAYMENT");
             } else if (payMyLoan.getPaymentAmount().equals(loan.getMonthlyPayment())) {
-                payment.setLoan(loan);
                 paymentRepo.save(payment);
+                userClass.getLoan().getPayments().add(payment);
             } else {
                 throw new RequestRejectedException("WRONG_AMOUNT");
             }
         }
 //        ledgerRepo.save(new Ledger(null, payMyLoan.getPaymentAmount()));
-        return userClassRepo.getById(id);
+        return userClass;
     }
 }

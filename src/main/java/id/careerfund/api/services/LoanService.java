@@ -1,6 +1,10 @@
 package id.careerfund.api.services;
 
 import id.careerfund.api.domains.entities.Class;
+import id.careerfund.api.domains.entities.Loan;
+import org.springframework.data.domain.Page;
+
+import java.security.Principal;
 
 public interface LoanService {
     Double getInterestPercent(Class aClass, Integer tenorMonth);
@@ -20,4 +24,8 @@ public interface LoanService {
     Long getTotalPaymentWithoutAdminFee(Class aClass, Integer tenorMonth, Long downPayment);
 
     Long getTotalPayment(Class aClass, Integer tenorMonth, Long downPayment);
+
+    Page<Loan> getLoans(String sort, String order);
+
+    Page<Loan> getMyLoans(Principal principal, String sort, String order);
 }
