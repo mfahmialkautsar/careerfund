@@ -1,6 +1,7 @@
 package id.careerfund.api.services;
 
 import id.careerfund.api.domains.entities.Class;
+import id.careerfund.api.domains.entities.Funding;
 import id.careerfund.api.domains.entities.Loan;
 import id.careerfund.api.domains.entities.User;
 import id.careerfund.api.repositories.LoanRepository;
@@ -14,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
-import java.util.List;
 
 @Service
 @Transactional
@@ -68,10 +68,14 @@ public class LoanServiceImpl implements LoanService {
         return getTotalPaymentWithoutAdminFee(aClass, tenorMonth, downPayment) + getAdminFee(aClass, tenorMonth, downPayment);
     }
 
+    public Double getLenderPayback(Loan loan, Funding funding) {
+        return (double) (loan.getInterestNumber() * funding.getFinancialTransaction().getNominal()) + funding.getFinancialTransaction().getNominal();
+    }
+
     @Override
     public Page<Loan> getLoans(String sort, String order) {
         Pageable pageable = PageableHelper.getPageable(sort, order);
-        return loanRepo.findDistinctByPaymentsNotEmpty(pageable);
+        return loanRepo.findDistinctByLoanPaymentsNotEmpty(pageable);
     }
 
     @Override

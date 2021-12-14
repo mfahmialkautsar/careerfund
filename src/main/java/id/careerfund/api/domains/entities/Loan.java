@@ -54,7 +54,7 @@ public class Loan extends Auditable {
     private Long fee;
 
     @OneToMany(mappedBy = "loan", orphanRemoval = true)
-    private List<Payment> payments = new ArrayList<>();
+    private List<LoanPayment> loanPayments = new ArrayList<>();
 
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)

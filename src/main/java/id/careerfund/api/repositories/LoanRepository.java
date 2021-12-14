@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface LoanRepository extends JpaRepository<Loan, Long> {
     Page<Loan> findDistinctByFundings_IdIs(Long id, Pageable pageable);
-    Page<Loan> findDistinctByPaymentsNotEmpty(Pageable pageable);
+    Page<Loan> findDistinctByLoanPaymentsNotEmpty(Pageable pageable);
 }

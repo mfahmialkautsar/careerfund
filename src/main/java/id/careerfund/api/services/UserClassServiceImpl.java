@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -27,11 +28,14 @@ public class UserClassServiceImpl implements UserClassService {
     private final ClassRepository classRepo;
     private final PaymentAccountRepository paymentAccountRepo;
     private final PaymentRepository paymentRepo;
-//    private final LedgerRepository ledgerRepo;
+    private final LoanPaymentRepository loanPaymentRepo;
+    private final FinancialTransactionRepository financialTransactionRepo;
     private final LoanService loanService;
+    private final CashService cashService;
+    private final BalanceService balanceService;
 
     private boolean hasPaidDownPayment(Loan loan) {
-        return !loan.getPayments().isEmpty();
+        return !loan.getLoanPayments().isEmpty();
     }
 
     @Override
@@ -39,8 +43,10 @@ public class UserClassServiceImpl implements UserClassService {
         log.info("Registering class {}", userClassRequest.getClassId());
         User user = UserMapper.principalToUser(principal);
         Class aClass = classRepo.getById(userClassRequest.getClassId());
-        if (userClassRequest.getDownPayment() > aClass.getPrice() * 0.3) throw new RequestRejectedException("DOWNPAYMENT_GREATER");
-        if (userClassRequest.getDownPayment() < aClass.getPrice() * 0.1) throw new RequestRejectedException("DOWNPAYMENT_LESS");
+        if (userClassRequest.getDownPayment() > aClass.getPrice() * 0.3)
+            throw new RequestRejectedException("DOWNPAYMENT_GREATER");
+        if (userClassRequest.getDownPayment() < aClass.getPrice() * 0.1)
+            throw new RequestRejectedException("DOWNPAYMENT_LESS");
         Loan loan = new Loan();
         loan.setBorrower(user);
         loan.setDownPayment(userClassRequest.getDownPayment());
@@ -57,7 +63,6 @@ public class UserClassServiceImpl implements UserClassService {
         userClass.setUser(user);
         userClass.setLoan(loan);
         userClassRepo.save(userClass);
-//        ledgerRepo.save(new Ledger(null, -aClass.getPrice()));
         return userClass;
     }
 
@@ -75,21 +80,34 @@ public class UserClassServiceImpl implements UserClassService {
     }
 
     @Override
-    public UserClass payMyClass(Principal principal, Long id, PayMyLoan payMyLoan) throws AccessDeniedException, RequestRejectedException {
-        UserClass userClass = userClassRepo.getById(id);
+    public UserClass payMyClass(Principal principal, Long id, PayMyLoan payMyLoan) throws AccessDeniedException, RequestRejectedException, EntityNotFoundException {
+        Optional<UserClass> optionalUserClass = userClassRepo.findById(id);
+        if (!optionalUserClass.isPresent()) throw new EntityNotFoundException();
+        UserClass userClass = optionalUserClass.get();
         User user = UserMapper.principalToUser(principal);
         Loan loan = userClass.getLoan();
+
         PaymentAccount paymentAccount = paymentAccountRepo.getById(payMyLoan.getPaymentAccountId());
-        int paymentPeriod = loan.getPayments().size();
+
+        FinancialTransaction financialTransaction = new FinancialTransaction();
+        financialTransaction.setNominal(payMyLoan.getPaymentAmount());
+
         Payment payment = new Payment();
-        payment.setLoan(loan);
-        payment.setPeriod(paymentPeriod);
         payment.setPaymentAccount(paymentAccount);
+        payment.setFinancialTransaction(financialTransaction);
+
+        int paymentPeriod = loan.getLoanPayments().size();
+        LoanPayment loanPayment = new LoanPayment();
+        loanPayment.setLoan(loan);
+        loanPayment.setPeriod(paymentPeriod);
+        loanPayment.setPayment(payment);
+
         if (!userClass.getUser().getId().equals(user.getId())) throw new AccessDeniedException("USER_WRONG");
         if (!hasPaidDownPayment(loan)) {
             if (payMyLoan.getPaymentAmount().equals(loan.getDownPayment())) {
-                paymentRepo.save(payment);
-                userClass.getLoan().getPayments().add(payment);
+                onPaymentSuccess(loanPayment, financialTransaction, payment, userClass);
+//                Add to company cash
+                cashService.doDebit(financialTransaction);
             } else if (payMyLoan.getPaymentAmount().equals(loan.getMonthlyPayment())) {
                 throw new RequestRejectedException("SHOULD_PAY_DOWNPAYMENT");
             } else {
@@ -99,13 +117,24 @@ public class UserClassServiceImpl implements UserClassService {
             if (payMyLoan.getPaymentAmount().equals(loan.getDownPayment())) {
                 throw new RequestRejectedException("SHOULD_PAY_MONTHLYPAYMENT");
             } else if (payMyLoan.getPaymentAmount().equals(loan.getMonthlyPayment())) {
-                paymentRepo.save(payment);
-                userClass.getLoan().getPayments().add(payment);
+                onPaymentSuccess(loanPayment, financialTransaction, payment, userClass);
+//                Add to company cash
+                cashService.doDebit(financialTransaction);
+
+//                Reduce company cash & Add to lender balance
+                cashService.doCredit(financialTransaction);
+                loan.getFundings().forEach(funding -> balanceService.setLenderPayback(funding, loan, financialTransaction));
             } else {
                 throw new RequestRejectedException("WRONG_AMOUNT");
             }
         }
-//        ledgerRepo.save(new Ledger(null, payMyLoan.getPaymentAmount()));
         return userClass;
+    }
+
+    private void onPaymentSuccess(LoanPayment loanPayment, FinancialTransaction financialTransaction, Payment payment, UserClass userClass) {
+        financialTransactionRepo.save(financialTransaction);
+        paymentRepo.save(payment);
+        loanPaymentRepo.save(loanPayment);
+        userClass.getLoan().getLoanPayments().add(loanPayment);
     }
 }

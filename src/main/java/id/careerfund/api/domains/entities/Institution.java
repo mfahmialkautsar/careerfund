@@ -32,4 +32,8 @@ public class Institution extends Auditable {
             inverseJoinColumns = @JoinColumn(name = "bootcamp_id"))
     private List<Bootcamp> bootcamps = new ArrayList<>();
 
+    @OneToOne(orphanRemoval = true)
+    @JoinColumn(name = "balance_id")
+    private Balance balance;
+
 }

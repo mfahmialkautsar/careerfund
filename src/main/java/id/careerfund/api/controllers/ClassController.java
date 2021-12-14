@@ -128,6 +128,8 @@ public class ClassController extends HandlerController {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Please pay the amount of monthly payment", e.getCause());
             else
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Please pay with the right amount", e.getCause());
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Class not found", e.getCause());
         } catch (Exception e) {
             e.printStackTrace();
             throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Failed pay loan. Please try again later", e.getCause());

@@ -1,6 +1,5 @@
 package id.careerfund.api.domains.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,20 +12,18 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "payments")
-public class Payment extends Auditable {
+@Table(name = "cash")
+public class Cash extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "payment_account_id")
-    private PaymentAccount paymentAccount;
+    @Column(name = "change", nullable = false)
+    private Double change;
 
-    @JsonIgnore
-    @OneToOne(mappedBy = "payment", orphanRemoval = true)
-    private LoanPayment loanPayment;
+    @Column(name = "current", nullable = false)
+    private Double current = 0.0;
 
     @OneToOne(optional = false, orphanRemoval = true)
     @JoinColumn(name = "financial_transaction_id", nullable = false)

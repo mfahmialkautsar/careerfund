@@ -7,8 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Table(name = "payment_accounts")
 @Getter
@@ -36,8 +34,4 @@ public class PaymentAccount extends Auditable {
     @ManyToOne
     @JoinColumn(name = "bank_id")
     private Bank bank;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "paymentAccount", orphanRemoval = true)
-    private List<Payment> payments = new ArrayList<>();
 }

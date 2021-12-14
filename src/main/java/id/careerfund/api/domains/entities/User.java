@@ -137,4 +137,8 @@ public class User extends Auditable implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "interest_id"))
     private Collection<Interest> interests;
 
+    @OneToOne(orphanRemoval = true)
+    @JoinColumn(name = "balance_id")
+    private Balance balance;
+
 }

@@ -18,5 +18,5 @@ public interface UserClassService {
 
     UserClass getMyClassById(Principal principal, Long id) throws AccessDeniedException;
 
-    UserClass payMyClass(Principal principal, Long id, PayMyLoan payMyLoan) throws AccessDeniedException, RequestRejectedException;
+    UserClass payMyClass(Principal principal, Long id, PayMyLoan payMyLoan) throws AccessDeniedException, RequestRejectedException, EntityNotFoundException;
 }

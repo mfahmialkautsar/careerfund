@@ -1,6 +1,7 @@
 package id.careerfund.api.services;
 
 import id.careerfund.api.domains.entities.Class;
+import id.careerfund.api.domains.entities.Funding;
 import id.careerfund.api.domains.entities.Loan;
 import org.springframework.data.domain.Page;
 
@@ -24,6 +25,8 @@ public interface LoanService {
     Long getTotalPaymentWithoutAdminFee(Class aClass, Integer tenorMonth, Long downPayment);
 
     Long getTotalPayment(Class aClass, Integer tenorMonth, Long downPayment);
+
+    Double getLenderPayback(Loan loan, Funding funding);
 
     Page<Loan> getLoans(String sort, String order);
 

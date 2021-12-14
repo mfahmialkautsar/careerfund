@@ -37,6 +37,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final RoleRepository roleRepo;
     private final InterestRepository interestRepo;
     private final PasswordEncoder passwordEncoder;
+    private final BalanceService balanceService;
     private final TokenService tokenService;
     private final EmailService emailService;
     private final OneTimePasswordService oneTimePasswordService;
@@ -60,6 +61,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         saveUser(user);
         addRoleToUser(user.getEmail(), RoleMapper.mapRole(userRegister.getRole()));
         addRoleToUser(user.getEmail(), ERole.ROLE_USER);
+        balanceService.addBalanceToUser(user);
         sendVerificationEmail(user.getEmail());
     }
 

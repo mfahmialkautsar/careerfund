@@ -107,10 +107,29 @@ public class DatabaseSeeder implements ApplicationRunner {
     }
 
     private void saveInstitutions() {
-        saveInstitutionIfNotExists(new Institution(1L, "Binar Academy", "https://kerjabilitas.com/user_image/user2/logo_7b6caab85699ca72e06917e9bad7512c.png", new ArrayList<>()));
-        saveInstitutionIfNotExists(new Institution(2L, "Apple Developer Academy", "https://logique.s3.ap-southeast-1.amazonaws.com/2020/11/apple-developer-academy.jpg", new ArrayList<>()));
-        saveInstitutionIfNotExists(new Institution(3L, "Google Developers", "https://www.its.ac.id/matematika/wp-content/uploads/sites/42/2019/05/google-developers.jpg", new ArrayList<>()));
-        saveInstitutionIfNotExists(new Institution(4L, "Hacktiv8", "https://pbs.twimg.com/profile_images/1303645505465974785/BAedfmOT_400x400.jpg", new ArrayList<>()));
+        Institution binar = new Institution();
+        binar.setId(1L);
+        binar.setName("Binar Academy");
+        binar.setLogoPath("https://kerjabilitas.com/user_image/user2/logo_7b6caab85699ca72e06917e9bad7512c.png");
+        saveInstitutionIfNotExists(binar);
+
+        Institution ada = new Institution();
+        ada.setId(2L);
+        ada.setName("Apple Developer Academy");
+        ada.setLogoPath("https://logique.s3.ap-southeast-1.amazonaws.com/2020/11/apple-developer-academy.jpg");
+        saveInstitutionIfNotExists(ada);
+
+        Institution gd = new Institution();
+        gd.setId(3L);
+        gd.setName("Google Developers");
+        gd.setLogoPath("https://www.its.ac.id/matematika/wp-content/uploads/sites/42/2019/05/google-developers.jpg");
+        saveInstitutionIfNotExists(gd);
+
+        Institution hacktiv8 = new Institution();
+        hacktiv8.setId(4L);
+        hacktiv8.setName("Hacktiv8");
+        hacktiv8.setLogoPath("https://pbs.twimg.com/profile_images/1303645505465974785/BAedfmOT_400x400.jpg");
+        saveInstitutionIfNotExists(hacktiv8);
     }
 
     private void saveBootcamps() {
@@ -161,7 +180,12 @@ public class DatabaseSeeder implements ApplicationRunner {
     }
 
     private void savePaymentAccount() {
-        PaymentAccount paymentAccount = new PaymentAccount(1L, "BCA", paymentTypeRepository.getById(1L), 122000000000001L, bankRepository.getById(1L), null);
+        PaymentAccount paymentAccount = new PaymentAccount();
+        paymentAccount.setId(1L);
+        paymentAccount.setName("BCA");
+        paymentAccount.setPaymentType(paymentTypeRepository.getById(1L));
+        paymentAccount.setNumber(122000000000001L);
+        paymentAccount.setBank(bankRepository.getById(1L));
         savePaymentAccountIfNotExists(paymentAccount);
     }
 
