@@ -9,6 +9,7 @@ import id.careerfund.api.domains.entities.User;
 import id.careerfund.api.domains.models.*;
 import id.careerfund.api.domains.models.reqres.UpdateUser;
 import id.careerfund.api.domains.models.requests.EmailRequest;
+import id.careerfund.api.domains.models.responses.FileUrlResponse;
 import id.careerfund.api.domains.models.responses.MyProfile;
 import id.careerfund.api.repositories.InterestRepository;
 import id.careerfund.api.repositories.RoleRepository;
@@ -206,12 +207,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public void uploadPhoto(Principal principal, MultipartFile file) {
+    public FileUrlResponse uploadPhoto(Principal principal, MultipartFile file) {
         User principalUser = UserMapper.principalToUser(principal);
         User user = userRepo.getById(principalUser.getId());
 
-        String photoPath = storageService.uploadFile(file);
+        String photoPath = storageService.uploadFile(file, "images/profile/");
         user.setPhotoPath(photoPath);
+        return new FileUrlResponse(photoPath);
     }
 
     private void saveUser(User user) {

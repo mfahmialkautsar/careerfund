@@ -3,6 +3,7 @@ package id.careerfund.api.controllers;
 import id.careerfund.api.domains.models.ApiResponse;
 import id.careerfund.api.domains.models.SimpleUser;
 import id.careerfund.api.domains.models.reqres.UpdateUser;
+import id.careerfund.api.domains.models.responses.FileUrlResponse;
 import id.careerfund.api.domains.models.responses.MyProfile;
 import id.careerfund.api.services.UserService;
 import id.careerfund.api.utils.mappers.UserMapper;
@@ -40,8 +41,12 @@ public class UserController extends HandlerController {
     }
 
     @PutMapping("profile/photo")
-    public ResponseEntity<ApiResponse> uploadPhoto(Principal principal, @RequestParam MultipartFile file) {
-        userService.uploadPhoto(principal, file);
-        return ResponseEntity.ok(ApiResponse.builder().build());
+    public ResponseEntity<ApiResponse<FileUrlResponse>> uploadPhoto(Principal principal, @RequestParam MultipartFile file) {
+        return ResponseEntity.ok(ApiResponse.<FileUrlResponse>builder().data(userService.uploadPhoto(principal, file)).build());
     }
+
+//    @PutMapping("profile/identity-card")
+//    public ResponseEntity<ApiResponse<FileUrlResponse>> uploadIdentityCard(Principal principal, @RequestParam MultipartFile file) {
+//        return ResponseEntity.ok()
+//    }
 }

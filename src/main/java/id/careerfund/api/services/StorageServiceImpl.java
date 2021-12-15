@@ -28,9 +28,9 @@ public class StorageServiceImpl implements StorageService {
     private String bucketUrl;
 
     @Override
-    public String uploadFile(MultipartFile multipartFile) {
+    public String uploadFile(MultipartFile multipartFile, String path) {
         File file = covertMultipartFileToFile(multipartFile);
-        String fileName = String.format("/images/profile/%s_%s", System.currentTimeMillis(), multipartFile.getOriginalFilename());
+        String fileName = String.format("%s%s_%s", path, System.currentTimeMillis(), multipartFile.getOriginalFilename());
         s3.putObject(new PutObjectRequest(bucketName, fileName, file));
         file.delete();
         return String.format("%s/%s", bucketUrl, fileName);

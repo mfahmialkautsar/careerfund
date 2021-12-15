@@ -6,6 +6,7 @@ import id.careerfund.api.domains.entities.User;
 import id.careerfund.api.domains.models.*;
 import id.careerfund.api.domains.models.reqres.UpdateUser;
 import id.careerfund.api.domains.models.requests.EmailRequest;
+import id.careerfund.api.domains.models.responses.FileUrlResponse;
 import id.careerfund.api.domains.models.responses.MyProfile;
 import javassist.NotFoundException;
 import org.springframework.web.multipart.MultipartFile;
@@ -48,5 +49,5 @@ public interface UserService {
 
     MyProfile getMyProfile(Principal principal);
 
-    void uploadPhoto(Principal principal, MultipartFile file);
+    FileUrlResponse uploadPhoto(Principal principal, MultipartFile file);
 }
