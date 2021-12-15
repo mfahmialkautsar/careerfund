@@ -39,7 +39,7 @@ public class BalanceServiceImpl implements BalanceService {
         FinancialTransaction paybackFinancialTransaction = new FinancialTransaction();
         paybackFinancialTransaction.setFinancialTransaction(financialTransaction);
         paybackFinancialTransaction.setNominal(lenderPayback);
-        financialTransactionRepo.save(financialTransaction);
+        financialTransactionRepo.save(paybackFinancialTransaction);
 
         BalanceHistory balanceHistory = new BalanceHistory();
         balanceHistory.setBalance(funding.getLender().getBalance());

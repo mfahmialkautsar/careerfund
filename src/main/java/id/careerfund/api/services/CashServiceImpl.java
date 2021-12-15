@@ -51,7 +51,7 @@ public class CashServiceImpl implements CashService {
         FinancialTransaction feeFinancialTransaction = new FinancialTransaction();
         feeFinancialTransaction.setFinancialTransaction(financialTransaction);
         feeFinancialTransaction.setNominal(fee);
-        financialTransactionRepo.save(financialTransaction);
+        financialTransactionRepo.save(feeFinancialTransaction);
 
         doDebit(feeFinancialTransaction);
     }
