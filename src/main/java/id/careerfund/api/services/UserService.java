@@ -8,6 +8,7 @@ import id.careerfund.api.domains.models.reqres.UpdateUser;
 import id.careerfund.api.domains.models.requests.EmailRequest;
 import id.careerfund.api.domains.models.responses.MyProfile;
 import javassist.NotFoundException;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 import java.security.Principal;
@@ -46,4 +47,6 @@ public interface UserService {
     UpdateUser updateUser(Principal principal, UpdateUser updateUser);
 
     MyProfile getMyProfile(Principal principal);
+
+    void uploadPhoto(Principal principal, MultipartFile file);
 }

@@ -1,5 +1,6 @@
 package id.careerfund.api.controllers;
 
+import id.careerfund.api.domains.models.ApiResponse;
 import id.careerfund.api.domains.models.SimpleUser;
 import id.careerfund.api.domains.models.reqres.UpdateUser;
 import id.careerfund.api.domains.models.responses.MyProfile;
@@ -7,10 +8,8 @@ import id.careerfund.api.services.UserService;
 import id.careerfund.api.utils.mappers.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.security.Principal;
@@ -38,5 +37,11 @@ public class UserController extends HandlerController {
     @GetMapping("/profile")
     public ResponseEntity<MyProfile> getProfile(Principal principal) {
         return ResponseEntity.ok(userService.getMyProfile(principal));
+    }
+
+    @PutMapping("profile/photo")
+    public ResponseEntity<ApiResponse> uploadPhoto(Principal principal, @RequestParam MultipartFile file) {
+        userService.uploadPhoto(principal, file);
+        return ResponseEntity.ok(ApiResponse.builder().build());
     }
 }

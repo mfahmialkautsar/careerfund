@@ -24,6 +24,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 import javax.transaction.Transactional;
@@ -44,6 +45,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final TokenService tokenService;
     private final EmailService emailService;
     private final OneTimePasswordService oneTimePasswordService;
+    private final StorageService storageService;
 
     @Override
     public User loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -201,6 +203,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public MyProfile getMyProfile(Principal principal) {
         return UserMapper.principalToMyProfile(principal);
+    }
+
+    @Override
+    public void uploadPhoto(Principal principal, MultipartFile file) {
+        User principalUser = UserMapper.principalToUser(principal);
+        User user = userRepo.getById(principalUser.getId());
+
+        String photoPath = storageService.uploadFile(file);
+        user.setPhotoPath(photoPath);
     }
 
     private void saveUser(User user) {
