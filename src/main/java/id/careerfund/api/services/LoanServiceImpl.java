@@ -120,7 +120,7 @@ public class LoanServiceImpl implements LoanService {
         Loan loan = optionalLoan.get();
 
         if (!isFundable(loan)) throw new RequestRejectedException("LOAN_FUNDING_FULL");
-        if (fundLoan.getFund() > loan.getTotalPayment() || loan.getTotalPayment() > loan.getTotalPayment() - fundingService.getTotalLoanFund(loan)) throw new RequestRejectedException("MAX_EXCEEDED");
+        if (fundLoan.getFund() > loan.getTotalPayment() || fundLoan.getFund() > loan.getTotalPayment() - fundingService.getTotalLoanFund(loan)) throw new RequestRejectedException("MAX_EXCEEDED");
         if (fundLoan.getFund() < getMinFund(loan)) throw new RequestRejectedException(String.valueOf(getMinFund(loan)));
 
         Funding funding = new Funding();

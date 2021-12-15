@@ -1,5 +1,6 @@
 package id.careerfund.api.utils.mappers;
 
+import id.careerfund.api.domains.entities.Funding;
 import id.careerfund.api.domains.entities.Loan;
 import id.careerfund.api.domains.entities.User;
 import id.careerfund.api.domains.models.SimpleUser;
@@ -49,19 +50,6 @@ public final class UserMapper {
 
     public static MyProfile principalToMyProfile(Principal principal) {
         User user = principalToUser(principal);
-        long totalDebt = 0L;
-        long paidDebt = 0L;
-        for (Loan loan : user.getLoans()) {
-            for (int i = 1; i < loan.getLoanPayments().size(); i++) {
-                if (loan.getLoanPayments().get(i) != null)
-                    paidDebt += loan.getLoanPayments().get(i).getPayment().getFinancialTransaction().getNominal().longValue();
-            }
-        }
-        for (Loan loan : user.getLoans()) {
-            if (!loan.getLoanPayments().isEmpty())
-                totalDebt += loan.getTotalPayment();
-        }
-        Long remainingDebt = totalDebt - paidDebt;
 
         MyProfile myProfile = new MyProfile();
         myProfile.setId(user.getId());
@@ -75,7 +63,33 @@ public final class UserMapper {
         myProfile.setPhotoPath(user.getPhotoPath());
         myProfile.setIdentityCardPath(user.getIdentityCardPath());
         myProfile.setAssessmentScore(user.getAssessmentScore());
-        myProfile.setRemainingDebt(remainingDebt);
+        myProfile.setRemainingDebt(getRemainingDebt(user));
+        myProfile.setAssets(getTotalAssets(user));
         return myProfile;
+    }
+
+    private static Long getRemainingDebt(User user) {
+        long totalDebt = 0L;
+        long paidDebt = 0L;
+        for (Loan loan : user.getLoans()) {
+            for (int i = 1; i < loan.getLoanPayments().size(); i++) {
+                if (loan.getLoanPayments().get(i) != null)
+                    paidDebt += loan.getLoanPayments().get(i).getPayment().getFinancialTransaction().getNominal().longValue();
+            }
+        }
+        for (Loan loan : user.getLoans()) {
+            if (!loan.getLoanPayments().isEmpty())
+                totalDebt += loan.getTotalPayment();
+        }
+        return totalDebt - paidDebt;
+    }
+
+    private static Long getTotalAssets(User user) {
+        long totalAssets = 0L;
+        for (Funding funding :
+                user.getFundings()) {
+            totalAssets += funding.getFinancialTransaction().getNominal();
+        }
+        return totalAssets;
     }
 }

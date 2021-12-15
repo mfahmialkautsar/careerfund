@@ -30,4 +30,6 @@ public class MyProfile {
     private Float assessmentScore;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Long remainingDebt;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Long assets;
 }
