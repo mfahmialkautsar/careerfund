@@ -1,5 +1,6 @@
 package id.careerfund.api.domains.models.responses;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import id.careerfund.api.domains.entities.Balance;
 import id.careerfund.api.domains.entities.Interest;
 import id.careerfund.api.domains.entities.Role;
@@ -27,4 +28,6 @@ public class MyProfile {
     private String photoPath;
     private String identityCardPath;
     private Float assessmentScore;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Long remainingDebt;
 }

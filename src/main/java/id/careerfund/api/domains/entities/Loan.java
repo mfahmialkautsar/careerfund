@@ -64,4 +64,9 @@ public class Loan extends Auditable {
 
     @OneToMany(mappedBy = "loan", orphanRemoval = true)
     private List<Funding> fundings = new ArrayList<>();
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @Transient
+    private Integer monthPaid;
+
 }

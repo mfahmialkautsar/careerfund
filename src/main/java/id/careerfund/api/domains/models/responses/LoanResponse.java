@@ -28,4 +28,5 @@ public class LoanResponse {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Boolean fundedByMe;
     private Long fundLeft;
+    private Integer monthPaid;
 }

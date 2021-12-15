@@ -1,5 +1,7 @@
 package id.careerfund.api.utils.mappers;
 
+import id.careerfund.api.domains.entities.Loan;
+import id.careerfund.api.domains.entities.LoanPayment;
 import id.careerfund.api.domains.entities.User;
 import id.careerfund.api.domains.models.SimpleUser;
 import id.careerfund.api.domains.models.UserRegister;
@@ -48,6 +50,17 @@ public final class UserMapper {
 
     public static MyProfile principalToMyProfile(Principal principal) {
         User user = principalToUser(principal);
+        long totalDebt = 0L;
+        long paidDebt = 0L;
+        for (Loan loan : user.getLoans()) {
+            for (LoanPayment loanPayment : loan.getLoanPayments()) {
+                paidDebt += loanPayment.getPayment().getFinancialTransaction().getNominal().longValue();
+            }
+        }
+        for (Loan loan : user.getLoans()) {
+            totalDebt += loan.getTotalPayment();
+        }
+        Long remainingDebt = totalDebt - paidDebt;
         MyProfile myProfile = new MyProfile();
         myProfile.setId(user.getId());
         myProfile.setName(user.getName());
@@ -60,6 +73,7 @@ public final class UserMapper {
         myProfile.setPhotoPath(user.getPhotoPath());
         myProfile.setIdentityCardPath(user.getIdentityCardPath());
         myProfile.setAssessmentScore(user.getAssessmentScore());
+        myProfile.setRemainingDebt(remainingDebt);
         return myProfile;
     }
 }

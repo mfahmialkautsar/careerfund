@@ -180,6 +180,7 @@ public class LoanServiceImpl implements LoanService {
 
     private void setLoanTransientValues(Loan loan, LoanResponse loanResponse, long userId) {
         loanResponse.setProgress(getLoanProgress(loan));
+        loanResponse.setMonthPaid(loan.getLoanPayments().size() - 1);
         loanResponse.setFundable(isFundable(loan));
         loanResponse.setFundedByMe(loanRepo.existsByFundings_Lender_Id(userId));
         loanResponse.setFundLeft(loan.getTotalPayment() - fundingService.getTotalLoanFund(loan));

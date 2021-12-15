@@ -9,16 +9,13 @@ import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -31,7 +28,7 @@ public class ClassServiceImpl implements ClassService {
     @Override
     public Page<Class> getClasses(Principal principal, Collection<Long> categories, Collection<Long> institutions, String name, Double priceStart, Double priceEnd, String sort, String order) {
         Pageable pageable = PageableHelper.getPageable(sort, order);
-        Page<Class> classes = classRepo.findDistinctByBootcamp_Categories_IdInAndBootcamp_Institutions_IdInAndBootcamp_NameIsLikeIgnoreCaseAndPriceGreaterThanEqualAndPriceLessThanEqual(categories, institutions, name, priceStart, priceEnd, pageable);
+        Page<Class> classes = classRepo.findDistinctByBootcamp_Categories_IdInAndBootcamp_Institutions_IdInAndBootcamp_NameIsLikeIgnoreCaseOrBootcamp_NameIsLikeIgnoreCaseOrInstitutions_NameIsLikeIgnoreCaseAndPriceGreaterThanEqualAndPriceLessThanEqual(categories, institutions, name, priceStart, priceEnd, pageable);
         if (principal != null) {
             User user = UserMapper.principalToUser(principal);
             classes.getContent().forEach(aClass -> aClass.setRegistered(aClass.getUserClass().retainAll(user.getUserClasses())));
