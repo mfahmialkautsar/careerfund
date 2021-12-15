@@ -29,6 +29,7 @@ public class BalanceServiceImpl implements BalanceService {
 
     @Override
     public void sendLenderPayback(Funding funding, FinancialTransaction financialTransaction) {
+        if (funding.getLender().getBalance() == null) addBalanceToUser(funding.getLender());
         Double lenderBalance = funding.getLender().getBalance().getNominal();
         Double lenderPayback = loanService.getLenderPayback(funding);
         funding.getLender()
