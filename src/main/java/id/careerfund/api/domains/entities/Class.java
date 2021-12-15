@@ -49,5 +49,9 @@ public class Class extends Auditable {
 
     @Transient
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Integer durationMonth;
+
+    @Transient
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Boolean registered;
 }

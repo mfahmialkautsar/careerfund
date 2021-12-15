@@ -11,6 +11,8 @@ public final class LoanMapper {
         loanResponse.setTenorMonth(loan.getTenorMonth());
         loanResponse.setTargetFund(loan.getTotalPayment());
         loanResponse.setAClass(loan.getUserClass().getAClass());
+        loanResponse.setMonthlyPayment(loan.getMonthlyPayment());
+        loanResponse.setTotalPayment(loan.getTotalPayment());
         return loanResponse;
     }
 }

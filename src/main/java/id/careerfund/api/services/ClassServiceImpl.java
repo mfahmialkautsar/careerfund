@@ -29,6 +29,7 @@ public class ClassServiceImpl implements ClassService {
     public Page<Class> getClasses(Principal principal, Collection<Long> categories, Collection<Long> institutions, String name, Double priceStart, Double priceEnd, String sort, String order) {
         Pageable pageable = PageableHelper.getPageable(sort, order);
         Page<Class> classes = classRepo.findDistinctByBootcamp_Categories_IdInAndBootcamp_Institutions_IdInAndBootcamp_NameIsLikeIgnoreCaseOrBootcamp_NameIsLikeIgnoreCaseOrInstitutions_NameIsLikeIgnoreCaseAndPriceGreaterThanEqualAndPriceLessThanEqual(categories, institutions, name, priceStart, priceEnd, pageable);
+        classes.getContent().forEach(this::setTransientValues);
         if (principal != null) {
             User user = UserMapper.principalToUser(principal);
             classes.getContent().forEach(aClass -> aClass.setRegistered(aClass.getUserClass().retainAll(user.getUserClasses())));
@@ -45,6 +46,7 @@ public class ClassServiceImpl implements ClassService {
             User user = UserMapper.principalToUser(principal);
             aClass.get().setRegistered(aClass.get().getUserClass().retainAll(user.getUserClasses()));
         }
+        setTransientValues(aClass.get());
 
         return aClass.get();
     }
@@ -52,5 +54,9 @@ public class ClassServiceImpl implements ClassService {
     @Override
     public Long getMonthDuration(Class aClass) {
         return aClass.getStartDate().until(aClass.getEndDate(), ChronoUnit.MONTHS);
+    }
+
+    private void setTransientValues(Class aClass) {
+        aClass.setDurationMonth(getMonthDuration(aClass).intValue());
     }
 }

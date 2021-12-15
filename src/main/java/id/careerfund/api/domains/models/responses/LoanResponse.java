@@ -2,8 +2,6 @@ package id.careerfund.api.domains.models.responses;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import id.careerfund.api.domains.entities.Class;
-import id.careerfund.api.domains.entities.Funding;
-import id.careerfund.api.domains.entities.LoanPayment;
 import id.careerfund.api.domains.entities.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,4 +27,7 @@ public class LoanResponse {
     private Boolean fundedByMe;
     private Long fundLeft;
     private Integer monthPaid;
+    private Long totalPayment;
+    private Long monthlyPayment;
+
 }

@@ -33,6 +33,7 @@ public class UserClassServiceImpl implements UserClassService {
     private final LoanService loanService;
     private final CashService cashService;
     private final BalanceService balanceService;
+    private final ClassService classService;
 
     private boolean hasPaidDownPayment(Loan loan) {
         return !loan.getLoanPayments().isEmpty();
@@ -154,5 +155,6 @@ public class UserClassServiceImpl implements UserClassService {
     private void setTransientProperties(UserClass userClass) {
         userClass.setIsDpPaid(!userClass.getLoan().getLoanPayments().isEmpty());
         userClass.getLoan().setMonthPaid(userClass.getLoan().getLoanPayments().size() - 1);
+        userClass.getAClass().setDurationMonth(classService.getMonthDuration(userClass.getAClass()).intValue());
     }
 }
