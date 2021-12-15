@@ -164,16 +164,40 @@ public class DatabaseSeeder implements ApplicationRunner {
     }
 
     private void saveClasses() {
-        Class binarBED2021 = new Class(1L, null, LocalDate.of(2021, 4, 1), LocalDate.of(2021, 6, 30), 80, 25000000L, bootcampRepository.getById(1L), null, null);
+        Class binarBED2021 = new Class();
+        binarBED2021.setId(1L);
+        binarBED2021.setStartDate(LocalDate.of(2021, 4, 1));
+        binarBED2021.setEndDate(LocalDate.of(2021, 6, 30));
+        binarBED2021.setQuota(80);
+        binarBED2021.setPrice(25000000L);
+        binarBED2021.setBootcamp(bootcampRepository.getById(1L));
         saveClassIfNotExists(binarBED2021);
 
-        Class ada2022 = new Class(2L, null, LocalDate.of(2022, 2, 1), LocalDate.of(2022, 12, 31), 200, 0L, bootcampRepository.getById(2L), null, null);
+        Class ada2022 = new Class();
+        ada2022.setId(2L);
+        ada2022.setStartDate(LocalDate.of(2022, 2, 1));
+        ada2022.setEndDate(LocalDate.of(2022, 12, 31));
+        ada2022.setQuota(200);
+        ada2022.setPrice(0L);
+        ada2022.setBootcamp(bootcampRepository.getById(2L));
         saveClassIfNotExists(ada2022);
 
-        Class gdk2019 = new Class(3L, null, LocalDate.of(2019, 6, 1), LocalDate.of(2019, 12, 31), 100000, 0L, bootcampRepository.getById(3L), null, null);
+        Class gdk2019 = new Class();
+        gdk2019.setId(3L);
+        gdk2019.setStartDate(LocalDate.of(2019, 6, 1));
+        gdk2019.setEndDate(LocalDate.of(2019, 12, 31));
+        gdk2019.setQuota(100000);
+        gdk2019.setPrice(0L);
+        gdk2019.setBootcamp(bootcampRepository.getById(3L));
         saveClassIfNotExists(gdk2019);
 
-        Class hacktiv8Web2022 = new Class(4L, null, LocalDate.of(2022, 7, 1), LocalDate.of(2024, 6, 30), 10000, 20000000L, bootcampRepository.getById(4L), null, null);
+        Class hacktiv8Web2022 = new Class();
+        hacktiv8Web2022.setId(4L);
+        hacktiv8Web2022.setStartDate(LocalDate.of(2022, 7, 1));
+        hacktiv8Web2022.setEndDate(LocalDate.of(2024, 6, 30));
+        hacktiv8Web2022.setQuota(10000);
+        hacktiv8Web2022.setPrice(20000000L);
+        hacktiv8Web2022.setBootcamp(bootcampRepository.getById(4L));
         saveClassIfNotExists(hacktiv8Web2022);
     }
 

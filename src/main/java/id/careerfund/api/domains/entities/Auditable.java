@@ -24,7 +24,6 @@ public abstract class Auditable {
     @JoinColumn(name = "created_by", updatable = false)
     private User createdBy;
 
-    @JsonIgnore
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -35,7 +34,6 @@ public abstract class Auditable {
     @JoinColumn(name = "updated_by")
     private User updatedBy;
 
-    @JsonIgnore
     @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;

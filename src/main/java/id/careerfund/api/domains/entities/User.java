@@ -60,7 +60,7 @@ public class User extends Auditable implements UserDetails {
     private String address;
 
     @Column(name = "assessment_score")
-    private Float assessmentScore = 0.0F;
+    private Float assessmentScore;
 
     @JsonIgnore
     @Column(name = "is_not_expired", nullable = false)
@@ -82,7 +82,6 @@ public class User extends Auditable implements UserDetails {
     @OneToMany(mappedBy = "borrower", orphanRemoval = true)
     private List<Loan> loans = new ArrayList<>();
 
-    @JsonIgnore
     @OneToMany(mappedBy = "user", orphanRemoval = true)
     private List<UserClass> userClasses = new ArrayList<>();
 
