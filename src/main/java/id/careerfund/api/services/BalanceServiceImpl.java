@@ -3,6 +3,7 @@ package id.careerfund.api.services;
 import id.careerfund.api.domains.EBalanceChange;
 import id.careerfund.api.domains.entities.*;
 import id.careerfund.api.repositories.BalanceHistoryRepository;
+import id.careerfund.api.repositories.BalanceRepository;
 import id.careerfund.api.repositories.FinancialTransactionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Slf4j
 public class BalanceServiceImpl implements BalanceService {
+    private final BalanceRepository balanceRepo;
     private final BalanceHistoryRepository balanceHistoryRepo;
     private final LoanService loanService;
     private final FinancialTransactionRepository financialTransactionRepo;
@@ -21,6 +23,7 @@ public class BalanceServiceImpl implements BalanceService {
     @Override
     public void addBalanceToUser(User user) {
         Balance balance = new Balance();
+        balanceRepo.save(balance);
         user.setBalance(balance);
     }
 
