@@ -41,6 +41,6 @@ public class FinancialTransaction extends Auditable {
     private BalanceHistory balanceHistory;
 
     @JsonIgnore
-    @OneToOne(mappedBy = "transferedToBootcamp", orphanRemoval = true)
+    @OneToOne(mappedBy = "transferredToBootcamp", orphanRemoval = true)
     private UserClass userClass;
 }

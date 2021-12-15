@@ -2,11 +2,14 @@ package id.careerfund.api.domains.models.responses;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import id.careerfund.api.domains.entities.Class;
-import id.careerfund.api.domains.entities.User;
+import id.careerfund.api.domains.entities.LoanPayment;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,7 +17,7 @@ import lombok.Setter;
 @Setter
 public class LoanResponse {
     private Long id;
-    private User borrower;
+    private Borrower borrower;
     private Double interestPercent;
     private Integer tenorMonth;
     private Long targetFund;
@@ -29,5 +32,5 @@ public class LoanResponse {
     private Integer monthPaid;
     private Long totalPayment;
     private Long monthlyPayment;
-
+    private List<LoanPayment> loanPayments = new ArrayList<>();
 }

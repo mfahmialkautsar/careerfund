@@ -42,7 +42,7 @@ public class UserClass extends Auditable {
 
     @OneToOne(orphanRemoval = true)
     @JoinColumn(name = "transfered_to_bootcamp_id")
-    private FinancialTransaction transferedToBootcamp;
+    private FinancialTransaction transferredToBootcamp;
 
     @Transient
     @JsonInclude(JsonInclude.Include.NON_NULL)

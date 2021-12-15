@@ -3,7 +3,9 @@ package id.careerfund.api.services;
 import id.careerfund.api.domains.entities.*;
 import id.careerfund.api.domains.entities.Class;
 import id.careerfund.api.domains.models.requests.FundLoan;
+import id.careerfund.api.domains.models.responses.Borrower;
 import id.careerfund.api.domains.models.responses.LoanResponse;
+import id.careerfund.api.domains.models.responses.UserClassResponse;
 import id.careerfund.api.repositories.FinancialTransactionRepository;
 import id.careerfund.api.repositories.FundingRepository;
 import id.careerfund.api.repositories.LoanRepository;
@@ -20,7 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.security.Principal;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -158,7 +162,7 @@ public class LoanServiceImpl implements LoanService {
             FinancialTransaction financialTransaction = new FinancialTransaction();
             financialTransaction.setNominal(loan.getTotalPayment() + loan.getDownPayment().doubleValue());
             financialTransactionRepo.save(financialTransaction);
-            loan.getUserClass().setTransferedToBootcamp(financialTransaction);
+            loan.getUserClass().setTransferredToBootcamp(financialTransaction);
             cashService.doCredit(financialTransaction);
         }
     }
@@ -184,5 +188,6 @@ public class LoanServiceImpl implements LoanService {
         loanResponse.setFundable(isFundable(loan));
         loanResponse.setFundedByMe(loanRepo.existsByFundings_Lender_Id(userId));
         loanResponse.setFundLeft(loan.getTotalPayment() - fundingService.getTotalLoanFund(loan));
+
     }
 }
