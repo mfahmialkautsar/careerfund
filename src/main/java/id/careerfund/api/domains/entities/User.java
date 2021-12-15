@@ -47,7 +47,10 @@ public class User extends Auditable implements UserDetails {
     private Collection<Role> roles = new ArrayList<>();
 
     @Column(name = "phone_number", unique = true)
-    private Long phoneNumber;
+    private String phoneNumber;
+
+    @Column(name = "photo_path")
+    private String photoPath;
 
     @Lob
     @Column(name = "address")
@@ -145,5 +148,4 @@ public class User extends Auditable implements UserDetails {
     @OneToOne(orphanRemoval = true)
     @JoinColumn(name = "balance_id")
     private Balance balance;
-
 }

@@ -4,6 +4,9 @@ import com.auth0.jwt.exceptions.TokenExpiredException;
 import id.careerfund.api.domains.entities.Interest;
 import id.careerfund.api.domains.entities.User;
 import id.careerfund.api.domains.models.*;
+import id.careerfund.api.domains.models.reqres.UpdateUser;
+import id.careerfund.api.domains.models.requests.EmailRequest;
+import id.careerfund.api.domains.models.responses.MyProfile;
 import javassist.NotFoundException;
 
 import javax.mail.MessagingException;
@@ -37,4 +40,10 @@ public interface UserService {
     TokenResponse signIn(SignInRequest signInRequest) throws Exception;
 
     TokenResponse verifyUser(OtpRequest otpRequest) throws NotFoundException, TokenExpiredException;
+
+    UpdateUser getProfileUpdate(Principal principal);
+
+    UpdateUser updateUser(Principal principal, UpdateUser updateUser);
+
+    MyProfile getMyProfile(Principal principal);
 }

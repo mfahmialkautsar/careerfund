@@ -7,6 +7,9 @@ import id.careerfund.api.domains.entities.OneTimePassword;
 import id.careerfund.api.domains.entities.Role;
 import id.careerfund.api.domains.entities.User;
 import id.careerfund.api.domains.models.*;
+import id.careerfund.api.domains.models.reqres.UpdateUser;
+import id.careerfund.api.domains.models.requests.EmailRequest;
+import id.careerfund.api.domains.models.responses.MyProfile;
 import id.careerfund.api.repositories.InterestRepository;
 import id.careerfund.api.repositories.RoleRepository;
 import id.careerfund.api.repositories.UserRepository;
@@ -177,6 +180,27 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         User user = oneTimePassword.getUser();
         user.setIsEnabled(true);
         return tokenService.getToken(user);
+    }
+
+    @Override
+    public UpdateUser getProfileUpdate(Principal principal) {
+        return UserMapper.principalToUpdateUser(principal);
+    }
+
+    @Override
+    public UpdateUser updateUser(Principal principal, UpdateUser updateUser) {
+        User userPrincipal = UserMapper.principalToUser(principal);
+        User user = userRepo.getById(userPrincipal.getId());
+        user.setName(updateUser.getName());
+        user.setEmail(updateUser.getEmail());
+        user.setPhoneNumber(updateUser.getPhoneNumber());
+        user.setAddress(updateUser.getAddress());
+        return UserMapper.userToUpdateUser(user);
+    }
+
+    @Override
+    public MyProfile getMyProfile(Principal principal) {
+        return UserMapper.principalToMyProfile(principal);
     }
 
     private void saveUser(User user) {

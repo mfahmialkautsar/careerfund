@@ -3,6 +3,7 @@ package id.careerfund.api.controllers;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import id.careerfund.api.domains.models.*;
 import id.careerfund.api.domains.models.ResponseTemplate;
+import id.careerfund.api.domains.models.requests.EmailRequest;
 import id.careerfund.api.services.RefreshTokenService;
 import id.careerfund.api.services.TokenService;
 import id.careerfund.api.services.UserService;
