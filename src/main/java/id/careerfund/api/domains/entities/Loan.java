@@ -64,17 +64,4 @@ public class Loan extends Auditable {
 
     @OneToMany(mappedBy = "loan", orphanRemoval = true)
     private List<Funding> fundings = new ArrayList<>();
-
-    @Transient
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Boolean fundable;
-
-    @Transient
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Double progress;
-
-    @Transient
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Boolean fundedByMe;
-
 }

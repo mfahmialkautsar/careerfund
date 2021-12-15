@@ -1,9 +1,9 @@
 package id.careerfund.api.controllers;
 
 import id.careerfund.api.domains.ERole;
-import id.careerfund.api.domains.entities.Loan;
 import id.careerfund.api.domains.models.ApiResponse;
 import id.careerfund.api.domains.models.requests.FundLoan;
+import id.careerfund.api.domains.models.responses.LoanResponse;
 import id.careerfund.api.services.LoanService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,28 +28,28 @@ public class LoanController extends HandlerController {
 
     @Secured({ERole.Constants.LENDER})
     @GetMapping("/lender/loans")
-    public ResponseEntity<ApiResponse<List<Loan>>> getLenderMyLoans(
+    public ResponseEntity<ApiResponse<List<LoanResponse>>> getLenderMyLoans(
             Principal principal
     ) {
-        return ResponseEntity.ok(ApiResponse.<List<Loan>>builder().data(loanService.getLoans(principal, null, null).getContent()).build());
+        return ResponseEntity.ok(ApiResponse.<List<LoanResponse>>builder().data(loanService.getLoans(principal, null, null).getContent()).build());
     }
 
     @Secured({ERole.Constants.LENDER})
     @GetMapping("/lender/my/loans")
-    public ResponseEntity<ApiResponse<List<Loan>>> getLenderLoans(
+    public ResponseEntity<ApiResponse<List<LoanResponse>>> getLenderLoans(
             Principal principal
     ) {
-        return ResponseEntity.ok(ApiResponse.<List<Loan>>builder().data(loanService.getMyLoans(principal, null, null).getContent()).build());
+        return ResponseEntity.ok(ApiResponse.<List<LoanResponse>>builder().data(loanService.getMyLoans(principal, null, null).getContent()).build());
     }
 
     @Secured({ERole.Constants.LENDER})
     @PostMapping("/lender/loans/fund")
-    public ResponseEntity<ApiResponse<Loan>> fundLoan(
+    public ResponseEntity<ApiResponse<LoanResponse>> fundLoan(
             Principal principal,
             @Valid @RequestBody FundLoan fundLoan
     ) {
         try {
-            return ResponseEntity.ok(ApiResponse.<Loan>builder().data(loanService.fundLoan(principal, fundLoan)).build());
+            return ResponseEntity.ok(ApiResponse.<LoanResponse>builder().data(loanService.fundLoan(principal, fundLoan)).build());
         } catch (RequestRejectedException e) {
             if (e.getMessage().equals("LOAN_FUNDING_FULL"))
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This loan has been fully funded", e.getCause());
