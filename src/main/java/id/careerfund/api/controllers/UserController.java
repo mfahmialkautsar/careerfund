@@ -51,12 +51,12 @@ public class UserController extends HandlerController {
         return ResponseEntity.ok(ApiResponse.<FileUrlResponse>builder().data(userService.uploadIdentityCard(principal, file)).build());
     }
 
-    @PutMapping("profile/assessment-score")
+    @PutMapping("/profile/assessment-score")
     public ResponseEntity<ApiResponse<AssessmentScore>> saveAssessmentScore(Principal principal, @Valid @RequestBody AssessmentScore assessmentScore) {
         return ResponseEntity.ok(ApiResponse.<AssessmentScore>builder().data(userService.saveAssessmentScore(principal, assessmentScore)).build());
     }
 
-    @GetMapping("profile/assessment-score")
+    @GetMapping("/profile/assessment-score")
     public ResponseEntity<ApiResponse<AssessmentScore>> getAssessmentScore(Principal principal) {
         return ResponseEntity.ok(ApiResponse.<AssessmentScore>builder().data(userService.getAssessmentScore(principal)).build());
     }

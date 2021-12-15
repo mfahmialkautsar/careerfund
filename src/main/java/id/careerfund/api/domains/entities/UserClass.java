@@ -1,6 +1,7 @@
 package id.careerfund.api.domains.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -42,5 +43,9 @@ public class UserClass extends Auditable {
     @OneToOne(orphanRemoval = true)
     @JoinColumn(name = "transfered_to_bootcamp_id")
     private FinancialTransaction transferedToBootcamp;
+
+    @Transient
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Boolean isDpPaid;
 
 }

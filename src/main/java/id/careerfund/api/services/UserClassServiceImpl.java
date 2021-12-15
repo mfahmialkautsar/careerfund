@@ -47,6 +47,7 @@ public class UserClassServiceImpl implements UserClassService {
             throw new RequestRejectedException("DOWNPAYMENT_GREATER");
         if (userClassRequest.getDownPayment() < aClass.getPrice() * 0.1)
             throw new RequestRejectedException("DOWNPAYMENT_LESS");
+
         Loan loan = new Loan();
         loan.setBorrower(user);
         loan.setDownPayment(userClassRequest.getDownPayment());
@@ -58,17 +59,22 @@ public class UserClassServiceImpl implements UserClassService {
         loan.setMonthlyPayment(loanService.getMonthlyPayment(aClass, userClassRequest.getTenorMonth(), userClassRequest.getDownPayment()));
         loan.setTotalPayment(loanService.getTotalPayment(aClass, userClassRequest.getTenorMonth(), userClassRequest.getDownPayment()));
         loanRepo.save(loan);
+
         UserClass userClass = new UserClass();
         userClass.setAClass(aClass);
         userClass.setUser(user);
         userClass.setLoan(loan);
         userClassRepo.save(userClass);
+
+        setTransientProperties(userClass);
         return userClass;
     }
 
     @Override
     public List<UserClass> getMyClasses(Principal principal) {
-        return userClassRepo.findByUser(UserMapper.principalToUser(principal));
+        List<UserClass> userClasses = userClassRepo.findByUser(UserMapper.principalToUser(principal));
+        userClasses.forEach(this::setTransientProperties);
+        return userClasses;
     }
 
     @Override
@@ -76,6 +82,7 @@ public class UserClassServiceImpl implements UserClassService {
         UserClass userClass = userClassRepo.getById(id);
         User user = UserMapper.principalToUser(principal);
         if (!userClass.getUser().getId().equals(user.getId())) throw new AccessDeniedException("USER_WRONG");
+        setTransientProperties(userClass);
         return userClass;
     }
 
@@ -132,6 +139,8 @@ public class UserClassServiceImpl implements UserClassService {
                 throw new RequestRejectedException("WRONG_AMOUNT");
             }
         }
+
+        setTransientProperties(userClass);
         return userClass;
     }
 
@@ -140,5 +149,9 @@ public class UserClassServiceImpl implements UserClassService {
         paymentRepo.save(payment);
         loanPaymentRepo.save(loanPayment);
         userClass.getLoan().getLoanPayments().add(loanPayment);
+    }
+
+    private void setTransientProperties(UserClass userClass) {
+        userClass.setIsDpPaid(!userClass.getLoan().getLoanPayments().isEmpty());
     }
 }
