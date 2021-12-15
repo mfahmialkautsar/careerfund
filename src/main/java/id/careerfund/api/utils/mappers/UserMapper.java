@@ -59,6 +59,7 @@ public final class UserMapper {
         myProfile.setBalance(user.getBalance());
         myProfile.setPhotoPath(user.getPhotoPath());
         myProfile.setIdentityCardPath(user.getIdentityCardPath());
+        myProfile.setAssessmentScore(user.getAssessmentScore());
         return myProfile;
     }
 }

@@ -4,6 +4,7 @@ import com.auth0.jwt.exceptions.TokenExpiredException;
 import id.careerfund.api.domains.entities.Interest;
 import id.careerfund.api.domains.entities.User;
 import id.careerfund.api.domains.models.*;
+import id.careerfund.api.domains.models.reqres.AssessmentScore;
 import id.careerfund.api.domains.models.reqres.UpdateUser;
 import id.careerfund.api.domains.models.requests.EmailRequest;
 import id.careerfund.api.domains.models.responses.FileUrlResponse;
@@ -52,4 +53,8 @@ public interface UserService {
     FileUrlResponse uploadPhoto(Principal principal, MultipartFile file);
 
     FileUrlResponse uploadIdentityCard(Principal principal, MultipartFile file);
+
+    AssessmentScore saveAssessmentScore(Principal principal, AssessmentScore assessmentScore);
+
+    AssessmentScore getAssessmentScore(Principal principal);
 }

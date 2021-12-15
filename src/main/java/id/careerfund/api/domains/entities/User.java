@@ -59,6 +59,9 @@ public class User extends Auditable implements UserDetails {
     @Column(name = "address")
     private String address;
 
+    @Column(name = "assessment_score")
+    private Float assessmentScore = 0.0F;
+
     @JsonIgnore
     @Column(name = "is_not_expired", nullable = false)
     private Boolean isNotExpired = true;

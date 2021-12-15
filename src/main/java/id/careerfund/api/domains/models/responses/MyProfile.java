@@ -26,4 +26,5 @@ public class MyProfile {
     private Balance balance;
     private String photoPath;
     private String identityCardPath;
+    private Float assessmentScore;
 }

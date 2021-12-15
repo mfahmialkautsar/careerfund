@@ -2,6 +2,7 @@ package id.careerfund.api.controllers;
 
 import id.careerfund.api.domains.models.ApiResponse;
 import id.careerfund.api.domains.models.SimpleUser;
+import id.careerfund.api.domains.models.reqres.AssessmentScore;
 import id.careerfund.api.domains.models.reqres.UpdateUser;
 import id.careerfund.api.domains.models.responses.FileUrlResponse;
 import id.careerfund.api.domains.models.responses.MyProfile;
@@ -40,13 +41,23 @@ public class UserController extends HandlerController {
         return ResponseEntity.ok(userService.getMyProfile(principal));
     }
 
-    @PutMapping("profile/photo")
+    @PutMapping("/profile/photo")
     public ResponseEntity<ApiResponse<FileUrlResponse>> uploadPhoto(Principal principal, @RequestParam MultipartFile file) {
         return ResponseEntity.ok(ApiResponse.<FileUrlResponse>builder().data(userService.uploadPhoto(principal, file)).build());
     }
 
-    @PutMapping("profile/identity-card")
+    @PutMapping("/profile/identity-card")
     public ResponseEntity<ApiResponse<FileUrlResponse>> uploadIdentityCard(Principal principal, @RequestParam MultipartFile file) {
         return ResponseEntity.ok(ApiResponse.<FileUrlResponse>builder().data(userService.uploadIdentityCard(principal, file)).build());
+    }
+
+    @PutMapping("profile/assessment-score")
+    public ResponseEntity<ApiResponse<AssessmentScore>> saveAssessmentScore(Principal principal, @Valid @RequestBody AssessmentScore assessmentScore) {
+        return ResponseEntity.ok(ApiResponse.<AssessmentScore>builder().data(userService.saveAssessmentScore(principal, assessmentScore)).build());
+    }
+
+    @GetMapping("profile/assessment-score")
+    public ResponseEntity<ApiResponse<AssessmentScore>> getAssessmentScore(Principal principal) {
+        return ResponseEntity.ok(ApiResponse.<AssessmentScore>builder().data(userService.getAssessmentScore(principal)).build());
     }
 }

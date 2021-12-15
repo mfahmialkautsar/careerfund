@@ -7,6 +7,7 @@ import id.careerfund.api.domains.entities.OneTimePassword;
 import id.careerfund.api.domains.entities.Role;
 import id.careerfund.api.domains.entities.User;
 import id.careerfund.api.domains.models.*;
+import id.careerfund.api.domains.models.reqres.AssessmentScore;
 import id.careerfund.api.domains.models.reqres.UpdateUser;
 import id.careerfund.api.domains.models.requests.EmailRequest;
 import id.careerfund.api.domains.models.responses.FileUrlResponse;
@@ -224,6 +225,20 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         String identityCardPath = storageService.uploadFile(file, "images/ic/");
         user.setIdentityCardPath(identityCardPath);
         return new FileUrlResponse(identityCardPath);
+    }
+
+    @Override
+    public AssessmentScore saveAssessmentScore(Principal principal, AssessmentScore assessmentScore) {
+        User principalUser = UserMapper.principalToUser(principal);
+        User user = userRepo.getById(principalUser.getId());
+        user.setAssessmentScore(assessmentScore.getScore());
+        return new AssessmentScore(assessmentScore.getScore());
+    }
+
+    @Override
+    public AssessmentScore getAssessmentScore(Principal principal) {
+        User user = UserMapper.principalToUser(principal);
+        return new AssessmentScore(user.getAssessmentScore());
     }
 
     private void saveUser(User user) {
