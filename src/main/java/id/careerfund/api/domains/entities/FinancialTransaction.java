@@ -21,7 +21,12 @@ public class FinancialTransaction extends Auditable {
     private Long id;
 
     @Column(name = "nominal", nullable = false)
-    private Long nominal;
+    private Double nominal;
+
+    @JsonIgnore
+    @OneToOne(orphanRemoval = true)
+    @JoinColumn(name = "financial_transaction_id")
+    private FinancialTransaction financialTransaction;
 
     @JsonIgnore
     @OneToOne(mappedBy = "financialTransaction", orphanRemoval = true)
@@ -35,4 +40,7 @@ public class FinancialTransaction extends Auditable {
     @OneToOne(mappedBy = "financialTransaction", orphanRemoval = true)
     private BalanceHistory balanceHistory;
 
+    @JsonIgnore
+    @OneToOne(mappedBy = "transferedToBootcamp", orphanRemoval = true)
+    private UserClass userClass;
 }

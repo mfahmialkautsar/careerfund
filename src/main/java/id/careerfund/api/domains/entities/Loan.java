@@ -1,6 +1,7 @@
 package id.careerfund.api.domains.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -63,4 +64,17 @@ public class Loan extends Auditable {
 
     @OneToMany(mappedBy = "loan", orphanRemoval = true)
     private List<Funding> fundings = new ArrayList<>();
+
+    @Transient
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Boolean fundable;
+
+    @Transient
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Double progress;
+
+    @Transient
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Boolean fundedByMe;
+
 }

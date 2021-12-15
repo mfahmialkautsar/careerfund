@@ -25,8 +25,7 @@ public class Cash extends Auditable {
     @Column(name = "current", nullable = false)
     private Double current = 0.0;
 
-    @OneToOne(optional = false, orphanRemoval = true)
-    @JoinColumn(name = "financial_transaction_id", nullable = false)
+    @OneToOne(orphanRemoval = true)
+    @JoinColumn(name = "financial_transaction_id")
     private FinancialTransaction financialTransaction;
-
 }

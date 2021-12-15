@@ -8,5 +8,5 @@ import id.careerfund.api.domains.entities.User;
 public interface BalanceService {
     void addBalanceToUser(User user);
 
-    void setLenderPayback(Funding funding, Loan loan, FinancialTransaction financialTransaction);
+    void sendLenderPayback(Funding funding, FinancialTransaction financialTransaction);
 }

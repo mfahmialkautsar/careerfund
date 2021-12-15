@@ -38,4 +38,9 @@ public class UserClass extends Auditable {
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @OneToOne(orphanRemoval = true)
+    @JoinColumn(name = "transfered_to_bootcamp_id")
+    private FinancialTransaction transferedToBootcamp;
+
 }

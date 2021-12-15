@@ -90,7 +90,7 @@ public class UserClassServiceImpl implements UserClassService {
         PaymentAccount paymentAccount = paymentAccountRepo.getById(payMyLoan.getPaymentAccountId());
 
         FinancialTransaction financialTransaction = new FinancialTransaction();
-        financialTransaction.setNominal(payMyLoan.getPaymentAmount());
+        financialTransaction.setNominal(payMyLoan.getPaymentAmount().doubleValue());
 
         Payment payment = new Payment();
         payment.setPaymentAccount(paymentAccount);
@@ -121,9 +121,13 @@ public class UserClassServiceImpl implements UserClassService {
 //                Add to company cash
                 cashService.doDebit(financialTransaction);
 
-//                Reduce company cash & Add to lender balance
-                cashService.doCredit(financialTransaction);
-                loan.getFundings().forEach(funding -> balanceService.setLenderPayback(funding, loan, financialTransaction));
+//                Take fee
+                cashService.takeMonthlyFee(financialTransaction,
+                        loanService.getMonthlyAdminFee(userClass.getAClass(), loan.getTenorMonth(), loan.getDownPayment())
+                                .doubleValue());
+
+//                Send payback to lender balance
+                loan.getFundings().forEach(funding -> balanceService.sendLenderPayback(funding, financialTransaction));
             } else {
                 throw new RequestRejectedException("WRONG_AMOUNT");
             }

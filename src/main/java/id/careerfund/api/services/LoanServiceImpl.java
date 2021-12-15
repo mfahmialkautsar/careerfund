@@ -1,9 +1,10 @@
 package id.careerfund.api.services;
 
+import id.careerfund.api.domains.entities.*;
 import id.careerfund.api.domains.entities.Class;
-import id.careerfund.api.domains.entities.Funding;
-import id.careerfund.api.domains.entities.Loan;
-import id.careerfund.api.domains.entities.User;
+import id.careerfund.api.domains.models.requests.FundLoan;
+import id.careerfund.api.repositories.FinancialTransactionRepository;
+import id.careerfund.api.repositories.FundingRepository;
 import id.careerfund.api.repositories.LoanRepository;
 import id.careerfund.api.utils.helpers.PageableHelper;
 import id.careerfund.api.utils.mappers.UserMapper;
@@ -11,10 +12,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.web.firewall.RequestRejectedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.security.Principal;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -22,15 +26,19 @@ import java.security.Principal;
 @Slf4j
 public class LoanServiceImpl implements LoanService {
     private final LoanRepository loanRepo;
+    private final FinancialTransactionRepository financialTransactionRepo;
+    private final FundingRepository fundingRepo;
+    private final FundingService fundingService;
+    private final CashService cashService;
 
     @Override
     public Double getInterestPercent(Class aClass, Integer tenorMonth) {
-        return 5.0 * (tenorMonth/12.0);
+        return 5.0 * (tenorMonth / 12.0);
     }
 
     @Override
     public Long getInterestNumber(Class aClass, Integer tenorMonth, Long downPayment) {
-        return (long) Math.ceil((getInterestPercent(aClass, tenorMonth)/100) * getTotalPaymentWithoutAdminFeeAndInterest(aClass, downPayment));
+        return (long) Math.ceil((getInterestPercent(aClass, tenorMonth) / 100) * getTotalPaymentWithoutAdminFeeAndInterest(aClass, downPayment));
     }
 
     @Override
@@ -68,20 +76,101 @@ public class LoanServiceImpl implements LoanService {
         return getTotalPaymentWithoutAdminFee(aClass, tenorMonth, downPayment) + getAdminFee(aClass, tenorMonth, downPayment);
     }
 
-    public Double getLenderPayback(Loan loan, Funding funding) {
-        return (double) (loan.getInterestNumber() * funding.getFinancialTransaction().getNominal()) + funding.getFinancialTransaction().getNominal();
+    @Override
+    public Double getLenderPayback(Funding funding) {
+        return (((funding.getLoan().getInterestPercent() / 100.0) * funding.getFinancialTransaction().getNominal()) / funding.getLoan().getTenorMonth())
+                + fundingService.getMonthlyCapital(funding);
     }
 
     @Override
-    public Page<Loan> getLoans(String sort, String order) {
+    public Page<Loan> getLoans(Principal principal, String sort, String order) {
+        User user = UserMapper.principalToUser(principal);
         Pageable pageable = PageableHelper.getPageable(sort, order);
-        return loanRepo.findDistinctByLoanPaymentsNotEmpty(pageable);
+        Page<Loan> loanPage = loanRepo.findDistinctByLoanPaymentsNotEmpty(pageable);
+        setPageTransientValues(loanPage, user.getId());
+        return loanPage;
     }
 
     @Override
     public Page<Loan> getMyLoans(Principal principal, String sort, String order) {
         User user = UserMapper.principalToUser(principal);
         Pageable pageable = PageableHelper.getPageable(sort, order);
-        return loanRepo.findDistinctByFundings_IdIs(user.getId(), pageable);
+        Page<Loan> loanPage = loanRepo.findByFundings_Lender_Id(user.getId(), pageable);
+        setPageTransientValues(loanPage, user.getId());
+        return loanPage;
+    }
+
+    @Override
+    public Loan fundLoan(Principal principal, FundLoan fundLoan) throws RequestRejectedException, EntityNotFoundException {
+        User user = UserMapper.principalToUser(principal);
+
+        FinancialTransaction financialTransaction = new FinancialTransaction();
+        financialTransaction.setNominal(fundLoan.getFund().doubleValue());
+        financialTransactionRepo.save(financialTransaction);
+
+        Optional<Loan> optionalLoan = loanRepo.findById(fundLoan.getLoanId());
+
+        if (!optionalLoan.isPresent()) throw new EntityNotFoundException("LOAN_NOT_FOUND");
+        Loan loan = optionalLoan.get();
+
+        if (!isFundable(loan)) throw new RequestRejectedException("LOAN_FUNDING_FULL");
+        if (fundLoan.getFund() > loan.getTotalPayment() || loan.getTotalPayment() > loan.getTotalPayment() - fundingService.getTotalLoanFund(loan)) throw new RequestRejectedException("MAX_EXCEEDED");
+        if (fundLoan.getFund() < getMinFund(loan)) throw new RequestRejectedException(String.valueOf(getMinFund(loan)));
+
+        Funding funding = new Funding();
+        funding.setLender(user);
+        funding.setFinancialTransaction(financialTransaction);
+        funding.setLoan(loan);
+        fundingRepo.save(funding);
+
+        loan.getFundings().add(funding);
+
+        cashService.doDebit(financialTransaction);
+
+        finishFund(loan);
+        setLoanTransientValues(loan, user.getId());
+        return loan;
+    }
+
+    private boolean isFundable(Loan loan) {
+        Long totalFund = fundingService.getTotalLoanFund(loan);
+        return totalFund < loan.getTotalPayment();
+    }
+
+    private Long getMinFund(Loan loan) {
+        Long totalFund = fundingService.getTotalLoanFund(loan);
+        Long neededFund = loan.getTotalPayment();
+        long deviation = neededFund - totalFund;
+        if (deviation < 200000) return deviation;
+        return 100000L;
+    }
+
+    private void finishFund(Loan loan) {
+        if (!isFundable(loan)) {
+            FinancialTransaction financialTransaction = new FinancialTransaction();
+            financialTransaction.setNominal(loan.getTotalPayment() + loan.getDownPayment().doubleValue());
+            financialTransactionRepo.save(financialTransaction);
+            loan.getUserClass().setTransferedToBootcamp(financialTransaction);
+            cashService.doCredit(financialTransaction);
+        }
+    }
+
+    private double getLoanProgress(Loan loan) {
+        long funded = 0;
+        for (int i = 0; i < loan.getLoanPayments().size(); i++) {
+            if (i == 0) continue;
+            funded += loan.getLoanPayments().get(i).getPayment().getFinancialTransaction().getNominal();
+        }
+        return (double) funded / (double) loan.getTotalPayment();
+    }
+
+    private void setPageTransientValues(Page<Loan> loanPage, long userId) {
+        loanPage.getContent().forEach(loan -> setLoanTransientValues(loan, userId));
+    }
+
+    private void setLoanTransientValues(Loan loan, long userId) {
+        loan.setProgress(getLoanProgress(loan));
+        loan.setFundable(isFundable(loan));
+        loan.setFundedByMe(loanRepo.existsByFundings_Lender_Id(userId));
     }
 }

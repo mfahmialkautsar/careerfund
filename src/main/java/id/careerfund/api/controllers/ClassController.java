@@ -55,6 +55,7 @@ public class ClassController extends HandlerController {
         } catch (NullPointerException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Parameter cannot be null", e.getCause());
         } catch (Exception e) {
+            e.printStackTrace();
             throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Failed to get classes. Try again next time", e.getCause());
         }
     }
@@ -95,6 +96,7 @@ public class ClassController extends HandlerController {
             else
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Downpayment less than expected", e.getCause());
         } catch (Exception e) {
+            e.printStackTrace();
             throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Failed to register to a class. Try again next time", e.getCause());
         }
     }

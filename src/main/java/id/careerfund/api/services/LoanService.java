@@ -3,8 +3,11 @@ package id.careerfund.api.services;
 import id.careerfund.api.domains.entities.Class;
 import id.careerfund.api.domains.entities.Funding;
 import id.careerfund.api.domains.entities.Loan;
+import id.careerfund.api.domains.models.requests.FundLoan;
 import org.springframework.data.domain.Page;
+import org.springframework.security.web.firewall.RequestRejectedException;
 
+import javax.persistence.EntityNotFoundException;
 import java.security.Principal;
 
 public interface LoanService {
@@ -26,9 +29,11 @@ public interface LoanService {
 
     Long getTotalPayment(Class aClass, Integer tenorMonth, Long downPayment);
 
-    Double getLenderPayback(Loan loan, Funding funding);
+    Double getLenderPayback(Funding funding);
 
-    Page<Loan> getLoans(String sort, String order);
+    Page<Loan> getLoans(Principal principal, String sort, String order);
 
     Page<Loan> getMyLoans(Principal principal, String sort, String order);
+
+    Loan fundLoan(Principal principal, FundLoan fundLoan) throws RequestRejectedException, EntityNotFoundException;
 }

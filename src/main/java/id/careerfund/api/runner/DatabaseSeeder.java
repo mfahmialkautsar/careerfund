@@ -42,6 +42,8 @@ public class DatabaseSeeder implements ApplicationRunner {
     private PaymentAccountRepository paymentAccountRepository;
     @Autowired
     private BankRepository bankRepository;
+    @Autowired
+    private BalanceRepository balanceRepository;
 
     @Override
     public void run(ApplicationArguments args) {
@@ -78,6 +80,9 @@ public class DatabaseSeeder implements ApplicationRunner {
         invoker.setName("Invoker");
         invoker.setPassword(passwordEncoder.encode("1234"));
         invoker.setRoles(Arrays.asList(roleRepository.findByName(ERole.ROLE_LENDER), roleRepository.findByName(ERole.ROLE_USER)));
+        Balance invokerBalance = new Balance();
+        balanceRepository.save(invokerBalance);
+        invoker.setBalance(invokerBalance);
         registerUserIfNotExists(invoker);
 
         User meepo = new User();
@@ -86,6 +91,9 @@ public class DatabaseSeeder implements ApplicationRunner {
         meepo.setName("Meepo");
         meepo.setPassword(passwordEncoder.encode("1234"));
         meepo.setRoles(Arrays.asList(roleRepository.findByName(ERole.ROLE_BORROWER), roleRepository.findByName(ERole.ROLE_USER)));
+        Balance meepoBalance = new Balance();
+        balanceRepository.save(meepoBalance);
+        meepo.setBalance(meepoBalance);
         registerUserIfNotExists(meepo);
 
         User dump = new User();

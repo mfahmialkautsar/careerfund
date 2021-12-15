@@ -91,21 +91,25 @@ public class User extends Auditable implements UserDetails {
         return email;
     }
 
+    @JsonIgnore
     @Override
     public boolean isAccountNonExpired() {
         return isNotExpired;
     }
 
+    @JsonIgnore
     @Override
     public boolean isAccountNonLocked() {
         return isNotLocked;
     }
 
+    @JsonIgnore
     @Override
     public boolean isCredentialsNonExpired() {
         return isCredentialsNotExpired;
     }
 
+    @JsonIgnore
     @Override
     public boolean isEnabled() {
         return isEnabled;
@@ -137,6 +141,7 @@ public class User extends Auditable implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "interest_id"))
     private Collection<Interest> interests;
 
+    @JsonIgnore
     @OneToOne(orphanRemoval = true)
     @JoinColumn(name = "balance_id")
     private Balance balance;

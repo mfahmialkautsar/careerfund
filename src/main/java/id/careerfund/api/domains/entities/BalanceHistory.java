@@ -34,7 +34,7 @@ public class BalanceHistory extends Auditable {
     @JoinColumn(name = "financial_transaction_id")
     private FinancialTransaction financialTransaction;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     @Column(name = "balance_change_type")
     private EBalanceChange balanceChangeType;
 
