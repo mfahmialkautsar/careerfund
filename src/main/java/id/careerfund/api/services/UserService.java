@@ -50,4 +50,6 @@ public interface UserService {
     MyProfile getMyProfile(Principal principal);
 
     FileUrlResponse uploadPhoto(Principal principal, MultipartFile file);
+
+    FileUrlResponse uploadIdentityCard(Principal principal, MultipartFile file);
 }

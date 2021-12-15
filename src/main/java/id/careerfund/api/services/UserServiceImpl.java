@@ -216,6 +216,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return new FileUrlResponse(photoPath);
     }
 
+    @Override
+    public FileUrlResponse uploadIdentityCard(Principal principal, MultipartFile file) {
+        User principalUser = UserMapper.principalToUser(principal);
+        User user = userRepo.getById(principalUser.getId());
+
+        String identityCardPath = storageService.uploadFile(file, "images/ic/");
+        user.setIdentityCardPath(identityCardPath);
+        return new FileUrlResponse(identityCardPath);
+    }
+
     private void saveUser(User user) {
         log.info("Saving new user {}", user.getName());
         user.setPassword(passwordEncoder.encode(user.getPassword()));

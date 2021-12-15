@@ -25,4 +25,5 @@ public class MyProfile {
     private Collection<Interest> interests;
     private Balance balance;
     private String photoPath;
+    private String identityCardPath;
 }

@@ -45,8 +45,8 @@ public class UserController extends HandlerController {
         return ResponseEntity.ok(ApiResponse.<FileUrlResponse>builder().data(userService.uploadPhoto(principal, file)).build());
     }
 
-//    @PutMapping("profile/identity-card")
-//    public ResponseEntity<ApiResponse<FileUrlResponse>> uploadIdentityCard(Principal principal, @RequestParam MultipartFile file) {
-//        return ResponseEntity.ok()
-//    }
+    @PutMapping("profile/identity-card")
+    public ResponseEntity<ApiResponse<FileUrlResponse>> uploadIdentityCard(Principal principal, @RequestParam MultipartFile file) {
+        return ResponseEntity.ok(ApiResponse.<FileUrlResponse>builder().data(userService.uploadIdentityCard(principal, file)).build());
+    }
 }

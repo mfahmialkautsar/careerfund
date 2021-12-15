@@ -58,6 +58,7 @@ public final class UserMapper {
         myProfile.setInterests(user.getInterests());
         myProfile.setBalance(user.getBalance());
         myProfile.setPhotoPath(user.getPhotoPath());
+        myProfile.setIdentityCardPath(user.getIdentityCardPath());
         return myProfile;
     }
 }
