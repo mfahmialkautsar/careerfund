@@ -29,7 +29,12 @@ public final class UserMapper {
 
     public static UpdateUser principalToUpdateUser(Principal principal) {
         User user = principalToUser(principal);
-        return new UpdateUser(user.getName(), user.getPhoneNumber(), user.getEmail(), user.getAddress());
+        UpdateUser updateUser = new UpdateUser();
+        updateUser.setName(user.getName());
+        updateUser.setEmail(user.getEmail());
+        updateUser.setPhoneNumber(user.getPhoneNumber());
+        updateUser.setAddress(user.getAddress());
+        return updateUser;
     }
 
     public static UpdateUser userToUpdateUser(User user) {
