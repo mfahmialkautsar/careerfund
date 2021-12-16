@@ -9,7 +9,7 @@ import java.util.List;
 public final class UserClassMapper {
     public static UserClassResponse entityToResponse(UserClass userClass) {
         UserClassResponse userClassResponse = new UserClassResponse();
-        userClassResponse.setId(userClassResponse.getId());
+        userClassResponse.setId(userClass.getId());
         userClassResponse.setAClass(userClass.getAClass());
         userClassResponse.setLoan(userClass.getLoan());
         userClassResponse.setScore(userClass.getScore());
