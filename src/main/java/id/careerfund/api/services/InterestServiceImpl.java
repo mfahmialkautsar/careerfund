@@ -1,6 +1,6 @@
 package id.careerfund.api.services;
 
-import id.careerfund.api.domains.models.Interests;
+import id.careerfund.api.domains.models.responses.Interests;
 import id.careerfund.api.repositories.InterestRepository;
 import id.careerfund.api.utils.mappers.InterestMapper;
 import lombok.RequiredArgsConstructor;

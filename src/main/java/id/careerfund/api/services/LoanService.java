@@ -35,5 +35,6 @@ public interface LoanService {
 
     Page<LoanResponse> getMyLoans(Principal principal, String sort, String order);
 
-    LoanResponse fundLoan(Principal principal, FundLoan fundLoan) throws RequestRejectedException, EntityNotFoundException;
+    LoanResponse fundLoan(Principal principal, FundLoan fundLoan)
+            throws RequestRejectedException, EntityNotFoundException;
 }

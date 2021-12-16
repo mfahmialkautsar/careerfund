@@ -1,11 +1,9 @@
-package id.careerfund.api.domains.models;
+package id.careerfund.api.domains.models.responses;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Setter
-@Getter
+@Data
 @AllArgsConstructor
 public class DeviceInfo {
     private String userAgent;

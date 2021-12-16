@@ -34,4 +34,3 @@ public class RefreshToken extends Auditable implements Serializable {
     @Column(nullable = false)
     private Instant expiryDate;
 }
-

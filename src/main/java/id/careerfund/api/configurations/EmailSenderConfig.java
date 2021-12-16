@@ -12,7 +12,7 @@ import org.springframework.util.ObjectUtils;
 
 import javax.mail.internet.MimeMessage;
 
-@SuppressWarnings({"WeakerAccess"})
+@SuppressWarnings({ "WeakerAccess" })
 @Component("emailSender")
 public class EmailSenderConfig {
     private final static Logger logger = LoggerFactory.getLogger(EmailSenderConfig.class);
@@ -44,7 +44,6 @@ public class EmailSenderConfig {
         if (ObjectUtils.isEmpty(from)) {
             from = "admin@mail.com";
         }
-        boolean success = false;
         try {
             MimeMessageHelper helper = new MimeMessageHelper(mime, true);
             helper.setFrom(from, senderName);
@@ -52,7 +51,6 @@ public class EmailSenderConfig {
             helper.setSubject(subject);
             helper.setText(message, true);
             mailSender.send(mime);
-            success = true;
         } catch (Exception e) {
             logger.error("error: " + e.getMessage());
         }
@@ -63,4 +61,3 @@ public class EmailSenderConfig {
         taskExecutor.execute(() -> send(to, subject, message));
     }
 }
-

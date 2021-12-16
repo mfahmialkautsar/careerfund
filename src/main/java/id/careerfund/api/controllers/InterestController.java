@@ -1,8 +1,8 @@
 package id.careerfund.api.controllers;
 
-import id.careerfund.api.domains.models.Interests;
-import id.careerfund.api.domains.models.MyInterests;
-import id.careerfund.api.domains.models.UpdateInterest;
+import id.careerfund.api.domains.models.requests.UpdateInterest;
+import id.careerfund.api.domains.models.responses.Interests;
+import id.careerfund.api.domains.models.responses.MyInterests;
 import id.careerfund.api.services.InterestService;
 import id.careerfund.api.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -40,15 +40,17 @@ public class InterestController extends HandlerController {
         return ResponseEntity.created(uri).build();
     }
 
-//    @PutMapping("/my/interests")
-//    public ResponseEntity<?> addMyInterests(Principal principal, @Valid @RequestBody UpdateInterest updateInterest) {
-//        userService.addInterests(principal, updateInterest);
-//        return ResponseEntity.ok().build();
-//    }
-//
-//    @DeleteMapping("/my/interests")
-//    public ResponseEntity<?> deleteMyInterests(Principal principal, @Valid @RequestBody UpdateInterest updateInterest) {
-//        userService.deleteInterests(principal, updateInterest);
-//        return ResponseEntity.ok().build();
-//    }
+    // @PutMapping("/my/interests")
+    // public ResponseEntity<?> addMyInterests(Principal principal, @Valid
+    // @RequestBody UpdateInterest updateInterest) {
+    // userService.addInterests(principal, updateInterest);
+    // return ResponseEntity.ok().build();
+    // }
+    //
+    // @DeleteMapping("/my/interests")
+    // public ResponseEntity<?> deleteMyInterests(Principal principal, @Valid
+    // @RequestBody UpdateInterest updateInterest) {
+    // userService.deleteInterests(principal, updateInterest);
+    // return ResponseEntity.ok().build();
+    // }
 }

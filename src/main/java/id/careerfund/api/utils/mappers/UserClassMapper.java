@@ -20,8 +20,7 @@ public final class UserClassMapper {
 
     public static List<UserClassResponse> entitiesToResponses(List<UserClass> userClasses) {
         List<UserClassResponse> userClassResponses = new ArrayList<>();
-        for (UserClass userClass :
-                userClasses) {
+        for (UserClass userClass : userClasses) {
             userClassResponses.add(entityToResponse(userClass));
         }
         return userClassResponses;

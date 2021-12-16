@@ -23,8 +23,7 @@ public class AsyncConfig extends AsyncConfigurerSupport {
     }
 
     @Override
-    public AsyncUncaughtExceptionHandler
-    getAsyncUncaughtExceptionHandler() {
+    public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
         return (ex, method, params) -> {
             log.error("Exception: {}", ex.getMessage());
             log.error("Method Name: {}", method.getName());

@@ -1,9 +1,8 @@
 package id.careerfund.api.services;
 
 import id.careerfund.api.domains.entities.User;
-import id.careerfund.api.domains.models.RequestOtpPassword;
-import id.careerfund.api.domains.models.ResponseTemplate;
-import id.careerfund.api.domains.models.UpdatePassword;
+import id.careerfund.api.domains.models.requests.EmailRequest;
+import id.careerfund.api.domains.models.requests.UpdatePassword;
 
 public interface ForgotPasswordService {
     Boolean setUserPassword(String token, String password);
@@ -18,9 +17,9 @@ public interface ForgotPasswordService {
 
     String randomString(int size, boolean numberOnly);
 
-    ResponseTemplate sendEmailForgot(RequestOtpPassword model) throws Exception;
+    void sendEmailForgot(EmailRequest model) throws Exception;
 
     void sendEmail(String email, User user) throws Exception;
 
-    ResponseTemplate resetPassword(String token, UpdatePassword model) throws Exception;
+    void resetPassword(String token, UpdatePassword model) throws Exception;
 }

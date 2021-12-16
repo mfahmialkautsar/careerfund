@@ -12,8 +12,14 @@ import id.careerfund.api.domains.models.reqres.AssessmentScore;
 import id.careerfund.api.domains.models.reqres.UpdateUser;
 import id.careerfund.api.domains.models.requests.EmailRequest;
 import id.careerfund.api.domains.models.requests.IdRequest;
+import id.careerfund.api.domains.models.requests.OtpRequest;
+import id.careerfund.api.domains.models.requests.SignInRequest;
+import id.careerfund.api.domains.models.requests.UpdateInterest;
+import id.careerfund.api.domains.models.requests.UserRegister;
 import id.careerfund.api.domains.models.responses.FileUrlResponse;
+import id.careerfund.api.domains.models.responses.MyInterests;
 import id.careerfund.api.domains.models.responses.MyProfile;
+import id.careerfund.api.domains.models.responses.TokenResponse;
 import id.careerfund.api.repositories.InterestRepository;
 import id.careerfund.api.repositories.RoleRepository;
 import id.careerfund.api.repositories.UserRepository;
@@ -66,7 +72,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public void registerUser(UserRegister userRegister) throws Exception {
         User user = UserMapper.userRegisterToUser(userRegister);
-        if (!getIsEmailAvailable(user.getEmail())) throw new Exception("EMAIL_UNAVAILABLE");
+        if (!getIsEmailAvailable(user.getEmail()))
+            throw new Exception("EMAIL_UNAVAILABLE");
         saveUser(user);
         addRoleToUser(user.getEmail(), RoleMapper.mapRole(userRegister.getRole()));
         addRoleToUser(user.getEmail(), ERole.ROLE_USER);
@@ -80,51 +87,53 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return userRepo.findByEmail(email);
     }
 
-//    @Override
-//    public List<User> getUsers() {
-//        log.info("Fetching all users");
-//        return userRepo.findAll();
-//    }
+    // @Override
+    // public List<User> getUsers() {
+    // log.info("Fetching all users");
+    // return userRepo.findAll();
+    // }
 
     @Override
     public boolean getIsEmailAvailable(String email) {
         return getUser(email) == null;
     }
 
-//    @Override
-//    public Interest addInterest(User user, Long id) {
-//        Collection<Interest> userInterests = user.getInterests();
-//        Optional<Interest> interest = interestRepo.findById(id);
-//        if (!interest.isPresent()) return null;
-//        if (isUserHasInterest(user, interest.get())) return null;
-//        userInterests.add(interest.get());
-//        return interest.get();
-//    }
-//
-//    @Override
-//    public Interest deleteInterest(User user, Long id) {
-//        Collection<Interest> userInterests = user.getInterests();
-//        Interest interest = interestRepo.getById(id);
-//        if (!isUserHasInterest(user, interest)) return null;
-//        userInterests.remove(interest);
-//        return interest;
-//    }
+    // @Override
+    // public Interest addInterest(User user, Long id) {
+    // Collection<Interest> userInterests = user.getInterests();
+    // Optional<Interest> interest = interestRepo.findById(id);
+    // if (!interest.isPresent()) return null;
+    // if (isUserHasInterest(user, interest.get())) return null;
+    // userInterests.add(interest.get());
+    // return interest.get();
+    // }
+    //
+    // @Override
+    // public Interest deleteInterest(User user, Long id) {
+    // Collection<Interest> userInterests = user.getInterests();
+    // Interest interest = interestRepo.getById(id);
+    // if (!isUserHasInterest(user, interest)) return null;
+    // userInterests.remove(interest);
+    // return interest;
+    // }
 
-//    @Override
-//    public void addInterests(Principal principal, UpdateInterest updateInterest) {
-//        User user = getUser(principal.getName());
-//        for (Long i : updateInterest.getInterestIds()) {
-//            addInterest(user, i);
-//        }
-//    }
-//
-//    @Override
-//    public void deleteInterests(Principal principal, UpdateInterest updateInterest) {
-//        User user = getUser(principal.getName());
-//        for (Long i : updateInterest.getInterestIds()) {
-//            deleteInterest(user, i);
-//        }
-//    }
+    // @Override
+    // public void addInterests(Principal principal, UpdateInterest updateInterest)
+    // {
+    // User user = getUser(principal.getName());
+    // for (Long i : updateInterest.getInterestIds()) {
+    // addInterest(user, i);
+    // }
+    // }
+    //
+    // @Override
+    // public void deleteInterests(Principal principal, UpdateInterest
+    // updateInterest) {
+    // User user = getUser(principal.getName());
+    // for (Long i : updateInterest.getInterestIds()) {
+    // deleteInterest(user, i);
+    // }
+    // }
 
     @Override
     public MyInterests getMyInterests(Principal principal) {
@@ -135,7 +144,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public UpdateInterest saveInterests(Principal principal, UpdateInterest updateInterest) {
         User user = getUser(principal.getName());
-        List<Interest> interests = updateInterest.getInterestIds().stream().map(interestRepo::getById).collect(Collectors.toList());
+        List<Interest> interests = updateInterest.getInterestIds().stream().map(interestRepo::getById)
+                .collect(Collectors.toList());
         log.info("Saving interests {}", interests);
         user.setInterests(interests);
         return updateInterest;
@@ -149,7 +159,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public void sendVerificationEmail(EmailRequest emailRequest) throws MessagingException, NotFoundException {
         User user = getUser(emailRequest.getEmail());
-        if (user == null) throw new NotFoundException("USER_NOT_FOUND");
+        if (user == null)
+            throw new NotFoundException("USER_NOT_FOUND");
         String otp = oneTimePasswordService.generateOtp(user);
         emailService.sendVerificationEmail(user, otp);
     }
@@ -161,7 +172,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         User user = userRepo.findByEmail(email);
 
-        if (user == null) throw new NotFoundException("USER_NOT_FOUND");
+        if (user == null)
+            throw new NotFoundException("USER_NOT_FOUND");
         if (!passwordEncoder.matches(signInRequest.getPassword(), user.getPassword()))
             throw new BadCredentialsException("PASSWORD_WRONG");
 

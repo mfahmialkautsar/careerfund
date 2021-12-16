@@ -14,4 +14,3 @@ public class JwtConfig {
     private String tokenPrefix;
     private Integer tokenExpiredDays;
 }
-

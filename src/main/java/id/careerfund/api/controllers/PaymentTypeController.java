@@ -1,7 +1,7 @@
 package id.careerfund.api.controllers;
 
 import id.careerfund.api.domains.entities.PaymentType;
-import id.careerfund.api.domains.models.ApiResponse;
+import id.careerfund.api.domains.models.responses.ApiResponse;
 import id.careerfund.api.services.PaymentTypeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +17,7 @@ public class PaymentTypeController {
 
     @GetMapping("/payment-types")
     public ResponseEntity<ApiResponse<List<PaymentType>>> getPaymentTypes() {
-        return ResponseEntity.ok(ApiResponse.<List<PaymentType>>builder().data(paymentTypeService.getPaymentTypes()).build());
+        return ResponseEntity
+                .ok(ApiResponse.<List<PaymentType>>builder().data(paymentTypeService.getPaymentTypes()).build());
     }
 }

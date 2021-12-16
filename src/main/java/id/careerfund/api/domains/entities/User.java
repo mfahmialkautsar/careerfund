@@ -42,9 +42,7 @@ public class User extends Auditable implements UserDetails {
 
     @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "users_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Collection<Role> roles = new ArrayList<>();
 
     @Column(name = "phone_number", unique = true)
@@ -134,7 +132,7 @@ public class User extends Auditable implements UserDetails {
         return isEnabled;
     }
 
-    //    Forget Pass here
+    // Forget Pass here
     @JsonIgnore
     private String verifyToken;
 
@@ -148,16 +146,14 @@ public class User extends Auditable implements UserDetails {
     @JsonIgnore
     private Date otpExpiredDate;
 
-    //add one to many users
+    // add one to many users
     @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private List<RefreshToken> refreshTokens;
 
     @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "users_interests",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "interest_id"))
+    @JoinTable(name = "users_interests", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "interest_id"))
     private Collection<Interest> interests;
 
     @JsonIgnore

@@ -2,8 +2,8 @@ package id.careerfund.api.services;
 
 import id.careerfund.api.domains.entities.RefreshToken;
 import id.careerfund.api.domains.entities.User;
-import id.careerfund.api.domains.models.NewTokenRequest;
-import id.careerfund.api.domains.models.TokenResponse;
+import id.careerfund.api.domains.models.requests.NewTokenRequest;
+import id.careerfund.api.domains.models.responses.TokenResponse;
 import id.careerfund.api.repositories.UserRepository;
 import id.careerfund.api.utils.mappers.RoleMapper;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +49,8 @@ public class TokenServiceImpl implements TokenService {
             User user = userRepo.findByEmail(email);
             assert user != null;
             return refreshTokenService.createRefreshToken(user.getId()).getToken();
-        } else return null;
+        } else
+            return null;
     }
 
     @Override

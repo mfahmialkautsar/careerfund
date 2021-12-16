@@ -30,7 +30,8 @@ public class StorageServiceImpl implements StorageService {
     @Override
     public String uploadFile(MultipartFile multipartFile, String path) {
         File file = covertMultipartFileToFile(multipartFile);
-        String fileName = String.format("%s%s_%s", path, System.currentTimeMillis(), multipartFile.getOriginalFilename());
+        String fileName = String.format("%s%s_%s", path, System.currentTimeMillis(),
+                multipartFile.getOriginalFilename());
         s3.putObject(new PutObjectRequest(bucketName, fileName, file));
         file.delete();
         return String.format("%s/%s", bucketUrl, fileName);
@@ -44,8 +45,7 @@ public class StorageServiceImpl implements StorageService {
 
     private File covertMultipartFileToFile(MultipartFile file) {
         File convertedFile = new File(Optional.ofNullable(file.getOriginalFilename()).orElse("unnamed"));
-        try {
-            FileOutputStream fileOutputStream = new FileOutputStream(convertedFile);
+        try (FileOutputStream fileOutputStream = new FileOutputStream(convertedFile)) {
             fileOutputStream.write(file.getBytes());
         } catch (IOException e) {
             log.error("Error converting multipartFile to file", e);

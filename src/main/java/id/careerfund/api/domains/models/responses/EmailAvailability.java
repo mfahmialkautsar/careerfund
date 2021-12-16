@@ -1,4 +1,4 @@
-package id.careerfund.api.domains.models;
+package id.careerfund.api.domains.models.responses;
 
 import lombok.AllArgsConstructor;
 

@@ -1,4 +1,4 @@
-package id.careerfund.api.domains.models;
+package id.careerfund.api.domains.models.requests;
 
 import lombok.Data;
 
@@ -9,4 +9,3 @@ public class UpdatePassword {
     @NotEmpty(message = "NewPassword is mandatory")
     public String newPassword;
 }
-

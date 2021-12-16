@@ -4,14 +4,12 @@ import id.careerfund.api.domains.entities.Class;
 import id.careerfund.api.domains.entities.FinancialTransaction;
 import id.careerfund.api.domains.entities.Loan;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 public class UserClassResponse {
     private Long id;
     private Class aClass;

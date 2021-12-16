@@ -1,8 +1,8 @@
 package id.careerfund.api.controllers;
 
 import id.careerfund.api.domains.ERole;
-import id.careerfund.api.domains.models.ApiResponse;
 import id.careerfund.api.domains.models.requests.FundLoan;
+import id.careerfund.api.domains.models.responses.ApiResponse;
 import id.careerfund.api.domains.models.responses.LoanResponse;
 import id.careerfund.api.services.LoanService;
 import lombok.RequiredArgsConstructor;
@@ -26,42 +26,46 @@ import java.util.List;
 public class LoanController extends HandlerController {
     private final LoanService loanService;
 
-    @Secured({ERole.Constants.LENDER})
+    @Secured({ ERole.Constants.LENDER })
     @GetMapping("/lender/loans")
     public ResponseEntity<ApiResponse<List<LoanResponse>>> getLenderMyLoans(
-            Principal principal
-    ) {
-        return ResponseEntity.ok(ApiResponse.<List<LoanResponse>>builder().data(loanService.getLoans(principal, null, null).getContent()).build());
+            Principal principal) {
+        return ResponseEntity.ok(ApiResponse.<List<LoanResponse>>builder()
+                .data(loanService.getLoans(principal, null, null).getContent()).build());
     }
 
-    @Secured({ERole.Constants.LENDER})
+    @Secured({ ERole.Constants.LENDER })
     @GetMapping("/lender/my/loans")
     public ResponseEntity<ApiResponse<List<LoanResponse>>> getLenderLoans(
-            Principal principal
-    ) {
-        return ResponseEntity.ok(ApiResponse.<List<LoanResponse>>builder().data(loanService.getMyLoans(principal, null, null).getContent()).build());
+            Principal principal) {
+        return ResponseEntity.ok(ApiResponse.<List<LoanResponse>>builder()
+                .data(loanService.getMyLoans(principal, null, null).getContent()).build());
     }
 
-    @Secured({ERole.Constants.LENDER})
+    @Secured({ ERole.Constants.LENDER })
     @PostMapping("/lender/loans/fund")
     public ResponseEntity<ApiResponse<LoanResponse>> fundLoan(
             Principal principal,
-            @Valid @RequestBody FundLoan fundLoan
-    ) {
+            @Valid @RequestBody FundLoan fundLoan) {
         try {
-            return ResponseEntity.ok(ApiResponse.<LoanResponse>builder().data(loanService.fundLoan(principal, fundLoan)).build());
+            return ResponseEntity
+                    .ok(ApiResponse.<LoanResponse>builder().data(loanService.fundLoan(principal, fundLoan)).build());
         } catch (RequestRejectedException e) {
             if (e.getMessage().equals("LOAN_FUNDING_FULL"))
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This loan has been fully funded", e.getCause());
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This loan has been fully funded",
+                        e.getCause());
             else if (e.getMessage().equals("MAX_EXCEEDED"))
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Maximal available fund exceeded.", e.getCause());
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Maximal available fund exceeded.",
+                        e.getCause());
             else
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("Remaining funding is less than 200.000, available fund is %s", e.getMessage()));
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        String.format("Remaining funding is less than 200.000, available fund is %s", e.getMessage()));
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Loan not found", e.getCause());
         } catch (Exception e) {
             e.printStackTrace();
-            throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Failed to register to a class. Try again next time", e.getCause());
+            throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED,
+                    "Failed to register to a class. Try again next time", e.getCause());
         }
     }
 }

@@ -1,7 +1,7 @@
 package id.careerfund.api.utils.mappers;
 
 import id.careerfund.api.domains.entities.Interest;
-import id.careerfund.api.domains.models.Interests;
+import id.careerfund.api.domains.models.responses.Interests;
 
 import java.util.List;
 

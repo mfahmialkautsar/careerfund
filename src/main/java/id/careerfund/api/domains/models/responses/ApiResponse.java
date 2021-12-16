@@ -1,12 +1,9 @@
-package id.careerfund.api.domains.models;
+package id.careerfund.api.domains.models.responses;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.util.List;
-import java.util.Map;
 
 @AllArgsConstructor
 @Getter
@@ -20,5 +17,4 @@ public class ApiResponse<T> {
     private Integer page;
     private Integer totalPages;
     private Long totalElements;
-//    private List<Map<String, List<String>>> filters;
 }

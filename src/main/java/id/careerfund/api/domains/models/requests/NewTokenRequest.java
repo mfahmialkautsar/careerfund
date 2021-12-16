@@ -1,13 +1,11 @@
-package id.careerfund.api.domains.models;
+package id.careerfund.api.domains.models.requests;
 
-import lombok.*;
+import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class SignOutRequest {
+public class NewTokenRequest {
     @NotEmpty(message = "Refresh Token is mandatory")
     private String refreshToken;
 }

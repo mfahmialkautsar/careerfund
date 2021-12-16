@@ -6,17 +6,15 @@ import id.careerfund.api.domains.entities.Balance;
 import id.careerfund.api.domains.entities.Interest;
 import id.careerfund.api.domains.entities.Role;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 public class MyProfile {
     private Long id;
     private String name;

@@ -1,7 +1,7 @@
 package id.careerfund.api.controllers;
 
 import id.careerfund.api.domains.entities.Institution;
-import id.careerfund.api.domains.models.ApiResponse;
+import id.careerfund.api.domains.models.responses.ApiResponse;
 import id.careerfund.api.services.InstitutionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

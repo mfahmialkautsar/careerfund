@@ -1,9 +1,11 @@
 package id.careerfund.api.controllers;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import id.careerfund.api.domains.models.ApiError;
-import id.careerfund.api.domains.models.ErrorResponse;
-import id.careerfund.api.domains.models.ValidationErrorResponse;
+
+import id.careerfund.api.domains.models.responses.ApiError;
+import id.careerfund.api.domains.models.responses.ErrorResponse;
+import id.careerfund.api.domains.models.responses.ValidationErrorResponse;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

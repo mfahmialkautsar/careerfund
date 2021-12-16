@@ -5,14 +5,12 @@ import id.careerfund.api.domains.entities.FinancialTransaction;
 import id.careerfund.api.repositories.CashRepository;
 import id.careerfund.api.repositories.FinancialTransactionRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
-@Slf4j
 public class CashServiceImpl implements CashService {
     private final CashRepository cashRepo;
     private final FinancialTransactionRepository financialTransactionRepo;

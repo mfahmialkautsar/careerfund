@@ -3,9 +3,8 @@ package id.careerfund.api.utils.mappers;
 import id.careerfund.api.domains.entities.Funding;
 import id.careerfund.api.domains.entities.Loan;
 import id.careerfund.api.domains.entities.User;
-import id.careerfund.api.domains.models.SimpleUser;
-import id.careerfund.api.domains.models.UserRegister;
 import id.careerfund.api.domains.models.reqres.UpdateUser;
+import id.careerfund.api.domains.models.requests.UserRegister;
 import id.careerfund.api.domains.models.responses.Borrower;
 import id.careerfund.api.domains.models.responses.MyProfile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,11 +22,6 @@ public final class UserMapper {
 
     public static User principalToUser(Principal principal) {
         return (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
-    }
-
-    public static SimpleUser principalToSimpleUser(Principal principal) {
-        User user = principalToUser(principal);
-        return new SimpleUser(user.getName(), user.getEmail());
     }
 
     public static UpdateUser principalToUpdateUser(Principal principal) {
@@ -89,7 +83,8 @@ public final class UserMapper {
         for (Loan loan : user.getLoans()) {
             for (int i = 1; i < loan.getLoanPayments().size(); i++) {
                 if (loan.getLoanPayments().get(i) != null)
-                    paidDebt += loan.getLoanPayments().get(i).getPayment().getFinancialTransaction().getNominal().longValue();
+                    paidDebt += loan.getLoanPayments().get(i).getPayment().getFinancialTransaction().getNominal()
+                            .longValue();
             }
         }
         for (Loan loan : user.getLoans()) {
@@ -101,8 +96,7 @@ public final class UserMapper {
 
     private static Long getTotalAssets(User user) {
         long totalAssets = 0L;
-        for (Funding funding :
-                user.getFundings()) {
+        for (Funding funding : user.getFundings()) {
             totalAssets += funding.getFinancialTransaction().getNominal();
         }
         return totalAssets;

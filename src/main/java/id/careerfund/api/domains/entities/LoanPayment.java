@@ -32,8 +32,8 @@ public class LoanPayment extends Auditable {
     @JoinColumn(name = "payment_id", nullable = false)
     private Payment payment;
 
-//    @ManyToOne(optional = false)
-//    @JoinColumn(name = "payment_account_id", nullable = false)
-//    private PaymentAccount paymentAccount;
+    // @ManyToOne(optional = false)
+    // @JoinColumn(name = "payment_account_id", nullable = false)
+    // private PaymentAccount paymentAccount;
 
 }

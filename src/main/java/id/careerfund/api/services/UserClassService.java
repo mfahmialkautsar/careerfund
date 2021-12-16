@@ -12,11 +12,13 @@ import java.util.List;
 
 public interface UserClassService {
 
-    UserClass registerClass(Principal principal, UserClassRequest userClassRequest) throws EntityNotFoundException, RequestRejectedException;
+    UserClass registerClass(Principal principal, UserClassRequest userClassRequest)
+            throws EntityNotFoundException, RequestRejectedException;
 
     List<UserClass> getMyClasses(Principal principal);
 
     UserClass getMyClassById(Principal principal, Long id) throws AccessDeniedException;
 
-    UserClass payMyClass(Principal principal, Long id, PayMyLoan payMyLoan) throws AccessDeniedException, RequestRejectedException, EntityNotFoundException;
+    UserClass payMyClass(Principal principal, Long id, PayMyLoan payMyLoan)
+            throws AccessDeniedException, RequestRejectedException, EntityNotFoundException;
 }

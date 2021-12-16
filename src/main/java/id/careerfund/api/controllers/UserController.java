@@ -1,13 +1,11 @@
 package id.careerfund.api.controllers;
 
-import id.careerfund.api.domains.models.ApiResponse;
-import id.careerfund.api.domains.models.SimpleUser;
 import id.careerfund.api.domains.models.reqres.AssessmentScore;
 import id.careerfund.api.domains.models.reqres.UpdateUser;
+import id.careerfund.api.domains.models.responses.ApiResponse;
 import id.careerfund.api.domains.models.responses.FileUrlResponse;
 import id.careerfund.api.domains.models.responses.MyProfile;
 import id.careerfund.api.services.UserService;
-import id.careerfund.api.utils.mappers.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,11 +18,6 @@ import java.security.Principal;
 @RequiredArgsConstructor
 public class UserController extends HandlerController {
     private final UserService userService;
-
-    @GetMapping("/user")
-    public ResponseEntity<SimpleUser> getUser(Principal principal) {
-        return ResponseEntity.ok(UserMapper.principalToSimpleUser(principal));
-    }
 
     @GetMapping("/profile/edit")
     public ResponseEntity<UpdateUser> getProfileEdit(Principal principal) {
@@ -42,27 +35,36 @@ public class UserController extends HandlerController {
     }
 
     @PutMapping("/profile/photo")
-    public ResponseEntity<ApiResponse<FileUrlResponse>> uploadPhoto(Principal principal, @RequestParam MultipartFile file) {
-        return ResponseEntity.ok(ApiResponse.<FileUrlResponse>builder().data(userService.uploadPhoto(principal, file)).build());
+    public ResponseEntity<ApiResponse<FileUrlResponse>> uploadPhoto(Principal principal,
+            @RequestParam MultipartFile file) {
+        return ResponseEntity
+                .ok(ApiResponse.<FileUrlResponse>builder().data(userService.uploadPhoto(principal, file)).build());
     }
 
     @PutMapping("/profile/identity-card")
-    public ResponseEntity<ApiResponse<FileUrlResponse>> uploadIdentityCard(Principal principal, @RequestParam MultipartFile file) {
-        return ResponseEntity.ok(ApiResponse.<FileUrlResponse>builder().data(userService.uploadIdentityCard(principal, file)).build());
+    public ResponseEntity<ApiResponse<FileUrlResponse>> uploadIdentityCard(Principal principal,
+            @RequestParam MultipartFile file) {
+        return ResponseEntity.ok(
+                ApiResponse.<FileUrlResponse>builder().data(userService.uploadIdentityCard(principal, file)).build());
     }
 
     @PutMapping("/profile/selfie")
-    public ResponseEntity<ApiResponse<FileUrlResponse>> uploadSelfie(Principal principal, @RequestParam MultipartFile file) {
-        return ResponseEntity.ok(ApiResponse.<FileUrlResponse>builder().data(userService.uploadSelfie(principal, file)).build());
+    public ResponseEntity<ApiResponse<FileUrlResponse>> uploadSelfie(Principal principal,
+            @RequestParam MultipartFile file) {
+        return ResponseEntity
+                .ok(ApiResponse.<FileUrlResponse>builder().data(userService.uploadSelfie(principal, file)).build());
     }
 
     @PutMapping("/profile/assessment-score")
-    public ResponseEntity<ApiResponse<AssessmentScore>> saveAssessmentScore(Principal principal, @Valid @RequestBody AssessmentScore assessmentScore) {
-        return ResponseEntity.ok(ApiResponse.<AssessmentScore>builder().data(userService.saveAssessmentScore(principal, assessmentScore)).build());
+    public ResponseEntity<ApiResponse<AssessmentScore>> saveAssessmentScore(Principal principal,
+            @Valid @RequestBody AssessmentScore assessmentScore) {
+        return ResponseEntity.ok(ApiResponse.<AssessmentScore>builder()
+                .data(userService.saveAssessmentScore(principal, assessmentScore)).build());
     }
 
     @GetMapping("/profile/assessment-score")
     public ResponseEntity<ApiResponse<AssessmentScore>> getAssessmentScore(Principal principal) {
-        return ResponseEntity.ok(ApiResponse.<AssessmentScore>builder().data(userService.getAssessmentScore(principal)).build());
+        return ResponseEntity
+                .ok(ApiResponse.<AssessmentScore>builder().data(userService.getAssessmentScore(principal)).build());
     }
 }

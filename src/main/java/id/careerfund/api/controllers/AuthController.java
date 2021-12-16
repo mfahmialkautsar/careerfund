@@ -1,9 +1,15 @@
 package id.careerfund.api.controllers;
 
 import com.auth0.jwt.exceptions.TokenExpiredException;
-import id.careerfund.api.domains.models.*;
-import id.careerfund.api.domains.models.ResponseTemplate;
 import id.careerfund.api.domains.models.requests.EmailRequest;
+import id.careerfund.api.domains.models.requests.NewTokenRequest;
+import id.careerfund.api.domains.models.requests.OtpRequest;
+import id.careerfund.api.domains.models.requests.SignInRequest;
+import id.careerfund.api.domains.models.requests.SignOutRequest;
+import id.careerfund.api.domains.models.requests.UserRegister;
+import id.careerfund.api.domains.models.responses.ApiResponse;
+import id.careerfund.api.domains.models.responses.EmailAvailability;
+import id.careerfund.api.domains.models.responses.TokenResponse;
 import id.careerfund.api.services.RefreshTokenService;
 import id.careerfund.api.services.TokenService;
 import id.careerfund.api.services.UserService;
@@ -33,7 +39,8 @@ public class AuthController extends HandlerController {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/register").toUriString());
         try {
             userService.registerUser(user);
-            return ResponseEntity.created(uri).body(ApiResponse.builder().message("Please check your email for OTP verification").build());
+            return ResponseEntity.created(uri)
+                    .body(ApiResponse.builder().message("Please check your email for OTP verification").build());
         } catch (Exception e) {
             e.printStackTrace();
             if (e.getMessage().equals("EMAIL_UNAVAILABLE")) {
@@ -53,10 +60,12 @@ public class AuthController extends HandlerController {
     public ResponseEntity<TokenResponse> signIn(@Valid @RequestBody SignInRequest signInRequest) {
         try {
             TokenResponse result = userService.signIn(signInRequest);
-            if (result == null) throw new DisabledException(null);
+            if (result == null)
+                throw new DisabledException(null);
             return ResponseEntity.ok(result);
         } catch (DisabledException e) {
-            throw new ResponseStatusException(HttpStatus.TEMPORARY_REDIRECT, "Please input OTP sent to your email", e.getCause());
+            throw new ResponseStatusException(HttpStatus.TEMPORARY_REDIRECT, "Please input OTP sent to your email",
+                    e.getCause());
         } catch (BadCredentialsException e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Email or password is incorrect", e.getCause());
         } catch (NotFoundException e) {
@@ -82,10 +91,10 @@ public class AuthController extends HandlerController {
     }
 
     @PutMapping("/signout")
-    public ResponseEntity<ResponseTemplate> signOut(@Valid @RequestBody SignOutRequest signOutRequest) {
+    public ResponseEntity<ApiResponse> signOut(@Valid @RequestBody SignOutRequest signOutRequest) {
         try {
-            ResponseTemplate result = refreshTokenService.signOut(signOutRequest);
-            return ResponseEntity.ok(result);
+            refreshTokenService.signOut(signOutRequest);
+            return ResponseEntity.ok(ApiResponse.builder().message("Successfully signed out").build());
         } catch (Exception e) {
             e.printStackTrace();
             if (e.getMessage().equals("Token Not Found")) {
@@ -101,7 +110,8 @@ public class AuthController extends HandlerController {
             this.userService.sendVerificationEmail(emailRequest);
         } catch (MessagingException e) {
             e.printStackTrace();
-            throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Failed sending email, try again", e.getCause());
+            throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Failed sending email, try again",
+                    e.getCause());
         } catch (NotFoundException e) {
             e.printStackTrace();
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Credential not found", e.getCause());
@@ -116,9 +126,11 @@ public class AuthController extends HandlerController {
             return ResponseEntity.ok(tokenResponse);
         } catch (Exception e) {
             if (e instanceof NotFoundException || e instanceof TokenExpiredException)
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Either OTP not found or expired", e.getCause());
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Either OTP not found or expired",
+                        e.getCause());
             e.printStackTrace();
-            throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Failed to verify OTP. Please try again later.");
+            throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED,
+                    "Failed to verify OTP. Please try again later.");
         }
     }
 }

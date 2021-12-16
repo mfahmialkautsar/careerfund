@@ -1,8 +1,7 @@
 package id.careerfund.api.services;
 
 import id.careerfund.api.domains.entities.RefreshToken;
-import id.careerfund.api.domains.models.ResponseTemplate;
-import id.careerfund.api.domains.models.SignOutRequest;
+import id.careerfund.api.domains.models.requests.SignOutRequest;
 
 public interface RefreshTokenService {
     RefreshToken findByToken(String refreshToken);
@@ -13,5 +12,5 @@ public interface RefreshTokenService {
 
     void deleteByToken(String token);
 
-    ResponseTemplate signOut(SignOutRequest signOutRequest) throws Exception;
+    void signOut(SignOutRequest signOutRequest) throws Exception;
 }

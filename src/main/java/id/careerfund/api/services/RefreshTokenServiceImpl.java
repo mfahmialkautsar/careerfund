@@ -4,8 +4,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 import id.careerfund.api.domains.entities.RefreshToken;
-import id.careerfund.api.domains.models.ResponseTemplate;
-import id.careerfund.api.domains.models.SignOutRequest;
+import id.careerfund.api.domains.models.requests.SignOutRequest;
 import id.careerfund.api.repositories.RefreshTokenRepository;
 import id.careerfund.api.repositories.UserRepository;
 import javassist.NotFoundException;
@@ -57,7 +56,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
 
     @Override
-    public ResponseTemplate signOut(SignOutRequest signOutRequest) throws Exception {
+    public void signOut(SignOutRequest signOutRequest) throws Exception {
         String token = signOutRequest.getRefreshToken();
 
         if (ObjectUtils.isEmpty(token)) {
@@ -69,10 +68,8 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
         try {
             deleteByToken(token);
-            return new ResponseTemplate().responseSuccess();
         } catch (Exception e) {
             throw new Exception("Bad Request");
         }
-
     }
 }

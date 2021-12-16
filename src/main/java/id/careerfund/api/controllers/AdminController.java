@@ -2,8 +2,8 @@ package id.careerfund.api.controllers;
 
 import id.careerfund.api.domains.ERole;
 import id.careerfund.api.domains.entities.User;
-import id.careerfund.api.domains.models.ApiResponse;
 import id.careerfund.api.domains.models.requests.IdRequest;
+import id.careerfund.api.domains.models.responses.ApiResponse;
 import id.careerfund.api.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@Secured({ERole.Constants.ADMIN})
+@Secured({ ERole.Constants.ADMIN })
 @RequestMapping("/admin")
 public class AdminController {
     private final UserService userService;
@@ -28,6 +28,7 @@ public class AdminController {
 
     @GetMapping("/verifying-users")
     public ResponseEntity<ApiResponse<List<User>>> getVerifyingUser() {
-        return ResponseEntity.ok(ApiResponse.<List<User>>builder().data(userService.getWaitingForVerificationUser()).build());
+        return ResponseEntity
+                .ok(ApiResponse.<List<User>>builder().data(userService.getWaitingForVerificationUser()).build());
     }
 }

@@ -3,9 +3,7 @@ package id.careerfund.api.services;
 import id.careerfund.api.domains.entities.*;
 import id.careerfund.api.domains.entities.Class;
 import id.careerfund.api.domains.models.requests.FundLoan;
-import id.careerfund.api.domains.models.responses.Borrower;
 import id.careerfund.api.domains.models.responses.LoanResponse;
-import id.careerfund.api.domains.models.responses.UserClassResponse;
 import id.careerfund.api.repositories.FinancialTransactionRepository;
 import id.careerfund.api.repositories.FundingRepository;
 import id.careerfund.api.repositories.LoanRepository;
@@ -13,7 +11,6 @@ import id.careerfund.api.utils.helpers.PageableHelper;
 import id.careerfund.api.utils.mappers.LoanMapper;
 import id.careerfund.api.utils.mappers.UserMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.web.firewall.RequestRejectedException;
@@ -22,14 +19,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.security.Principal;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
-@Slf4j
 public class LoanServiceImpl implements LoanService {
     private final LoanRepository loanRepo;
     private final FinancialTransactionRepository financialTransactionRepo;
@@ -44,7 +38,8 @@ public class LoanServiceImpl implements LoanService {
 
     @Override
     public Long getInterestNumber(Class aClass, Integer tenorMonth, Long downPayment) {
-        return (long) Math.ceil((getInterestPercent(aClass, tenorMonth) / 100) * getTotalPaymentWithoutAdminFeeAndInterest(aClass, downPayment));
+        return (long) Math.ceil((getInterestPercent(aClass, tenorMonth) / 100)
+                * getTotalPaymentWithoutAdminFeeAndInterest(aClass, downPayment));
     }
 
     @Override
@@ -74,17 +69,20 @@ public class LoanServiceImpl implements LoanService {
 
     @Override
     public Long getTotalPaymentWithoutAdminFee(Class aClass, Integer tenorMonth, Long downPayment) {
-        return getTotalPaymentWithoutAdminFeeAndInterest(aClass, downPayment) + getInterestNumber(aClass, tenorMonth, downPayment);
+        return getTotalPaymentWithoutAdminFeeAndInterest(aClass, downPayment)
+                + getInterestNumber(aClass, tenorMonth, downPayment);
     }
 
     @Override
     public Long getTotalPayment(Class aClass, Integer tenorMonth, Long downPayment) {
-        return getTotalPaymentWithoutAdminFee(aClass, tenorMonth, downPayment) + getAdminFee(aClass, tenorMonth, downPayment);
+        return getTotalPaymentWithoutAdminFee(aClass, tenorMonth, downPayment)
+                + getAdminFee(aClass, tenorMonth, downPayment);
     }
 
     @Override
     public Double getLenderPayback(Funding funding) {
-        return (((funding.getLoan().getInterestPercent() / 100.0) * funding.getFinancialTransaction().getNominal()) / funding.getLoan().getTenorMonth())
+        return (((funding.getLoan().getInterestPercent() / 100.0) * funding.getFinancialTransaction().getNominal())
+                / funding.getLoan().getTenorMonth())
                 + fundingService.getMonthlyCapital(funding);
     }
 
@@ -111,7 +109,8 @@ public class LoanServiceImpl implements LoanService {
     }
 
     @Override
-    public LoanResponse fundLoan(Principal principal, FundLoan fundLoan) throws RequestRejectedException, EntityNotFoundException {
+    public LoanResponse fundLoan(Principal principal, FundLoan fundLoan)
+            throws RequestRejectedException, EntityNotFoundException {
         User user = UserMapper.principalToUser(principal);
 
         FinancialTransaction financialTransaction = new FinancialTransaction();
@@ -120,12 +119,17 @@ public class LoanServiceImpl implements LoanService {
 
         Optional<Loan> optionalLoan = loanRepo.findById(fundLoan.getLoanId());
 
-        if (!optionalLoan.isPresent()) throw new EntityNotFoundException("LOAN_NOT_FOUND");
+        if (!optionalLoan.isPresent())
+            throw new EntityNotFoundException("LOAN_NOT_FOUND");
         Loan loan = optionalLoan.get();
 
-        if (!isFundable(loan)) throw new RequestRejectedException("LOAN_FUNDING_FULL");
-        if (fundLoan.getFund() > loan.getTotalPayment() || fundLoan.getFund() > loan.getTotalPayment() - fundingService.getTotalLoanFund(loan)) throw new RequestRejectedException("MAX_EXCEEDED");
-        if (fundLoan.getFund() < getMinFund(loan)) throw new RequestRejectedException(String.valueOf(getMinFund(loan)));
+        if (!isFundable(loan))
+            throw new RequestRejectedException("LOAN_FUNDING_FULL");
+        if (fundLoan.getFund() > loan.getTotalPayment()
+                || fundLoan.getFund() > loan.getTotalPayment() - fundingService.getTotalLoanFund(loan))
+            throw new RequestRejectedException("MAX_EXCEEDED");
+        if (fundLoan.getFund() < getMinFund(loan))
+            throw new RequestRejectedException(String.valueOf(getMinFund(loan)));
 
         Funding funding = new Funding();
         funding.setLender(user);
@@ -153,7 +157,8 @@ public class LoanServiceImpl implements LoanService {
         Long totalFund = fundingService.getTotalLoanFund(loan);
         Long neededFund = loan.getTotalPayment();
         long deviation = neededFund - totalFund;
-        if (deviation < 200000) return deviation;
+        if (deviation < 200000)
+            return deviation;
         return 100000L;
     }
 
@@ -170,7 +175,8 @@ public class LoanServiceImpl implements LoanService {
     private double getLoanProgress(Loan loan) {
         long funded = 0;
         for (int i = 0; i < loan.getLoanPayments().size(); i++) {
-            if (i == 0) continue;
+            if (i == 0)
+                continue;
             funded += loan.getLoanPayments().get(i).getPayment().getFinancialTransaction().getNominal();
         }
         return (double) funded / (double) loan.getTotalPayment();

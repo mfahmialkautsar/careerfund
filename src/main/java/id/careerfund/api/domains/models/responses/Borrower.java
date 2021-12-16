@@ -3,9 +3,8 @@ package id.careerfund.api.domains.models.responses;
 import id.careerfund.api.domains.entities.Balance;
 import id.careerfund.api.domains.entities.Interest;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,8 +12,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 public class Borrower {
     private String name;
     private String phoneNumber;

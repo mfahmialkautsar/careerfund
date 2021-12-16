@@ -1,14 +1,12 @@
 package id.careerfund.api.domains.models.responses;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 public class FileUrlResponse {
     private String url;
 }

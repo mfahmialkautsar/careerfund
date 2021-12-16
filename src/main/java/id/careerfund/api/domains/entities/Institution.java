@@ -28,9 +28,7 @@ public class Institution extends Auditable {
 
     @JsonIgnore
     @ManyToMany
-    @JoinTable(name = "bootcamps_institutions",
-            joinColumns = @JoinColumn(name = "institution_id"),
-            inverseJoinColumns = @JoinColumn(name = "bootcamp_id"))
+    @JoinTable(name = "bootcamps_institutions", joinColumns = @JoinColumn(name = "institution_id"), inverseJoinColumns = @JoinColumn(name = "bootcamp_id"))
     private List<Bootcamp> bootcamps = new ArrayList<>();
 
     @OneToOne(orphanRemoval = true)

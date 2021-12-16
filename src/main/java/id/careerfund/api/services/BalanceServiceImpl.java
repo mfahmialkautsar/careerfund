@@ -6,14 +6,12 @@ import id.careerfund.api.repositories.BalanceHistoryRepository;
 import id.careerfund.api.repositories.BalanceRepository;
 import id.careerfund.api.repositories.FinancialTransactionRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
-@Slf4j
 public class BalanceServiceImpl implements BalanceService {
     private final BalanceRepository balanceRepo;
     private final BalanceHistoryRepository balanceHistoryRepo;
@@ -29,7 +27,8 @@ public class BalanceServiceImpl implements BalanceService {
 
     @Override
     public void sendLenderPayback(Funding funding, FinancialTransaction financialTransaction) {
-        if (funding.getLender().getBalance() == null) addBalanceToUser(funding.getLender());
+        if (funding.getLender().getBalance() == null)
+            addBalanceToUser(funding.getLender());
         Double lenderBalance = funding.getLender().getBalance().getNominal();
         Double lenderPayback = loanService.getLenderPayback(funding);
         funding.getLender()

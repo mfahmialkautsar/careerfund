@@ -8,8 +8,14 @@ import id.careerfund.api.domains.models.reqres.AssessmentScore;
 import id.careerfund.api.domains.models.reqres.UpdateUser;
 import id.careerfund.api.domains.models.requests.EmailRequest;
 import id.careerfund.api.domains.models.requests.IdRequest;
+import id.careerfund.api.domains.models.requests.OtpRequest;
+import id.careerfund.api.domains.models.requests.SignInRequest;
+import id.careerfund.api.domains.models.requests.UpdateInterest;
+import id.careerfund.api.domains.models.requests.UserRegister;
 import id.careerfund.api.domains.models.responses.FileUrlResponse;
+import id.careerfund.api.domains.models.responses.MyInterests;
 import id.careerfund.api.domains.models.responses.MyProfile;
+import id.careerfund.api.domains.models.responses.TokenResponse;
 import javassist.NotFoundException;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,17 +28,17 @@ public interface UserService {
 
     User getUser(String email);
 
-//    List<User> getUsers();
+    // List<User> getUsers();
 
     boolean getIsEmailAvailable(String email);
 
-//    Interest addInterest(User user, Long id);
-//
-//    Interest deleteInterest(User user, Long id);
+    // Interest addInterest(User user, Long id);
+    //
+    // Interest deleteInterest(User user, Long id);
 
-//    void addInterests(Principal principal, UpdateInterest updateInterest);
-//
-//    void deleteInterests(Principal principal, UpdateInterest updateInterest);
+    // void addInterests(Principal principal, UpdateInterest updateInterest);
+    //
+    // void deleteInterests(Principal principal, UpdateInterest updateInterest);
 
     MyInterests getMyInterests(Principal principal);
 

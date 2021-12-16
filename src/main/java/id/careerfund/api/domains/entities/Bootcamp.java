@@ -3,7 +3,6 @@ package id.careerfund.api.domains.entities;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,14 +26,10 @@ public class Bootcamp extends Auditable {
     private String logoPath;
 
     @ManyToMany
-    @JoinTable(name = "bootcamps_institutions",
-            joinColumns = @JoinColumn(name = "bootcamp_id"),
-            inverseJoinColumns = @JoinColumn(name = "institution_id"))
+    @JoinTable(name = "bootcamps_institutions", joinColumns = @JoinColumn(name = "bootcamp_id"), inverseJoinColumns = @JoinColumn(name = "institution_id"))
     private List<Institution> institutions = new ArrayList<>();
 
     @ManyToMany
-    @JoinTable(name = "bootcamps_categories",
-            joinColumns = @JoinColumn(name = "bootcamp_id"),
-            inverseJoinColumns = @JoinColumn(name = "category_id"))
+    @JoinTable(name = "bootcamps_categories", joinColumns = @JoinColumn(name = "bootcamp_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
     private List<Interest> categories = new ArrayList<>();
 }

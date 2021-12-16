@@ -4,17 +4,15 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import id.careerfund.api.domains.entities.Class;
 import id.careerfund.api.domains.entities.LoanPayment;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 public class LoanResponse {
     private Long id;
     private Borrower borrower;

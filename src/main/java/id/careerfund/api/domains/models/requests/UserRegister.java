@@ -1,4 +1,4 @@
-package id.careerfund.api.domains.models;
+package id.careerfund.api.domains.models.requests;
 
 import id.careerfund.api.domains.ERoleRegister;
 import id.careerfund.api.utils.validators.ValidEnum;

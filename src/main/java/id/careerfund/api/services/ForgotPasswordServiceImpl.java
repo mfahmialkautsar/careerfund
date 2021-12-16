@@ -2,9 +2,8 @@ package id.careerfund.api.services;
 
 import id.careerfund.api.configurations.EmailSenderConfig;
 import id.careerfund.api.domains.entities.User;
-import id.careerfund.api.domains.models.RequestOtpPassword;
-import id.careerfund.api.domains.models.ResponseTemplate;
-import id.careerfund.api.domains.models.UpdatePassword;
+import id.careerfund.api.domains.models.requests.EmailRequest;
+import id.careerfund.api.domains.models.requests.UpdatePassword;
 import id.careerfund.api.repositories.UserRepository;
 import id.careerfund.api.utils.templates.EmailTemplate;
 import javassist.NotFoundException;
@@ -123,7 +122,7 @@ public class ForgotPasswordServiceImpl implements ForgotPasswordService {
     }
 
     @Override
-    public ResponseTemplate resetPassword(String token, UpdatePassword model) throws Exception {
+    public void resetPassword(String token, UpdatePassword model) throws Exception {
         String newPassword = model.getNewPassword();
 
         if (ObjectUtils.isEmpty(newPassword)) {
@@ -135,14 +134,12 @@ public class ForgotPasswordServiceImpl implements ForgotPasswordService {
         if (!result) {
             throw new NotFoundException("Token Not Found");
         }
-
-        return new ResponseTemplate().responseSuccess();
     }
 
     @Override
-    public ResponseTemplate sendEmailForgot(RequestOtpPassword model) throws Exception {
+    public void sendEmailForgot(EmailRequest emailRequest) throws Exception {
 
-        String email = model.getEmail();
+        String email = emailRequest.getEmail();
         User user = userRepo.findByEmail(email);
 
         if (ObjectUtils.isEmpty(email)) {
@@ -155,7 +152,6 @@ public class ForgotPasswordServiceImpl implements ForgotPasswordService {
 
         try {
             sendEmail(email, user);
-            return new ResponseTemplate().responseSuccess();
         } catch (Exception e) {
             throw new Exception("Bad Request");
         }

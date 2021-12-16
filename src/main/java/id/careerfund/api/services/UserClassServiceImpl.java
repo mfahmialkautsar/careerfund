@@ -40,7 +40,8 @@ public class UserClassServiceImpl implements UserClassService {
     }
 
     @Override
-    public UserClass registerClass(Principal principal, UserClassRequest userClassRequest) throws EntityNotFoundException {
+    public UserClass registerClass(Principal principal, UserClassRequest userClassRequest)
+            throws EntityNotFoundException {
         log.info("Registering class {}", userClassRequest.getClassId());
         User user = UserMapper.principalToUser(principal);
         Class aClass = classRepo.getById(userClassRequest.getClassId());
@@ -54,11 +55,16 @@ public class UserClassServiceImpl implements UserClassService {
         loan.setDownPayment(userClassRequest.getDownPayment());
         loan.setTenorMonth(userClassRequest.getTenorMonth());
         loan.setInterestPercent(loanService.getInterestPercent(aClass, userClassRequest.getTenorMonth()));
-        loan.setInterestNumber(loanService.getInterestNumber(aClass, userClassRequest.getTenorMonth(), userClassRequest.getDownPayment()));
-        loan.setMonthlyFee(loanService.getMonthlyAdminFee(aClass, userClassRequest.getTenorMonth(), userClassRequest.getDownPayment()));
-        loan.setFee(loanService.getAdminFee(aClass, userClassRequest.getTenorMonth(), userClassRequest.getDownPayment()));
-        loan.setMonthlyPayment(loanService.getMonthlyPayment(aClass, userClassRequest.getTenorMonth(), userClassRequest.getDownPayment()));
-        loan.setTotalPayment(loanService.getTotalPayment(aClass, userClassRequest.getTenorMonth(), userClassRequest.getDownPayment()));
+        loan.setInterestNumber(loanService.getInterestNumber(aClass, userClassRequest.getTenorMonth(),
+                userClassRequest.getDownPayment()));
+        loan.setMonthlyFee(loanService.getMonthlyAdminFee(aClass, userClassRequest.getTenorMonth(),
+                userClassRequest.getDownPayment()));
+        loan.setFee(
+                loanService.getAdminFee(aClass, userClassRequest.getTenorMonth(), userClassRequest.getDownPayment()));
+        loan.setMonthlyPayment(loanService.getMonthlyPayment(aClass, userClassRequest.getTenorMonth(),
+                userClassRequest.getDownPayment()));
+        loan.setTotalPayment(loanService.getTotalPayment(aClass, userClassRequest.getTenorMonth(),
+                userClassRequest.getDownPayment()));
         loanRepo.save(loan);
 
         UserClass userClass = new UserClass();
@@ -82,15 +88,18 @@ public class UserClassServiceImpl implements UserClassService {
     public UserClass getMyClassById(Principal principal, Long id) throws AccessDeniedException {
         UserClass userClass = userClassRepo.getById(id);
         User user = UserMapper.principalToUser(principal);
-        if (!userClass.getUser().getId().equals(user.getId())) throw new AccessDeniedException("USER_WRONG");
+        if (!userClass.getUser().getId().equals(user.getId()))
+            throw new AccessDeniedException("USER_WRONG");
         setTransientProperties(userClass);
         return userClass;
     }
 
     @Override
-    public UserClass payMyClass(Principal principal, Long id, PayMyLoan payMyLoan) throws AccessDeniedException, RequestRejectedException, EntityNotFoundException {
+    public UserClass payMyClass(Principal principal, Long id, PayMyLoan payMyLoan)
+            throws AccessDeniedException, RequestRejectedException, EntityNotFoundException {
         Optional<UserClass> optionalUserClass = userClassRepo.findById(id);
-        if (!optionalUserClass.isPresent()) throw new EntityNotFoundException();
+        if (!optionalUserClass.isPresent())
+            throw new EntityNotFoundException();
         UserClass userClass = optionalUserClass.get();
         User user = UserMapper.principalToUser(principal);
         Loan loan = userClass.getLoan();
@@ -110,11 +119,12 @@ public class UserClassServiceImpl implements UserClassService {
         loanPayment.setPeriod(paymentPeriod);
         loanPayment.setPayment(payment);
 
-        if (!userClass.getUser().getId().equals(user.getId())) throw new AccessDeniedException("USER_WRONG");
+        if (!userClass.getUser().getId().equals(user.getId()))
+            throw new AccessDeniedException("USER_WRONG");
         if (!hasPaidDownPayment(loan)) {
             if (payMyLoan.getPaymentAmount().equals(loan.getDownPayment())) {
                 onPaymentSuccess(loanPayment, financialTransaction, payment, userClass);
-//                Add to company cash
+                // Add to company cash
                 cashService.doDebit(financialTransaction);
             } else if (payMyLoan.getPaymentAmount().equals(loan.getMonthlyPayment())) {
                 throw new RequestRejectedException("SHOULD_PAY_DOWNPAYMENT");
@@ -126,15 +136,16 @@ public class UserClassServiceImpl implements UserClassService {
                 throw new RequestRejectedException("SHOULD_PAY_MONTHLYPAYMENT");
             } else if (payMyLoan.getPaymentAmount().equals(loan.getMonthlyPayment())) {
                 onPaymentSuccess(loanPayment, financialTransaction, payment, userClass);
-//                Add to company cash
+                // Add to company cash
                 cashService.doDebit(financialTransaction);
 
-//                Take fee
+                // Take fee
                 cashService.takeMonthlyFee(financialTransaction,
-                        loanService.getMonthlyAdminFee(userClass.getAClass(), loan.getTenorMonth(), loan.getDownPayment())
+                        loanService
+                                .getMonthlyAdminFee(userClass.getAClass(), loan.getTenorMonth(), loan.getDownPayment())
                                 .doubleValue());
 
-//                Send payback to lender balance
+                // Send payback to lender balance
                 loan.getFundings().forEach(funding -> balanceService.sendLenderPayback(funding, financialTransaction));
             } else {
                 throw new RequestRejectedException("WRONG_AMOUNT");
@@ -145,7 +156,8 @@ public class UserClassServiceImpl implements UserClassService {
         return userClass;
     }
 
-    private void onPaymentSuccess(LoanPayment loanPayment, FinancialTransaction financialTransaction, Payment payment, UserClass userClass) {
+    private void onPaymentSuccess(LoanPayment loanPayment, FinancialTransaction financialTransaction, Payment payment,
+            UserClass userClass) {
         financialTransactionRepo.save(financialTransaction);
         paymentRepo.save(payment);
         loanPaymentRepo.save(loanPayment);

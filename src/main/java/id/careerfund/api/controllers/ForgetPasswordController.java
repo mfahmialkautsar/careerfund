@@ -1,14 +1,13 @@
 package id.careerfund.api.controllers;
 
 import id.careerfund.api.services.ForgotPasswordService;
-import id.careerfund.api.domains.models.RequestOtpPassword;
-import id.careerfund.api.domains.models.UpdatePassword;
-import id.careerfund.api.domains.models.ResponseTemplate;
+import id.careerfund.api.domains.models.requests.EmailRequest;
+import id.careerfund.api.domains.models.requests.UpdatePassword;
+import id.careerfund.api.domains.models.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 
 @RestController
 @RequestMapping("/password")
@@ -16,23 +15,26 @@ import org.springframework.web.bind.annotation.*;
 public class ForgetPasswordController extends HandlerController {
     private final ForgotPasswordService forgotPasswordService;
 
-    @PostMapping("/forgot")//send link reset
-    public ResponseEntity<ResponseTemplate> sendEmailForgot(@RequestBody RequestOtpPassword model) {
+    @PostMapping("/forgot") // send link reset
+    public ResponseEntity<ApiResponse> sendEmailForgot(@RequestBody EmailRequest model) {
         try {
-            ResponseTemplate result = forgotPasswordService.sendEmailForgot(model);
-            return ResponseEntity.ok(result);
+            forgotPasswordService.sendEmailForgot(model);
+            return ResponseEntity
+                    .ok(ApiResponse.builder().message("Please check your email for OTP verification").build());
         } catch (Exception e) {
             if (e.getMessage().equals("User Not Found")) {
                 return ResponseEntity.notFound().build();
-            } else return ResponseEntity.badRequest().build();
+            } else
+                return ResponseEntity.badRequest().build();
         }
     }
 
     @PutMapping("/update")
-    public ResponseEntity<ResponseTemplate> resetPassword(@RequestParam String token, @RequestBody UpdatePassword model) {
+    public ResponseEntity<ApiResponse> resetPassword(@RequestParam String token,
+            @RequestBody UpdatePassword model) {
         try {
-            ResponseTemplate result = forgotPasswordService.resetPassword(token, model);
-            return ResponseEntity.ok(result);
+            forgotPasswordService.resetPassword(token, model);
+            return ResponseEntity.ok(ApiResponse.builder().message("Password has been updated").build());
         } catch (Exception e) {
             if (e.getMessage().equals("Token Not Found")) {
                 return ResponseEntity.notFound().build();

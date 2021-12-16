@@ -67,7 +67,6 @@ public class DatabaseSeeder implements ApplicationRunner {
         saveRoleIfNotExists(new Role(null, ERole.ROLE_BORROWER));
     }
 
-
     private void saveUsers() {
         User admin = new User();
         admin.setName("Fahmi Al");
@@ -80,7 +79,8 @@ public class DatabaseSeeder implements ApplicationRunner {
         lender.setEmail("lender@careerfund.com");
         lender.setName("Lender");
         lender.setPassword(passwordEncoder.encode("1234"));
-        lender.setRoles(Arrays.asList(roleRepository.findByName(ERole.ROLE_LENDER), roleRepository.findByName(ERole.ROLE_USER)));
+        lender.setRoles(Arrays.asList(roleRepository.findByName(ERole.ROLE_LENDER),
+                roleRepository.findByName(ERole.ROLE_USER)));
         Balance lenderBalance = new Balance();
         balanceRepository.save(lenderBalance);
         lender.setBalance(lenderBalance);
@@ -91,18 +91,20 @@ public class DatabaseSeeder implements ApplicationRunner {
         Borrower.setEmail("borrower@careerfund.com");
         Borrower.setName("Borrower");
         Borrower.setPassword(passwordEncoder.encode("1234"));
-        Borrower.setRoles(Arrays.asList(roleRepository.findByName(ERole.ROLE_BORROWER), roleRepository.findByName(ERole.ROLE_USER)));
+        Borrower.setRoles(Arrays.asList(roleRepository.findByName(ERole.ROLE_BORROWER),
+                roleRepository.findByName(ERole.ROLE_USER)));
         Balance borrowerBalance = new Balance();
         balanceRepository.save(borrowerBalance);
         Borrower.setBalance(borrowerBalance);
         registerUserIfNotExists(Borrower);
 
-//        User dump = new User();
-//        dump.setEmail("dump.file17@gmail.com");
-//        dump.setName("Dump");
-//        dump.setPassword(passwordEncoder.encode("1234"));
-//        dump.setRoles(Arrays.asList(roleRepository.findByName(ERole.ROLE_BORROWER), roleRepository.findByName(ERole.ROLE_USER)));
-//        registerUserIfNotExists(dump);
+        // User dump = new User();
+        // dump.setEmail("dump.file17@gmail.com");
+        // dump.setName("Dump");
+        // dump.setPassword(passwordEncoder.encode("1234"));
+        // dump.setRoles(Arrays.asList(roleRepository.findByName(ERole.ROLE_BORROWER),
+        // roleRepository.findByName(ERole.ROLE_USER)));
+        // registerUserIfNotExists(dump);
     }
 
     private void saveInterests() {
@@ -128,11 +130,12 @@ public class DatabaseSeeder implements ApplicationRunner {
         binar.setName("Binar Academy");
         binar.setLogoPath("https://kerjabilitas.com/user_image/user2/logo_7b6caab85699ca72e06917e9bad7512c.png");
         saveInstitutionIfNotExists(binar);
-        
+
         Institution purwadhika = new Institution();
         purwadhika.setId(2L);
         purwadhika.setName("Purwadhika");
-        purwadhika.setLogoPath("https://yt3.ggpht.com/ytc/AKedOLTSK3UnfTjW8XHFgX-SiVs0ay1vQ5qYnFLj9aCnzg=s900-c-k-c0x00ffffff-no-rj");
+        purwadhika.setLogoPath(
+                "https://yt3.ggpht.com/ytc/AKedOLTSK3UnfTjW8XHFgX-SiVs0ay1vQ5qYnFLj9aCnzg=s900-c-k-c0x00ffffff-no-rj");
         saveInstitutionIfNotExists(purwadhika);
 
         Institution hacktiv8 = new Institution();
@@ -150,7 +153,8 @@ public class DatabaseSeeder implements ApplicationRunner {
         Institution dibimbing = new Institution();
         dibimbing.setId(5L);
         dibimbing.setName("Dibimbing");
-        dibimbing.setLogoPath("https://scontent.fcgk9-2.fna.fbcdn.net/v/t1.6435-9/120577459_106427087899427_1734021432716910770_n.png?_nc_cat=104&ccb=1-5&_nc_sid=09cbfe&_nc_eui2=AeHv3ylVlEu5ZbPIsUAvN15NVPEClu393WBU8QKW7f3dYG-SS8BbOXY49bQ7hNPze_y2JnRIEsTDVcdSTDi1jfdh&_nc_ohc=5gY0r8QR3JUAX_Mq9Mn&_nc_oc=AQlqp3TRF70u1N7NUZHs8bZpnlx2YH6ic77oavI-PVA5veLQasQbp0fwBdR3w_Cj094&tn=pkF0IaruVqY03w_s&_nc_ht=scontent.fcgk9-2.fna&oh=00_AT8ZVU1pT4YqYh1rqF6sOjXTeou86y54IhME53UAhpwntQ&oe=61E2334F");
+        dibimbing.setLogoPath(
+                "https://scontent.fcgk9-2.fna.fbcdn.net/v/t1.6435-9/120577459_106427087899427_1734021432716910770_n.png?_nc_cat=104&ccb=1-5&_nc_sid=09cbfe&_nc_eui2=AeHv3ylVlEu5ZbPIsUAvN15NVPEClu393WBU8QKW7f3dYG-SS8BbOXY49bQ7hNPze_y2JnRIEsTDVcdSTDi1jfdh&_nc_ohc=5gY0r8QR3JUAX_Mq9Mn&_nc_oc=AQlqp3TRF70u1N7NUZHs8bZpnlx2YH6ic77oavI-PVA5veLQasQbp0fwBdR3w_Cj094&tn=pkF0IaruVqY03w_s&_nc_ht=scontent.fcgk9-2.fna&oh=00_AT8ZVU1pT4YqYh1rqF6sOjXTeou86y54IhME53UAhpwntQ&oe=61E2334F");
         saveInstitutionIfNotExists(dibimbing);
 
         Institution rakamin = new Institution();
@@ -598,7 +602,7 @@ public class DatabaseSeeder implements ApplicationRunner {
         if (!classRepository.existsById(aClass.getId())) {
             classRepository.save(aClass);
         }
-//        return classRepository.getById(aClass.getId());
+        // return classRepository.getById(aClass.getId());
     }
 
     private void saveBootcampInstitutionIfNotExists(Bootcamp bootcamp, Institution institution) {
