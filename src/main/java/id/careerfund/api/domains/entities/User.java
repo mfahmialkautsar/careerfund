@@ -55,6 +55,10 @@ public class User extends Auditable implements UserDetails {
     private String identityCardPath;
 
     @Lob
+    @Column(name = "selfie_path")
+    private String selfiePath;
+
+    @Lob
     @Column(name = "photo_path")
     private String photoPath;
 
@@ -160,5 +164,4 @@ public class User extends Auditable implements UserDetails {
     @OneToOne(orphanRemoval = true)
     @JoinColumn(name = "balance_id")
     private Balance balance;
-
 }

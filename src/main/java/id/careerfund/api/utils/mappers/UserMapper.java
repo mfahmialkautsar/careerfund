@@ -63,6 +63,7 @@ public final class UserMapper {
         myProfile.setBalance(user.getBalance());
         myProfile.setPhotoPath(user.getPhotoPath());
         myProfile.setIdentityCardPath(user.getIdentityCardPath());
+        myProfile.setSelfiePath(user.getSelfiePath());
         myProfile.setAssessmentScore(user.getAssessmentScore());
         myProfile.setIdVerificationStatus(user.getIdVerificationStatus());
         myProfile.setRemainingDebt(getRemainingDebt(user));

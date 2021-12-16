@@ -231,6 +231,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
+    public FileUrlResponse uploadSelfie(Principal principal, MultipartFile file) {
+        User principalUser = UserMapper.principalToUser(principal);
+        User user = userRepo.getById(principalUser.getId());
+
+        String selfiePath = storageService.uploadFile(file, "images/selfies/");
+        user.setSelfiePath(selfiePath);
+        user.setIdVerificationStatus(EIdVerificationStatus.VERIFYING);
+        return new FileUrlResponse(selfiePath);
+    }
+
+    @Override
     public AssessmentScore saveAssessmentScore(Principal principal, AssessmentScore assessmentScore) {
         User principalUser = UserMapper.principalToUser(principal);
         User user = userRepo.getById(principalUser.getId());

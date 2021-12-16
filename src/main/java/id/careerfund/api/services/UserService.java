@@ -56,6 +56,8 @@ public interface UserService {
 
     FileUrlResponse uploadIdentityCard(Principal principal, MultipartFile file);
 
+    FileUrlResponse uploadSelfie(Principal principal, MultipartFile file);
+
     AssessmentScore saveAssessmentScore(Principal principal, AssessmentScore assessmentScore);
 
     AssessmentScore getAssessmentScore(Principal principal);

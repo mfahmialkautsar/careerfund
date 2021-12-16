@@ -28,6 +28,7 @@ public class MyProfile {
     private Balance balance;
     private String photoPath;
     private String identityCardPath;
+    private String selfiePath;
     private Float assessmentScore;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Long remainingDebt;
