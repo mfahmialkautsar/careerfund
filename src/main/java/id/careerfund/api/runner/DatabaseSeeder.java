@@ -17,6 +17,7 @@ import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 @Slf4j
 @Transactional
@@ -71,7 +72,8 @@ public class DatabaseSeeder implements ApplicationRunner {
         User admin = new User();
         admin.setName("Fahmi Al");
         admin.setEmail("aal@email.com");
-        admin.setPassword("tothemoon");
+        admin.setPassword(passwordEncoder.encode("tothemoon"));
+        admin.setIsEnabled(true);
         registerAdminIfNotExists(admin);
 
         User invoker = new User();
@@ -233,9 +235,9 @@ public class DatabaseSeeder implements ApplicationRunner {
 
     private void registerAdminIfNotExists(User user) {
         if (userRepository.findByEmail(user.getEmail()) == null) {
-            userRepository.save(user);
             Role role = roleRepository.findByName(ERole.ROLE_ADMIN);
-            user.getRoles().add(role);
+            user.setRoles(Collections.singletonList(role));
+            userRepository.save(user);
         }
     }
 

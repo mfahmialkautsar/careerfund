@@ -1,6 +1,7 @@
 package id.careerfund.api.domains.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import id.careerfund.api.domains.EIdVerificationStatus;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -61,6 +62,10 @@ public class User extends Auditable implements UserDetails {
 
     @Column(name = "assessment_score")
     private Float assessmentScore;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "id_verification_status")
+    private EIdVerificationStatus idVerificationStatus;
 
     @JsonIgnore
     @Column(name = "is_not_expired", nullable = false)
@@ -153,4 +158,5 @@ public class User extends Auditable implements UserDetails {
     @OneToOne(orphanRemoval = true)
     @JoinColumn(name = "balance_id")
     private Balance balance;
+
 }

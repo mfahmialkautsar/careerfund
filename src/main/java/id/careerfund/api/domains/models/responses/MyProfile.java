@@ -1,6 +1,7 @@
 package id.careerfund.api.domains.models.responses;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import id.careerfund.api.domains.EIdVerificationStatus;
 import id.careerfund.api.domains.entities.Balance;
 import id.careerfund.api.domains.entities.Interest;
 import id.careerfund.api.domains.entities.Role;
@@ -32,4 +33,5 @@ public class MyProfile {
     private Long remainingDebt;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Long assets;
+    private EIdVerificationStatus idVerificationStatus;
 }

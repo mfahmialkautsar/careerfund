@@ -1,6 +1,7 @@
 package id.careerfund.api.services;
 
 import com.auth0.jwt.exceptions.TokenExpiredException;
+import id.careerfund.api.domains.EIdVerificationStatus;
 import id.careerfund.api.domains.ERole;
 import id.careerfund.api.domains.entities.Interest;
 import id.careerfund.api.domains.entities.OneTimePassword;
@@ -10,6 +11,7 @@ import id.careerfund.api.domains.models.*;
 import id.careerfund.api.domains.models.reqres.AssessmentScore;
 import id.careerfund.api.domains.models.reqres.UpdateUser;
 import id.careerfund.api.domains.models.requests.EmailRequest;
+import id.careerfund.api.domains.models.requests.IdRequest;
 import id.careerfund.api.domains.models.responses.FileUrlResponse;
 import id.careerfund.api.domains.models.responses.MyProfile;
 import id.careerfund.api.repositories.InterestRepository;
@@ -224,6 +226,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         String identityCardPath = storageService.uploadFile(file, "images/ic/");
         user.setIdentityCardPath(identityCardPath);
+        user.setIdVerificationStatus(EIdVerificationStatus.VERIFYING);
         return new FileUrlResponse(identityCardPath);
     }
 
@@ -239,6 +242,20 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public AssessmentScore getAssessmentScore(Principal principal) {
         User user = UserMapper.principalToUser(principal);
         return new AssessmentScore(user.getAssessmentScore());
+    }
+
+    @Override
+    public void verifyUserId(IdRequest idRequest) {
+        User user = userRepo.getById(idRequest.getId());
+        if (idRequest.getStatus() == EIdVerificationStatus.VERIFIED)
+            user.setIdVerificationStatus(EIdVerificationStatus.VERIFIED);
+        else
+            user.setIdVerificationStatus(EIdVerificationStatus.REJECTED);
+    }
+
+    @Override
+    public List<User> getWaitingForVerificationUser() {
+        return userRepo.findByIdVerificationStatusIs(EIdVerificationStatus.VERIFYING);
     }
 
     private void saveUser(User user) {

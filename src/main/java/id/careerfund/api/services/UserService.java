@@ -7,6 +7,7 @@ import id.careerfund.api.domains.models.*;
 import id.careerfund.api.domains.models.reqres.AssessmentScore;
 import id.careerfund.api.domains.models.reqres.UpdateUser;
 import id.careerfund.api.domains.models.requests.EmailRequest;
+import id.careerfund.api.domains.models.requests.IdRequest;
 import id.careerfund.api.domains.models.responses.FileUrlResponse;
 import id.careerfund.api.domains.models.responses.MyProfile;
 import javassist.NotFoundException;
@@ -14,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 import java.security.Principal;
+import java.util.List;
 
 public interface UserService {
     void registerUser(UserRegister userRegister) throws Exception;
@@ -57,4 +59,8 @@ public interface UserService {
     AssessmentScore saveAssessmentScore(Principal principal, AssessmentScore assessmentScore);
 
     AssessmentScore getAssessmentScore(Principal principal);
+
+    void verifyUserId(IdRequest idRequest);
+
+    List<User> getWaitingForVerificationUser();
 }
