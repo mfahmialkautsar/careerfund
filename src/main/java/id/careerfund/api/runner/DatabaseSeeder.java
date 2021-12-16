@@ -469,23 +469,84 @@ public class DatabaseSeeder implements ApplicationRunner {
     }
 
     private void saveBank() {
-        Bank bank = new Bank(1L, "Bank Central Asia", null);
-        saveBankIfNotExists(bank);
+        Bank bca = new Bank();
+        bca.setId(1L);
+        bca.setName("Bank Central Asia");
+        bca.setLogoPath("https://statik.tempo.co/data/2019/04/23/id_836405/836405_720.jpg");
+        saveBankIfNotExists(bca);
+
+        Bank mandiri = new Bank();
+        mandiri.setId(2L);
+        mandiri.setName("Bank Mandiri");
+        mandiri.setLogoPath("https://pbs.twimg.com/profile_images/829865693185138688/D1y2Ciyn_400x400.jpg");
+        saveBankIfNotExists(mandiri);
+
+        Bank bni = new Bank();
+        bni.setId(3L);
+        bni.setName("Bank BNI");
+        bni.setLogoPath("https://pbs.twimg.com/profile_images/1219085693747490816/7CsOD8WC_400x400.jpg");
+        saveBankIfNotExists(bni);
+
+        Bank bri = new Bank();
+        bri.setId(4L);
+        bri.setName("Bank BRI");
+        bri.setLogoPath("https://statik.tempo.co/data/2020/01/21/id_908083/908083_720.jpg");
+        saveBankIfNotExists(bri);
+
+        Bank bsi = new Bank();
+        bsi.setId(5L);
+        bsi.setName("Bank Syariah Indonesia");
+        bsi.setLogoPath("https://statik.tempo.co/data/2021/02/02/id_997833/997833_720.jpg");
+        saveBankIfNotExists(bsi);
     }
 
     private void savePaymentType() {
-        PaymentType virtualAccount = new PaymentType(1L, EPaymentType.VIRTUAL_ACCOUNT, null);
+        PaymentType virtualAccount = new PaymentType();
+        virtualAccount.setId(1L);
+        virtualAccount.setName(EPaymentType.VIRTUAL_ACCOUNT);
         savePaymentTypeIfNotExists(virtualAccount);
     }
 
     private void savePaymentAccount() {
-        PaymentAccount paymentAccount = new PaymentAccount();
-        paymentAccount.setId(1L);
-        paymentAccount.setName("BCA");
-        paymentAccount.setPaymentType(paymentTypeRepository.getById(1L));
-        paymentAccount.setNumber(122000000000001L);
-        paymentAccount.setBank(bankRepository.getById(1L));
-        savePaymentAccountIfNotExists(paymentAccount);
+        PaymentAccount bcaVA = new PaymentAccount();
+        bcaVA.setId(1L);
+        bcaVA.setName("BCA Virtual Account");
+        bcaVA.setPaymentType(paymentTypeRepository.getById(1L));
+        bcaVA.setNumber(122000000000001L);
+        bcaVA.setBank(bankRepository.getById(1L));
+        savePaymentAccountIfNotExists(bcaVA);
+
+        PaymentAccount mandiriVA = new PaymentAccount();
+        mandiriVA.setId(2L);
+        mandiriVA.setName("Mandiri Virtual Account");
+        mandiriVA.setPaymentType(paymentTypeRepository.getById(1L));
+        mandiriVA.setNumber(123000000000001L);
+        mandiriVA.setBank(bankRepository.getById(2L));
+        savePaymentAccountIfNotExists(mandiriVA);
+
+        PaymentAccount bniVA = new PaymentAccount();
+        bniVA.setId(3L);
+        bniVA.setName("BNI Virtual Account");
+        bniVA.setPaymentType(paymentTypeRepository.getById(1L));
+        bniVA.setNumber(124000000000001L);
+        bniVA.setBank(bankRepository.getById(3L));
+        savePaymentAccountIfNotExists(bniVA);
+
+        PaymentAccount briVA = new PaymentAccount();
+        briVA.setId(4L);
+        briVA.setName("BRI Virtual Account");
+        briVA.setPaymentType(paymentTypeRepository.getById(1L));
+        briVA.setNumber(125000000000001L);
+        briVA.setBank(bankRepository.getById(4L));
+        savePaymentAccountIfNotExists(briVA);
+
+        PaymentAccount bsiVA = new PaymentAccount();
+        bsiVA.setId(5L);
+        bsiVA.setName("BSI Virtual Account");
+        bsiVA.setPaymentType(paymentTypeRepository.getById(1L));
+        bsiVA.setNumber(126000000000001L);
+        bsiVA.setBank(bankRepository.getById(5L));
+        savePaymentAccountIfNotExists(bsiVA);
     }
 
     private void registerUserIfNotExists(User user) {

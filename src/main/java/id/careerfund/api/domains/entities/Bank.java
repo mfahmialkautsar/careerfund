@@ -25,6 +25,10 @@ public class Bank extends Auditable {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
+    @Lob
+    @Column(name = "logo_path")
+    private String logoPath;
+
     @JsonIgnore
     @OneToMany(mappedBy = "bank", orphanRemoval = true)
     private List<PaymentAccount> paymentAccount = new ArrayList<>();

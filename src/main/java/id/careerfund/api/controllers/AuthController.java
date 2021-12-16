@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.net.URI;
 
@@ -94,19 +95,19 @@ public class AuthController extends HandlerController {
         }
     }
 
-//    @PostMapping("/signup/otp/request-email")
-//    public ResponseEntity<ApiResponse> requestSignUpOTP(@Valid @RequestBody EmailRequest emailRequest) {
-//        try {
-//            this.userService.sendVerificationEmail(emailRequest);
-//        } catch (MessagingException e) {
-//            e.printStackTrace();
-//            throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Failed sending email, try again", e.getCause());
-//        } catch (NotFoundException e) {
-//            e.printStackTrace();
-//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Credential not found", e.getCause());
-//        }
-//        return ResponseEntity.ok(ApiResponse.success("Please check your email for OTP verification"));
-//    }
+    @PostMapping("/signup/otp/request-email")
+    public ResponseEntity<ApiResponse> requestSignUpOTP(@Valid @RequestBody EmailRequest emailRequest) {
+        try {
+            this.userService.sendVerificationEmail(emailRequest);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Failed sending email, try again", e.getCause());
+        } catch (NotFoundException e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Credential not found", e.getCause());
+        }
+        return ResponseEntity.ok(ApiResponse.builder().message("Please check your email for OTP verification").build());
+    }
 
     @PostMapping("/signup/otp/verify")
     public ResponseEntity<TokenResponse> verifySignUpOTP(@Valid @RequestBody OtpRequest otpRequest) {
