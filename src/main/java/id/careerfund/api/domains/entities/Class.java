@@ -33,6 +33,10 @@ public class Class extends Auditable {
     @Column(name = "end_date")
     private LocalDate endDate;
 
+    @Column(name = "duration_month", nullable = false)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Long durationMonth;
+
     @Column(name = "quota")
     private Integer quota;
 
@@ -46,10 +50,6 @@ public class Class extends Auditable {
     @JsonIgnore
     @OneToMany(mappedBy = "aClass", orphanRemoval = true)
     private List<UserClass> userClass = new ArrayList<>();
-
-    @Transient
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Integer durationMonth;
 
     @Transient
     @JsonInclude(JsonInclude.Include.NON_NULL)

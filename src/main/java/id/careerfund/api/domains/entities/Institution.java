@@ -22,6 +22,7 @@ public class Institution extends Auditable {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
+    @Lob
     @Column(name = "logo_path")
     private String logoPath;
 

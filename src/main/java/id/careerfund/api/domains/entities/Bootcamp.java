@@ -22,6 +22,7 @@ public class Bootcamp extends Auditable {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Lob
     @Column(name = "logo_path")
     private String logoPath;
 

@@ -50,9 +50,11 @@ public class User extends Auditable implements UserDetails {
     @Column(name = "phone_number", unique = true)
     private String phoneNumber;
 
+    @Lob
     @Column(name = "identity_card_path")
     private String identityCardPath;
 
+    @Lob
     @Column(name = "photo_path")
     private String photoPath;
 
