@@ -16,6 +16,7 @@ import javax.persistence.*;
 public class Interest extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
     private Long id;
 
     @Column(name = "name", nullable = false, unique = true)

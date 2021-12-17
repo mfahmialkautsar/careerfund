@@ -11,7 +11,6 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ObjectUtils;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
@@ -579,8 +578,7 @@ public class DatabaseSeeder implements ApplicationRunner {
     }
 
     private void saveInterestIfNotExists(Interest newInterest) {
-        Interest interest = interestRepository.findByName(newInterest.getName());
-        if (ObjectUtils.isEmpty(interest)) {
+        if (interestRepository.findByName(newInterest.getName()) == null) {
             interestRepository.save(newInterest);
         }
     }
