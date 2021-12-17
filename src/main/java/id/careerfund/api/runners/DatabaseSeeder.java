@@ -5,6 +5,7 @@ import id.careerfund.api.domains.ERole;
 import id.careerfund.api.domains.entities.*;
 import id.careerfund.api.domains.entities.Class;
 import id.careerfund.api.repositories.*;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -21,29 +22,19 @@ import java.util.Collections;
 @Slf4j
 @Transactional
 @Component
+@RequiredArgsConstructor
 public class DatabaseSeeder implements ApplicationRunner {
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private RoleRepository roleRepository;
-    @Autowired
-    private InterestRepository interestRepository;
-    @Autowired
-    private InstitutionRepository institutionRepository;
-    @Autowired
-    private BootcampRepository bootcampRepository;
-    @Autowired
-    private ClassRepository classRepository;
-    @Autowired
-    private PaymentTypeRepository paymentTypeRepository;
-    @Autowired
-    private PaymentAccountRepository paymentAccountRepository;
-    @Autowired
-    private BankRepository bankRepository;
-    @Autowired
-    private BalanceRepository balanceRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final InterestRepository interestRepository;
+    private final InstitutionRepository institutionRepository;
+    private final BootcampRepository bootcampRepository;
+    private final ClassRepository classRepository;
+    private final PaymentTypeRepository paymentTypeRepository;
+    private final PaymentAccountRepository paymentAccountRepository;
+    private final BankRepository bankRepository;
+    private final BalanceRepository balanceRepository;
 
     @Override
     public void run(ApplicationArguments args) {
