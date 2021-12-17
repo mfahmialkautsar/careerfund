@@ -99,8 +99,11 @@ public class ClassController extends HandlerController {
             if (e.getMessage().equals("DOWNPAYMENT_GREATER"))
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Downpayment greater than expected",
                         e.getCause());
-            else
+            else if (e.getMessage().equals("DOWNPAYMENT_LESS"))
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Downpayment less than expected",
+                        e.getCause());
+            else
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Class registration is over",
                         e.getCause());
         } catch (Exception e) {
             e.printStackTrace();
@@ -144,9 +147,11 @@ public class ClassController extends HandlerController {
             else if (e.getMessage().equals("SHOULD_PAY_MONTHLYPAYMENT"))
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Please pay the amount of monthly payment",
                         e.getCause());
-            else
+            else if (e.getMessage().equals("WRONG_AMOUNT"))
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Please pay with the right amount",
                         e.getCause());
+            else
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Payment is over", e.getCause());
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Class not found", e.getCause());
         } catch (Exception e) {

@@ -10,6 +10,8 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,6 +55,9 @@ public class Loan extends Auditable {
 
     @Column(name = "fee", nullable = false)
     private Long fee;
+
+    @Column(name = "dp_payment_expired_time", nullable = false)
+    private LocalDateTime dpPaymentExpiredTime;
 
     @OneToMany(mappedBy = "loan", orphanRemoval = true)
     private List<LoanPayment> loanPayments = new ArrayList<>();

@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.security.Principal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,15 +43,18 @@ public class UserClassServiceImpl implements UserClassService {
 
     @Override
     public UserClass registerClass(Principal principal, UserClassRequest userClassRequest)
-            throws EntityNotFoundException {
-        log.info("Registering class {}", userClassRequest.getClassId());
+            throws EntityNotFoundException, RequestRejectedException {
         User user = UserMapper.principalToUser(principal);
         Class aClass = classRepo.getById(userClassRequest.getClassId());
+        if (aClass.getStartDate().isBefore(LocalDate.now().minusDays(7))) {
+            throw new RequestRejectedException("CLASS_REGISTRATION_OVER");
+        }
         if (userClassRequest.getDownPayment() > aClass.getPrice() * 0.3)
             throw new RequestRejectedException("DOWNPAYMENT_GREATER");
         if (userClassRequest.getDownPayment() < aClass.getPrice() * 0.1)
             throw new RequestRejectedException("DOWNPAYMENT_LESS");
 
+        log.info("Registering class {}", userClassRequest.getClassId());
         Loan loan = new Loan();
         loan.setBorrower(user);
         loan.setDownPayment(userClassRequest.getDownPayment());
@@ -65,6 +70,7 @@ public class UserClassServiceImpl implements UserClassService {
                 userClassRequest.getDownPayment()));
         loan.setTotalPayment(loanService.getTotalPayment(aClass, userClassRequest.getTenorMonth(),
                 userClassRequest.getDownPayment()));
+        loan.setDpPaymentExpiredTime(LocalDateTime.now().plusDays(2));
         loanRepo.save(loan);
 
         UserClass userClass = new UserClass();
@@ -122,15 +128,17 @@ public class UserClassServiceImpl implements UserClassService {
         if (!userClass.getUser().getId().equals(user.getId()))
             throw new AccessDeniedException("USER_WRONG");
         if (!hasPaidDownPayment(loan)) {
+            if (loan.getDpPaymentExpiredTime().isBefore(LocalDateTime.now()))
+                throw new RequestRejectedException("DOWNPAYMENT_EXPIRED");
             if (payMyLoan.getPaymentAmount().equals(loan.getDownPayment())) {
                 onPaymentSuccess(loanPayment, financialTransaction, payment, userClass);
                 // Add to company cash
                 cashService.doDebit(financialTransaction);
             } else if (payMyLoan.getPaymentAmount().equals(loan.getMonthlyPayment())) {
                 throw new RequestRejectedException("SHOULD_PAY_DOWNPAYMENT");
-            } else {
-                throw new RequestRejectedException("WRONG_AMOUNT");
             }
+            throw new RequestRejectedException("WRONG_AMOUNT");
+
         } else {
             if (payMyLoan.getPaymentAmount().equals(loan.getDownPayment())) {
                 throw new RequestRejectedException("SHOULD_PAY_MONTHLYPAYMENT");
