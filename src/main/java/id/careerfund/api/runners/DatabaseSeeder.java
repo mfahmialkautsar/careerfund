@@ -1,4 +1,4 @@
-package id.careerfund.api.runner;
+package id.careerfund.api.runners;
 
 import id.careerfund.api.domains.EPaymentType;
 import id.careerfund.api.domains.ERole;
