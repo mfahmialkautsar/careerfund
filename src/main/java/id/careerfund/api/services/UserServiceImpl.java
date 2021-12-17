@@ -7,7 +7,6 @@ import id.careerfund.api.domains.entities.Interest;
 import id.careerfund.api.domains.entities.OneTimePassword;
 import id.careerfund.api.domains.entities.Role;
 import id.careerfund.api.domains.entities.User;
-import id.careerfund.api.domains.models.*;
 import id.careerfund.api.domains.models.reqres.AssessmentScore;
 import id.careerfund.api.domains.models.reqres.UpdateUser;
 import id.careerfund.api.domains.models.requests.EmailRequest;

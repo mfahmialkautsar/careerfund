@@ -107,20 +107,57 @@ public class DatabaseSeeder implements ApplicationRunner {
     }
 
     private void saveInterests() {
-        saveInterestIfNotExists(new Interest(null, "Front End Development"));
-        saveInterestIfNotExists(new Interest(null, "Back End Development"));
-        saveInterestIfNotExists(new Interest(null, "UI UX Design"));
-        saveInterestIfNotExists(new Interest(null, "Data Science"));
-        saveInterestIfNotExists(new Interest(null, "Digital Marketing"));
-        saveInterestIfNotExists(new Interest(null, "Android Development"));
-        saveInterestIfNotExists(new Interest(null, "IOS Development"));
-        saveInterestIfNotExists(new Interest(null, "Product Management"));
-        saveInterestIfNotExists(new Interest(null, "Business Intelligence"));
-        saveInterestIfNotExists(new Interest(null, "Digital Marketing"));
-        saveInterestIfNotExists(new Interest(null, "Marketing"));
-        saveInterestIfNotExists(new Interest(null, "Visual Design"));
-        saveInterestIfNotExists(new Interest(null, "Quality Assurance"));
-        saveInterestIfNotExists(new Interest(null, "DevOps"));
+        Interest fed = new Interest();
+        fed.setName("Front End Development");
+        saveInterestIfNotExists(fed);
+
+        Interest bed = new Interest();
+        bed.setName("Back End Development");
+        saveInterestIfNotExists(bed);
+
+        Interest uid = new Interest();
+        uid.setName("UI UX Design");
+        saveInterestIfNotExists(uid);
+
+        Interest ds = new Interest();
+        ds.setName("Data Science");
+        saveInterestIfNotExists(ds);
+
+        Interest dm = new Interest();
+        dm.setName("Digital Marketing");
+        saveInterestIfNotExists(dm);
+
+        Interest ad = new Interest();
+        ad.setName("Android Development");
+        saveInterestIfNotExists(ad);
+
+        Interest ios = new Interest();
+        ios.setName("IOS Development");
+        saveInterestIfNotExists(ios);
+
+        Interest pm = new Interest();
+        pm.setName("Product Management");
+        saveInterestIfNotExists(pm);
+
+        Interest bi = new Interest();
+        bi.setName("Business Intelligence");
+        saveInterestIfNotExists(bi);
+
+        Interest m = new Interest();
+        m.setName("Marketing");
+        saveInterestIfNotExists(m);
+
+        Interest vd = new Interest();
+        vd.setName("Visual Design");
+        saveInterestIfNotExists(vd);
+
+        Interest qa = new Interest();
+        qa.setName("Quality Assurance");
+        saveInterestIfNotExists(qa);
+
+        Interest devops = new Interest();
+        devops.setName("DevOps");
+        saveInterestIfNotExists(devops);
     }
 
     private void saveInstitutions() {
@@ -600,7 +637,6 @@ public class DatabaseSeeder implements ApplicationRunner {
         if (!classRepository.existsById(aClass.getId())) {
             classRepository.save(aClass);
         }
-        // return classRepository.getById(aClass.getId());
     }
 
     private void saveBootcampInstitutionIfNotExists(Bootcamp bootcamp, Institution institution) {
