@@ -70,4 +70,6 @@ public interface UserService {
     void verifyUserId(IdRequest idRequest);
 
     List<User> getWaitingForVerificationUser();
+
+    void requestVerify(Principal principal);
 }

@@ -237,7 +237,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         String identityCardPath = storageService.uploadFile(file, "images/ic/");
         user.setIdentityCardPath(identityCardPath);
-        user.setIdVerificationStatus(EIdVerificationStatus.VERIFYING);
         return new FileUrlResponse(identityCardPath);
     }
 
@@ -248,7 +247,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         String selfiePath = storageService.uploadFile(file, "images/selfies/");
         user.setSelfiePath(selfiePath);
-        user.setIdVerificationStatus(EIdVerificationStatus.VERIFYING);
         return new FileUrlResponse(selfiePath);
     }
 
@@ -278,6 +276,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public List<User> getWaitingForVerificationUser() {
         return userRepo.findByIdVerificationStatusIs(EIdVerificationStatus.VERIFYING);
+    }
+
+    @Override
+    public void requestVerify(Principal principal) {
+        User principalUser = UserMapper.principalToUser(principal);
+        User user = userRepo.getById(principalUser.getId());
+        user.setIdVerificationStatus(EIdVerificationStatus.VERIFYING);
     }
 
     private void saveUser(User user) {

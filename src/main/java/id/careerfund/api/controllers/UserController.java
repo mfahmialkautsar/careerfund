@@ -55,6 +55,12 @@ public class UserController extends HandlerController {
                 .ok(ApiResponse.<FileUrlResponse>builder().data(userService.uploadSelfie(principal, file)).build());
     }
 
+    @PutMapping("/profile/verify")
+    public ResponseEntity<ApiResponse> requestVerifyIdentity(Principal principal) {
+        userService.requestVerify(principal);
+        return ResponseEntity.ok(ApiResponse.builder().message("Your identity is being verified").build());
+    }
+
     @PutMapping("/profile/assessment-score")
     public ResponseEntity<ApiResponse<AssessmentScore>> saveAssessmentScore(Principal principal,
             @Valid @RequestBody AssessmentScore assessmentScore) {
