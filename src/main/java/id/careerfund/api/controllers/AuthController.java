@@ -1,12 +1,7 @@
 package id.careerfund.api.controllers;
 
 import com.auth0.jwt.exceptions.TokenExpiredException;
-import id.careerfund.api.domains.models.requests.EmailRequest;
-import id.careerfund.api.domains.models.requests.NewTokenRequest;
-import id.careerfund.api.domains.models.requests.OtpRequest;
-import id.careerfund.api.domains.models.requests.SignInRequest;
-import id.careerfund.api.domains.models.requests.SignOutRequest;
-import id.careerfund.api.domains.models.requests.UserRegister;
+import id.careerfund.api.domains.models.requests.*;
 import id.careerfund.api.domains.models.responses.ApiResponse;
 import id.careerfund.api.domains.models.responses.EmailAvailability;
 import id.careerfund.api.domains.models.responses.TokenResponse;
@@ -26,6 +21,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.net.URI;
+import java.security.Principal;
 
 @RestController
 @RequiredArgsConstructor
@@ -131,6 +127,21 @@ public class AuthController extends HandlerController {
             e.printStackTrace();
             throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED,
                     "Failed to verify OTP. Please try again later.");
+        }
+    }
+
+    @PutMapping("/password")
+    public ResponseEntity<ApiResponse> changePassword(Principal principal, @Valid @RequestBody PasswordChangeRequest passwordChangeRequest) {
+        try {
+            userService.changePassword(principal, passwordChangeRequest);
+            return ResponseEntity.ok(ApiResponse.builder().message("Password changed").build());
+        } catch (BadCredentialsException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Your old password is wrong",
+                    e.getCause());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED,
+                    "Failed to change password. Please try again later.");
         }
     }
 }

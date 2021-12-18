@@ -68,7 +68,7 @@ public class DatabaseSeeder implements ApplicationRunner {
         lender.setIsEnabled(true);
         lender.setEmail("lender@careerfund.com");
         lender.setName("Lender");
-        lender.setPassword(passwordEncoder.encode("1234"));
+        lender.setPassword(passwordEncoder.encode("pass1234"));
         lender.setRoles(Arrays.asList(roleRepository.findByName(ERole.ROLE_LENDER),
                 roleRepository.findByName(ERole.ROLE_USER)));
         Balance lenderBalance = new Balance();
@@ -80,7 +80,7 @@ public class DatabaseSeeder implements ApplicationRunner {
         Borrower.setIsEnabled(true);
         Borrower.setEmail("borrower@careerfund.com");
         Borrower.setName("Borrower");
-        Borrower.setPassword(passwordEncoder.encode("1234"));
+        Borrower.setPassword(passwordEncoder.encode("pass1234"));
         Borrower.setRoles(Arrays.asList(roleRepository.findByName(ERole.ROLE_BORROWER),
                 roleRepository.findByName(ERole.ROLE_USER)));
         Balance borrowerBalance = new Balance();

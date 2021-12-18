@@ -5,17 +5,13 @@ import id.careerfund.api.domains.entities.Interest;
 import id.careerfund.api.domains.entities.User;
 import id.careerfund.api.domains.models.reqres.AssessmentScore;
 import id.careerfund.api.domains.models.reqres.UpdateUser;
-import id.careerfund.api.domains.models.requests.EmailRequest;
-import id.careerfund.api.domains.models.requests.IdRequest;
-import id.careerfund.api.domains.models.requests.OtpRequest;
-import id.careerfund.api.domains.models.requests.SignInRequest;
-import id.careerfund.api.domains.models.requests.UpdateInterest;
-import id.careerfund.api.domains.models.requests.UserRegister;
+import id.careerfund.api.domains.models.requests.*;
 import id.careerfund.api.domains.models.responses.FileUrlResponse;
 import id.careerfund.api.domains.models.responses.MyInterests;
 import id.careerfund.api.domains.models.responses.MyProfile;
 import id.careerfund.api.domains.models.responses.TokenResponse;
 import javassist.NotFoundException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
@@ -48,6 +44,8 @@ public interface UserService {
     void sendVerificationEmail(EmailRequest emailRequest) throws MessagingException, NotFoundException;
 
     TokenResponse signIn(SignInRequest signInRequest) throws Exception;
+
+    void changePassword(Principal principal, PasswordChangeRequest passwordChangeRequest) throws BadCredentialsException;
 
     TokenResponse verifyUser(OtpRequest otpRequest) throws NotFoundException, TokenExpiredException;
 

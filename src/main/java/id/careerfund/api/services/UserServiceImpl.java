@@ -9,12 +9,7 @@ import id.careerfund.api.domains.entities.Role;
 import id.careerfund.api.domains.entities.User;
 import id.careerfund.api.domains.models.reqres.AssessmentScore;
 import id.careerfund.api.domains.models.reqres.UpdateUser;
-import id.careerfund.api.domains.models.requests.EmailRequest;
-import id.careerfund.api.domains.models.requests.IdRequest;
-import id.careerfund.api.domains.models.requests.OtpRequest;
-import id.careerfund.api.domains.models.requests.SignInRequest;
-import id.careerfund.api.domains.models.requests.UpdateInterest;
-import id.careerfund.api.domains.models.requests.UserRegister;
+import id.careerfund.api.domains.models.requests.*;
 import id.careerfund.api.domains.models.responses.FileUrlResponse;
 import id.careerfund.api.domains.models.responses.MyInterests;
 import id.careerfund.api.domains.models.responses.MyProfile;
@@ -185,6 +180,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
 
         return tokenService.getToken(user);
+    }
+
+    @Override
+    public void changePassword(Principal principal, PasswordChangeRequest passwordChangeRequest) throws BadCredentialsException {
+        User userPrincipal = UserMapper.principalToUser(principal);
+        User user = userRepo.getById(userPrincipal.getId());
+        if (!passwordEncoder.matches(passwordChangeRequest.getOldPassword(), user.getPassword()))
+            throw new BadCredentialsException("OLD_PASSWORD_WRONG");
+        user.setPassword(passwordEncoder.encode(passwordChangeRequest.getNewPassword()));
     }
 
     private void sendVerificationEmail(String email) throws MessagingException, NotFoundException {
