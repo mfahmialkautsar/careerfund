@@ -50,6 +50,9 @@ public class Loan extends Auditable {
     @Column(name = "monthly_payment", nullable = false)
     private Long monthlyPayment;
 
+    @Column(name = "monthly_payment_due_date")
+    private Integer monthlyPaymentDueDate;
+
     @Column(name = "monthly_fee", nullable = false)
     private Long monthlyFee;
 

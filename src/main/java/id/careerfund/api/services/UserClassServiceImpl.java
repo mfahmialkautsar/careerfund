@@ -134,6 +134,7 @@ public class UserClassServiceImpl implements UserClassService {
                 onPaymentSuccess(loanPayment, financialTransaction, payment, userClass);
                 // Add to company cash
                 cashService.doDebit(financialTransaction);
+                loan.setMonthlyPaymentDueDate(LocalDateTime.now().getDayOfMonth());
             } else if (payMyLoan.getPaymentAmount().equals(loan.getMonthlyPayment())) {
                 throw new RequestRejectedException("SHOULD_PAY_DOWNPAYMENT");
             }
