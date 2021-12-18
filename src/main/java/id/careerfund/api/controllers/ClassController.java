@@ -135,23 +135,30 @@ public class ClassController extends HandlerController {
     public ResponseEntity<ApiResponse<UserClass>> payMyClass(Principal principal, @PathVariable Long myClassId,
             @Valid @RequestBody PayMyLoan payMyLoan) {
         try {
-            return ResponseEntity.ok(ApiResponse.<UserClass>builder()
+            URI uri = URI
+                    .create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/my/classes/{myClassId}/pay").toUriString());
+            return ResponseEntity.created(uri).body(ApiResponse.<UserClass>builder()
                     .data(userClassService.payMyClass(principal, myClassId, payMyLoan)).build());
         } catch (AccessDeniedException e) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to access this resource",
                     e.getCause());
         } catch (RequestRejectedException e) {
-            if (e.getMessage().equals("SHOULD_PAY_DOWNPAYMENT"))
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Please pay the amount of down payment",
-                        e.getCause());
-            else if (e.getMessage().equals("SHOULD_PAY_MONTHLYPAYMENT"))
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Please pay the amount of monthly payment",
-                        e.getCause());
-            else if (e.getMessage().equals("WRONG_AMOUNT"))
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Please pay with the right amount",
-                        e.getCause());
-            else
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Payment is over", e.getCause());
+            switch (e.getMessage()) {
+                case "LOAN_FINISHED":
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The loan has been finished",
+                            e.getCause());
+                case "SHOULD_PAY_DOWNPAYMENT":
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Please pay the amount of down payment",
+                            e.getCause());
+                case "SHOULD_PAY_MONTHLYPAYMENT":
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Please pay the amount of monthly payment",
+                            e.getCause());
+                case "WRONG_AMOUNT":
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Please pay with the right amount",
+                            e.getCause());
+                default:
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Payment is over", e.getCause());
+            }
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Class not found", e.getCause());
         } catch (Exception e) {

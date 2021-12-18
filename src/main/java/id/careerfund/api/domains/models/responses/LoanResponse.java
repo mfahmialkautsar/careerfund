@@ -18,6 +18,7 @@ public class LoanResponse {
     private Borrower borrower;
     private Double interestPercent;
     private Integer tenorMonth;
+    private Long totalPayment;
     private Long targetFund;
     private Class aClass;
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -27,8 +28,7 @@ public class LoanResponse {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Boolean fundedByMe;
     private Long fundLeft;
-    private Integer monthPaid;
-    private Long totalPayment;
+    private Integer monthsPaid;
     private Long monthlyPayment;
     private List<LoanPayment> loanPayments = new ArrayList<>();
 }

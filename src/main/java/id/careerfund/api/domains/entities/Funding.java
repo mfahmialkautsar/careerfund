@@ -33,4 +33,7 @@ public class Funding extends Auditable {
     @JoinColumn(name = "financial_transaction_id")
     private FinancialTransaction financialTransaction;
 
+    @JsonIgnore
+    @OneToOne(mappedBy = "funding", orphanRemoval = true)
+    private Withdraw withdraw;
 }

@@ -127,6 +127,8 @@ public class UserClassServiceImpl implements UserClassService {
 
         if (!userClass.getUser().getId().equals(user.getId()))
             throw new AccessDeniedException("USER_WRONG");
+        if (loan.getLoanPayments().size() - 1 >= loan.getTenorMonth())
+            throw new RequestRejectedException("LOAN_FINISHED");
         if (!hasPaidDownPayment(loan)) {
             if (loan.getDpPaymentExpiredTime().isBefore(LocalDateTime.now()))
                 throw new RequestRejectedException("DOWNPAYMENT_EXPIRED");

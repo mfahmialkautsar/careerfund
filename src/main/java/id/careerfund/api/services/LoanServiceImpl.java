@@ -4,9 +4,7 @@ import id.careerfund.api.domains.entities.*;
 import id.careerfund.api.domains.entities.Class;
 import id.careerfund.api.domains.models.requests.FundLoan;
 import id.careerfund.api.domains.models.responses.LoanResponse;
-import id.careerfund.api.repositories.FinancialTransactionRepository;
-import id.careerfund.api.repositories.FundingRepository;
-import id.careerfund.api.repositories.LoanRepository;
+import id.careerfund.api.repositories.*;
 import id.careerfund.api.utils.helpers.PageableHelper;
 import id.careerfund.api.utils.mappers.LoanMapper;
 import id.careerfund.api.utils.mappers.UserMapper;
@@ -19,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
@@ -128,6 +127,8 @@ public class LoanServiceImpl implements LoanService {
         if (fundLoan.getFund() > loan.getTotalPayment()
                 || fundLoan.getFund() > loan.getTotalPayment() - fundingService.getTotalLoanFund(loan))
             throw new RequestRejectedException("MAX_EXCEEDED");
+        if (loan.getLoanPayments().size() > 1 || loan.getUserClass().getAClass().getStartDate().isBefore(LocalDate.now()))
+            throw new RequestRejectedException("LOAN_STARTED");
         if (fundLoan.getFund() < getMinFund(loan))
             throw new RequestRejectedException(String.valueOf(getMinFund(loan)));
 
@@ -190,7 +191,7 @@ public class LoanServiceImpl implements LoanService {
 
     private void setLoanTransientValues(Loan loan, LoanResponse loanResponse, long userId) {
         loanResponse.setProgress(getLoanProgress(loan));
-        loanResponse.setMonthPaid(loan.getLoanPayments().size() - 1);
+        loanResponse.setMonthsPaid(loan.getLoanPayments().size() - 1);
         loanResponse.setFundable(isFundable(loan));
         loanResponse.setFundedByMe(loanRepo.existsByFundings_Lender_Id(userId));
         loanResponse.setFundLeft(loan.getTotalPayment() - fundingService.getTotalLoanFund(loan));

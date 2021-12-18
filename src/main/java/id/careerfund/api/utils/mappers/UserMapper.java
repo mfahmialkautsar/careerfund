@@ -10,6 +10,7 @@ import id.careerfund.api.domains.models.responses.MyProfile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 import java.security.Principal;
+import java.util.stream.Collectors;
 
 public final class UserMapper {
     public static User userRegisterToUser(UserRegister userRegister) {
@@ -96,7 +97,7 @@ public final class UserMapper {
 
     private static Long getTotalAssets(User user) {
         long totalAssets = 0L;
-        for (Funding funding : user.getFundings()) {
+        for (Funding funding : user.getFundings().stream().filter(funding -> funding.getWithdraw() != null).collect(Collectors.toList())) {
             totalAssets += funding.getFinancialTransaction().getNominal();
         }
         return totalAssets;
