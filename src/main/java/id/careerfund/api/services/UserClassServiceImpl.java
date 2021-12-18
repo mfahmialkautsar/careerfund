@@ -34,7 +34,7 @@ public class UserClassServiceImpl implements UserClassService {
     private final FinancialTransactionRepository financialTransactionRepo;
     private final LoanService loanService;
     private final CashService cashService;
-    private final BalanceService balanceService;
+//    private final BalanceService balanceService;
     private final ClassService classService;
 
     private boolean hasPaidDownPayment(Loan loan) {
@@ -137,8 +137,9 @@ public class UserClassServiceImpl implements UserClassService {
                 loan.setMonthlyPaymentDueDate(LocalDateTime.now().getDayOfMonth());
             } else if (payMyLoan.getPaymentAmount().equals(loan.getMonthlyPayment())) {
                 throw new RequestRejectedException("SHOULD_PAY_DOWNPAYMENT");
+            } else {
+                throw new RequestRejectedException("WRONG_AMOUNT");
             }
-            throw new RequestRejectedException("WRONG_AMOUNT");
 
         } else {
             if (payMyLoan.getPaymentAmount().equals(loan.getDownPayment())) {
@@ -155,7 +156,7 @@ public class UserClassServiceImpl implements UserClassService {
                                 .doubleValue());
 
                 // Send payback to lender balance
-                loan.getFundings().forEach(funding -> balanceService.sendLenderPayback(funding, financialTransaction));
+//                loan.getFundings().forEach(funding -> balanceService.sendLenderPayback(funding, financialTransaction));
             } else {
                 throw new RequestRejectedException("WRONG_AMOUNT");
             }

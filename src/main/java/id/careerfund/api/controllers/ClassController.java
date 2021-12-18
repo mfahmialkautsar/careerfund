@@ -113,11 +113,11 @@ public class ClassController extends HandlerController {
     }
 
     @Secured({ ERole.Constants.BORROWER })
-    @GetMapping("/my/classes/{classId}")
-    public ResponseEntity<ApiResponse<UserClass>> getMyClassById(Principal principal, @PathVariable Long classId) {
+    @GetMapping("/my/classes/{myClassId}")
+    public ResponseEntity<ApiResponse<UserClass>> getMyClassById(Principal principal, @PathVariable Long myClassId) {
         try {
             return ResponseEntity.ok(
-                    ApiResponse.<UserClass>builder().data(userClassService.getMyClassById(principal, classId)).build());
+                    ApiResponse.<UserClass>builder().data(userClassService.getMyClassById(principal, myClassId)).build());
         } catch (AccessDeniedException e) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to access this resource",
                     e.getCause());
@@ -131,12 +131,12 @@ public class ClassController extends HandlerController {
     }
 
     @Secured({ ERole.Constants.BORROWER })
-    @PostMapping("/my/classes/{classId}/pay")
-    public ResponseEntity<ApiResponse<UserClass>> payMyClass(Principal principal, @PathVariable Long classId,
+    @PostMapping("/my/classes/{myClassId}/pay")
+    public ResponseEntity<ApiResponse<UserClass>> payMyClass(Principal principal, @PathVariable Long myClassId,
             @Valid @RequestBody PayMyLoan payMyLoan) {
         try {
             return ResponseEntity.ok(ApiResponse.<UserClass>builder()
-                    .data(userClassService.payMyClass(principal, classId, payMyLoan)).build());
+                    .data(userClassService.payMyClass(principal, myClassId, payMyLoan)).build());
         } catch (AccessDeniedException e) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to access this resource",
                     e.getCause());

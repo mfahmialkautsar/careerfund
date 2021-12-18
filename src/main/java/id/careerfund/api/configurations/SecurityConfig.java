@@ -40,7 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     private static final String[] AUTH_LIST = {
-            "/user/**", "/my/**", "/lender/**", "/profile/**", "/admin/**", "/password/**"
+            "/user/**", "/my/**", "/lender/**", "/profile/**", "/admin/**", "/password"
     };
 
     @Override
