@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,8 +17,15 @@ import java.util.List;
 public class LoanBorrowerDto {
     private Long id;
     private Double interestPercent;
+    private Long interestNumber;
     private Integer tenorMonth;
+    private Long downPayment;
+    private LocalDateTime dpPaymentExpiredTime;
     private Long totalPayment;
+    private Long monthlyPayment;
+    private Integer monthlyPaymentDueDate;
+    private Long monthlyFee;
+    private Long fee;
     private Long targetFund;
     private Class aClass;
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -28,6 +36,5 @@ public class LoanBorrowerDto {
     private Boolean fundedByMe;
     private Long fundLeft;
     private Integer monthsPaid;
-    private Long monthlyPayment;
     private List<LoanPayment> loanPayments = new ArrayList<>();
 }
