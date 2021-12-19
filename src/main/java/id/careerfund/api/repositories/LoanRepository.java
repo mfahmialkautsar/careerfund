@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface LoanRepository extends JpaRepository<Loan, Long> {
     Page<Loan> findByFundings_Lender_Id(Long id, Pageable pageable);
 
-    boolean existsByFundings_Lender_Id(Long id);
+    boolean existsByIdAndFundings_Lender_Id(Long id, Long lenderId);
 
     Page<Loan> findDistinctByLoanPaymentsNotEmpty(Pageable pageable);
 }

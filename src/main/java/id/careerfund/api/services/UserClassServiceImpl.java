@@ -34,7 +34,6 @@ public class UserClassServiceImpl implements UserClassService {
     private final FinancialTransactionRepository financialTransactionRepo;
     private final LoanService loanService;
     private final CashService cashService;
-//    private final BalanceService balanceService;
     private final ClassService classService;
 
     private boolean hasPaidDownPayment(Loan loan) {

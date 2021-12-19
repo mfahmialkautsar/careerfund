@@ -193,8 +193,7 @@ public class LoanServiceImpl implements LoanService {
         loanResponse.setProgress(getLoanProgress(loan));
         loanResponse.setMonthsPaid(loan.getLoanPayments().size() - 1);
         loanResponse.setFundable(isFundable(loan));
-        loanResponse.setFundedByMe(loanRepo.existsByFundings_Lender_Id(userId));
+        loanResponse.setFundedByMe(loanRepo.existsByIdAndFundings_Lender_Id(loan.getId(), userId));
         loanResponse.setFundLeft(loan.getTotalPayment() - fundingService.getTotalLoanFund(loan));
-
     }
 }
