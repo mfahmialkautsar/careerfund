@@ -17,7 +17,9 @@ public class LoanDto {
     private Long id;
     private Borrower borrower;
     private Double interestPercent;
+    private Long interestNumber;
     private Integer tenorMonth;
+    private Long downPayment;
     private Long totalPayment;
     private Long targetFund;
     private Class aClass;
