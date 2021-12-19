@@ -40,12 +40,8 @@ public class UserClass extends Auditable {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @JsonIgnore
     @OneToOne(orphanRemoval = true)
     @JoinColumn(name = "transfered_to_bootcamp_id")
     private FinancialTransaction transferredToBootcamp;
-
-    @Transient
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Boolean isDpPaid;
-
 }

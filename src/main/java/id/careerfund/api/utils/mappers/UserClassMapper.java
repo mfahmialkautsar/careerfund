@@ -1,28 +1,26 @@
 package id.careerfund.api.utils.mappers;
 
 import id.careerfund.api.domains.entities.UserClass;
-import id.careerfund.api.domains.models.responses.UserClassResponse;
+import id.careerfund.api.domains.models.responses.UserClassBorrowerDto;
+import id.careerfund.api.services.ClassService;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-
+@Component
+@RequiredArgsConstructor
 public final class UserClassMapper {
-    public static UserClassResponse entityToResponse(UserClass userClass) {
-        UserClassResponse userClassResponse = new UserClassResponse();
-        userClassResponse.setId(userClass.getId());
-        userClassResponse.setAClass(userClass.getAClass());
-        userClassResponse.setLoan(userClass.getLoan());
-        userClassResponse.setScore(userClass.getScore());
-        userClassResponse.setTransferredToBootcamp(userClass.getTransferredToBootcamp());
-        userClassResponse.setIsDpPaid(userClass.getIsDpPaid());
-        return userClassResponse;
-    }
+    private final ModelMapper modelMapper;
+    private final LoanMapper loanMapper;
+    @Lazy
+    private final ClassService classService;
 
-    public static List<UserClassResponse> entitiesToResponses(List<UserClass> userClasses) {
-        List<UserClassResponse> userClassResponses = new ArrayList<>();
-        for (UserClass userClass : userClasses) {
-            userClassResponses.add(entityToResponse(userClass));
-        }
-        return userClassResponses;
+    public UserClassBorrowerDto entityToBorrowerDto(UserClass userClass) {
+        UserClassBorrowerDto userClassBorrowerDto = modelMapper.map(userClass, UserClassBorrowerDto.class);
+        userClassBorrowerDto.setDpPaid(!userClass.getLoan().getLoanPayments().isEmpty());
+        userClassBorrowerDto.setLoan(loanMapper.entityToBorrowerDto(userClass.getLoan()));
+        userClassBorrowerDto.getAClass().setDurationMonth(classService.getMonthDuration(userClass.getAClass()));
+        return userClassBorrowerDto;
     }
 }

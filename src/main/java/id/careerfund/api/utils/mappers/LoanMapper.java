@@ -1,6 +1,7 @@
 package id.careerfund.api.utils.mappers;
 
 import id.careerfund.api.domains.entities.Loan;
+import id.careerfund.api.domains.models.responses.LoanBorrowerDto;
 import id.careerfund.api.domains.models.responses.LoanDto;
 import id.careerfund.api.repositories.LoanRepository;
 import id.careerfund.api.services.FundingService;
@@ -16,6 +17,16 @@ public final class LoanMapper {
     private final ModelMapper modelMapper;
     @Lazy
     private final FundingService fundingService;
+
+    public LoanBorrowerDto entityToBorrowerDto(Loan loan) {
+        LoanBorrowerDto loanDto = modelMapper.map(loan, LoanBorrowerDto.class);
+        loanDto.setTargetFund(loanDto.getTotalPayment());
+        loanDto.setMonthsPaid(loan.getLoanPayments().size() - 1);
+        loanDto.setProgress(getLoanProgress(loan));
+        loanDto.setFundable(isFundable(loan));
+        loanDto.setFundLeft(loan.getTotalPayment() - fundingService.getTotalLoanFund(loan));
+        return loanDto;
+    }
 
     private boolean isFundable(Loan loan) {
         return isAmountFundable(loan) && loan.getLoanPayments().size() <= 1;

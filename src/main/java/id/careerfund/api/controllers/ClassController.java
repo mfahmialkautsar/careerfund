@@ -2,10 +2,10 @@ package id.careerfund.api.controllers;
 
 import id.careerfund.api.domains.ERole;
 import id.careerfund.api.domains.entities.Class;
-import id.careerfund.api.domains.entities.UserClass;
 import id.careerfund.api.domains.models.requests.PayMyLoan;
 import id.careerfund.api.domains.models.requests.UserClassRequest;
 import id.careerfund.api.domains.models.responses.ApiResponse;
+import id.careerfund.api.domains.models.responses.UserClassBorrowerDto;
 import id.careerfund.api.services.ClassService;
 import id.careerfund.api.services.UserClassService;
 import javassist.NotFoundException;
@@ -79,20 +79,20 @@ public class ClassController extends HandlerController {
 
     @Secured({ ERole.Constants.BORROWER })
     @GetMapping("/my/classes")
-    public ResponseEntity<ApiResponse<List<UserClass>>> getMyClasses(Principal principal) {
+    public ResponseEntity<ApiResponse<List<UserClassBorrowerDto>>> getMyClasses(Principal principal) {
         return ResponseEntity
-                .ok(ApiResponse.<List<UserClass>>builder().data(userClassService.getMyClasses(principal)).build());
+                .ok(ApiResponse.<List<UserClassBorrowerDto>>builder().data(userClassService.getMyClasses(principal)).build());
     }
 
     @Secured({ ERole.Constants.BORROWER })
     @PostMapping("/my/classes")
-    public ResponseEntity<ApiResponse<UserClass>> addMyClass(Principal principal,
-            @Valid @RequestBody UserClassRequest userClassRequest) {
+    public ResponseEntity<ApiResponse<UserClassBorrowerDto>> addMyClass(Principal principal,
+                                                                        @Valid @RequestBody UserClassRequest userClassRequest) {
         try {
             URI uri = URI
                     .create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/my/classes").toUriString());
-            UserClass userClass = userClassService.registerClass(principal, userClassRequest);
-            return ResponseEntity.created(uri).body(ApiResponse.<UserClass>builder().data(userClass).build());
+            UserClassBorrowerDto userClass = userClassService.registerClass(principal, userClassRequest);
+            return ResponseEntity.created(uri).body(ApiResponse.<UserClassBorrowerDto>builder().data(userClass).build());
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Class not found", e.getCause());
         } catch (RequestRejectedException e) {
@@ -114,10 +114,10 @@ public class ClassController extends HandlerController {
 
     @Secured({ ERole.Constants.BORROWER })
     @GetMapping("/my/classes/{myClassId}")
-    public ResponseEntity<ApiResponse<UserClass>> getMyClassById(Principal principal, @PathVariable Long myClassId) {
+    public ResponseEntity<ApiResponse<UserClassBorrowerDto>> getMyClassById(Principal principal, @PathVariable Long myClassId) {
         try {
             return ResponseEntity.ok(
-                    ApiResponse.<UserClass>builder().data(userClassService.getMyClassById(principal, myClassId)).build());
+                    ApiResponse.<UserClassBorrowerDto>builder().data(userClassService.getMyClassById(principal, myClassId)).build());
         } catch (AccessDeniedException e) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to access this resource",
                     e.getCause());
@@ -132,12 +132,12 @@ public class ClassController extends HandlerController {
 
     @Secured({ ERole.Constants.BORROWER })
     @PostMapping("/my/classes/{myClassId}/pay")
-    public ResponseEntity<ApiResponse<UserClass>> payMyClass(Principal principal, @PathVariable Long myClassId,
+    public ResponseEntity<ApiResponse<UserClassBorrowerDto>> payMyClass(Principal principal, @PathVariable Long myClassId,
             @Valid @RequestBody PayMyLoan payMyLoan) {
         try {
             URI uri = URI
                     .create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/my/classes/{myClassId}/pay").toUriString());
-            return ResponseEntity.created(uri).body(ApiResponse.<UserClass>builder()
+            return ResponseEntity.created(uri).body(ApiResponse.<UserClassBorrowerDto>builder()
                     .data(userClassService.payMyClass(principal, myClassId, payMyLoan)).build());
         } catch (AccessDeniedException e) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to access this resource",
@@ -160,7 +160,14 @@ public class ClassController extends HandlerController {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Payment is over", e.getCause());
             }
         } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Class not found", e.getCause());
+            switch (e.getMessage()) {
+                case "CLASS_NOT_FOUND":
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Class not found", e.getCause());
+                case "PAYMENT_ACCOUNT_NOT_FOUND":
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Payment account not found", e.getCause());
+                default:
+                    throw e;
+            }
         } catch (Exception e) {
             e.printStackTrace();
             throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Failed pay loan. Please try again later",

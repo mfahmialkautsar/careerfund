@@ -1,8 +1,8 @@
 package id.careerfund.api.services;
 
-import id.careerfund.api.domains.entities.UserClass;
 import id.careerfund.api.domains.models.requests.PayMyLoan;
 import id.careerfund.api.domains.models.requests.UserClassRequest;
+import id.careerfund.api.domains.models.responses.UserClassBorrowerDto;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.firewall.RequestRejectedException;
 
@@ -12,13 +12,13 @@ import java.util.List;
 
 public interface UserClassService {
 
-    UserClass registerClass(Principal principal, UserClassRequest userClassRequest)
+    UserClassBorrowerDto registerClass(Principal principal, UserClassRequest userClassRequest)
             throws EntityNotFoundException, RequestRejectedException;
 
-    List<UserClass> getMyClasses(Principal principal);
+    List<UserClassBorrowerDto> getMyClasses(Principal principal);
 
-    UserClass getMyClassById(Principal principal, Long id) throws AccessDeniedException;
+    UserClassBorrowerDto getMyClassById(Principal principal, Long id) throws AccessDeniedException;
 
-    UserClass payMyClass(Principal principal, Long id, PayMyLoan payMyLoan)
+    UserClassBorrowerDto payMyClass(Principal principal, Long id, PayMyLoan payMyLoan)
             throws AccessDeniedException, RequestRejectedException, EntityNotFoundException;
 }

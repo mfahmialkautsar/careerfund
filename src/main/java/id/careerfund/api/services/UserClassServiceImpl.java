@@ -4,7 +4,9 @@ import id.careerfund.api.domains.entities.*;
 import id.careerfund.api.domains.entities.Class;
 import id.careerfund.api.domains.models.requests.PayMyLoan;
 import id.careerfund.api.domains.models.requests.UserClassRequest;
+import id.careerfund.api.domains.models.responses.UserClassBorrowerDto;
 import id.careerfund.api.repositories.*;
+import id.careerfund.api.utils.mappers.UserClassMapper;
 import id.careerfund.api.utils.mappers.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +21,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -34,14 +37,14 @@ public class UserClassServiceImpl implements UserClassService {
     private final FinancialTransactionRepository financialTransactionRepo;
     private final LoanService loanService;
     private final CashService cashService;
-    private final ClassService classService;
+    private final UserClassMapper userClassMapper;
 
     private boolean hasPaidDownPayment(Loan loan) {
         return !loan.getLoanPayments().isEmpty();
     }
 
     @Override
-    public UserClass registerClass(Principal principal, UserClassRequest userClassRequest)
+    public UserClassBorrowerDto registerClass(Principal principal, UserClassRequest userClassRequest)
             throws EntityNotFoundException, RequestRejectedException {
         User user = UserMapper.principalToUser(principal);
         Class aClass = classRepo.getById(userClassRequest.getClassId());
@@ -78,29 +81,27 @@ public class UserClassServiceImpl implements UserClassService {
         userClass.setLoan(loan);
         userClassRepo.save(userClass);
 
-        setTransientProperties(userClass);
-        return userClass;
+        return userClassMapper.entityToBorrowerDto(userClass);
     }
 
     @Override
-    public List<UserClass> getMyClasses(Principal principal) {
+    public List<UserClassBorrowerDto> getMyClasses(Principal principal) {
         List<UserClass> userClasses = userClassRepo.findByUser(UserMapper.principalToUser(principal));
-        userClasses.forEach(this::setTransientProperties);
-        return userClasses;
+
+        return userClasses.stream().map(userClassMapper::entityToBorrowerDto).collect(Collectors.toList());
     }
 
     @Override
-    public UserClass getMyClassById(Principal principal, Long id) throws AccessDeniedException {
+    public UserClassBorrowerDto getMyClassById(Principal principal, Long id) throws AccessDeniedException {
         UserClass userClass = userClassRepo.getById(id);
         User user = UserMapper.principalToUser(principal);
         if (!userClass.getUser().getId().equals(user.getId()))
             throw new AccessDeniedException("USER_WRONG");
-        setTransientProperties(userClass);
-        return userClass;
+        return userClassMapper.entityToBorrowerDto(userClass);
     }
 
     @Override
-    public UserClass payMyClass(Principal principal, Long id, PayMyLoan payMyLoan)
+    public UserClassBorrowerDto payMyClass(Principal principal, Long id, PayMyLoan payMyLoan)
             throws AccessDeniedException, RequestRejectedException, EntityNotFoundException {
         Optional<UserClass> optionalUserClass = userClassRepo.findById(id);
         if (!optionalUserClass.isPresent())
@@ -109,7 +110,9 @@ public class UserClassServiceImpl implements UserClassService {
         User user = UserMapper.principalToUser(principal);
         Loan loan = userClass.getLoan();
 
-        PaymentAccount paymentAccount = paymentAccountRepo.getById(payMyLoan.getPaymentAccountId());
+        Optional<PaymentAccount> paymentAccountOptional = paymentAccountRepo.findById(payMyLoan.getPaymentAccountId());
+        if (!paymentAccountOptional.isPresent()) throw new EntityNotFoundException("PAYMENT_ACCOUNT_NOT_FOUND");
+        PaymentAccount paymentAccount = paymentAccountOptional.get();
 
         FinancialTransaction financialTransaction = new FinancialTransaction();
         financialTransaction.setNominal(payMyLoan.getPaymentAmount().doubleValue());
@@ -163,8 +166,7 @@ public class UserClassServiceImpl implements UserClassService {
             }
         }
 
-        setTransientProperties(userClass);
-        return userClass;
+        return userClassMapper.entityToBorrowerDto(userClass);
     }
 
     private void onPaymentSuccess(LoanPayment loanPayment, FinancialTransaction financialTransaction, Payment payment,
@@ -173,11 +175,5 @@ public class UserClassServiceImpl implements UserClassService {
         paymentRepo.save(payment);
         loanPaymentRepo.save(loanPayment);
         userClass.getLoan().getLoanPayments().add(loanPayment);
-    }
-
-    private void setTransientProperties(UserClass userClass) {
-        userClass.setIsDpPaid(!userClass.getLoan().getLoanPayments().isEmpty());
-        userClass.getLoan().setMonthsPaid(userClass.getLoan().getLoanPayments().size() - 1);
-        userClass.getAClass().setDurationMonth(classService.getMonthDuration(userClass.getAClass()));
     }
 }

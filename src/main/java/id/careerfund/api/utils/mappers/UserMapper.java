@@ -5,7 +5,6 @@ import id.careerfund.api.domains.entities.Loan;
 import id.careerfund.api.domains.entities.User;
 import id.careerfund.api.domains.models.reqres.UpdateUser;
 import id.careerfund.api.domains.models.requests.UserRegister;
-import id.careerfund.api.domains.models.responses.Borrower;
 import id.careerfund.api.domains.models.responses.MyProfile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
@@ -64,18 +63,6 @@ public final class UserMapper {
         myProfile.setRemainingDebt(getRemainingDebt(user));
         myProfile.setAssets(getTotalAssets(user));
         return myProfile;
-    }
-
-    public static Borrower userToBorrower(User user) {
-        Borrower borrower = new Borrower();
-        borrower.setName(user.getName());
-        borrower.setPhoneNumber(user.getPhoneNumber());
-        borrower.setPhotoPath(user.getPhotoPath());
-        borrower.setAddress(user.getAddress());
-        borrower.setAssessmentScore(user.getAssessmentScore());
-        borrower.setBalance(user.getBalance());
-        borrower.setUserClasses(UserClassMapper.entitiesToResponses(user.getUserClasses()));
-        return borrower;
     }
 
     private static Long getRemainingDebt(User user) {

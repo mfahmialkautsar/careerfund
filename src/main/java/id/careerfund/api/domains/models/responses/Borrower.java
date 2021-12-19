@@ -19,7 +19,7 @@ public class Borrower {
     private String photoPath;
     private String address;
     private Float assessmentScore;
-    private List<UserClassResponse> userClasses = new ArrayList<>();
+    private List<UserClassLenderDto> userClasses = new ArrayList<>();
     private Collection<Interest> interests;
     private Balance balance;
 }

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class FundingMapper {
+public final class FundingMapper {
     private final ModelMapper modelMapper;
     private final LoanMapper loanMapper;
 
