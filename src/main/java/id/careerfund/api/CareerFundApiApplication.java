@@ -1,5 +1,6 @@
 package id.careerfund.api;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -20,5 +21,10 @@ public class CareerFundApiApplication {
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    ModelMapper modelMapper() {
+        return new ModelMapper();
     }
 }

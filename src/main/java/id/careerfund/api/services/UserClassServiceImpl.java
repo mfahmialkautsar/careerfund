@@ -177,7 +177,7 @@ public class UserClassServiceImpl implements UserClassService {
 
     private void setTransientProperties(UserClass userClass) {
         userClass.setIsDpPaid(!userClass.getLoan().getLoanPayments().isEmpty());
-        userClass.getLoan().setMonthPaid(userClass.getLoan().getLoanPayments().size() - 1);
+        userClass.getLoan().setMonthsPaid(userClass.getLoan().getLoanPayments().size() - 1);
         userClass.getAClass().setDurationMonth(classService.getMonthDuration(userClass.getAClass()));
     }
 }

@@ -4,7 +4,8 @@ import id.careerfund.api.domains.ERole;
 import id.careerfund.api.domains.models.requests.FundLoan;
 import id.careerfund.api.domains.models.requests.WithdrawRequest;
 import id.careerfund.api.domains.models.responses.ApiResponse;
-import id.careerfund.api.domains.models.responses.LoanResponse;
+import id.careerfund.api.domains.models.responses.FundingDto;
+import id.careerfund.api.domains.models.responses.LoanDto;
 import id.careerfund.api.services.FundingService;
 import id.careerfund.api.services.LoanService;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +15,11 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.web.firewall.RequestRejectedException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
+import java.net.URI;
 import java.security.Principal;
 import java.util.List;
 
@@ -28,28 +31,32 @@ public class LoanController extends HandlerController {
 
     @Secured({ ERole.Constants.LENDER })
     @GetMapping("/lender/loans")
-    public ResponseEntity<ApiResponse<List<LoanResponse>>> getLenderMyLoans(
+    public ResponseEntity<ApiResponse<List<LoanDto>>> getLenderMyLoans(
             Principal principal) {
-        return ResponseEntity.ok(ApiResponse.<List<LoanResponse>>builder()
+        return ResponseEntity.ok(ApiResponse.<List<LoanDto>>builder()
                 .data(loanService.getLoans(principal, null, null).getContent()).build());
     }
 
     @Secured({ ERole.Constants.LENDER })
     @GetMapping("/lender/my/loans")
-    public ResponseEntity<ApiResponse<List<LoanResponse>>> getLenderLoans_ChangedSoon(
+    public ResponseEntity<ApiResponse<List<LoanDto>>> getLenderLoans_ChangedSoon(
             Principal principal) {
-        return ResponseEntity.ok(ApiResponse.<List<LoanResponse>>builder()
+        return ResponseEntity.ok(ApiResponse.<List<LoanDto>>builder()
                 .data(loanService.getMyLoans(principal, null, null).getContent()).build());
     }
 
     @Secured({ ERole.Constants.LENDER })
     @PostMapping("/lender/loans/fund")
-    public ResponseEntity<ApiResponse<LoanResponse>> fundLoan(
+    public ResponseEntity<ApiResponse<FundingDto>> fundLoan(
             Principal principal,
             @Valid @RequestBody FundLoan fundLoan) {
         try {
+            URI uri = URI
+                    .create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/lender/loans/fund")
+                            .toUriString());
             return ResponseEntity
-                    .ok(ApiResponse.<LoanResponse>builder().data(loanService.fundLoan(principal, fundLoan)).build());
+                    .created(uri)
+                    .body(ApiResponse.<FundingDto>builder().data(loanService.fundLoan(principal, fundLoan)).build());
         } catch (RequestRejectedException e) {
             if (e.getMessage().equals("LOAN_FUNDING_FULL"))
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This loan has been fully funded",
@@ -69,6 +76,24 @@ public class LoanController extends HandlerController {
             e.printStackTrace();
             throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED,
                     "Failed to fund a loan. Try again next time", e.getCause());
+        }
+    }
+
+    @Secured({ ERole.Constants.LENDER })
+    @GetMapping("/lender/my/loans/{fundingId}")
+    public ResponseEntity<ApiResponse<FundingDto>> getMyLenderLoan(
+            Principal principal,
+            @PathVariable Long fundingId) {
+        try {
+            return ResponseEntity.ok(ApiResponse.<FundingDto>builder()
+                    .data(fundingService.getMyFundingById(principal, fundingId)).build());
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    "Funding not found", e.getCause());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED,
+                    "Failed to get a loan. Try again next time", e.getCause());
         }
     }
 

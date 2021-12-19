@@ -3,12 +3,14 @@ package id.careerfund.api.services;
 import id.careerfund.api.domains.entities.*;
 import id.careerfund.api.domains.entities.Class;
 import id.careerfund.api.domains.models.requests.FundLoan;
-import id.careerfund.api.domains.models.responses.LoanResponse;
+import id.careerfund.api.domains.models.responses.FundingDto;
+import id.careerfund.api.domains.models.responses.LoanDto;
 import id.careerfund.api.repositories.*;
 import id.careerfund.api.utils.helpers.PageableHelper;
 import id.careerfund.api.utils.mappers.LoanMapper;
 import id.careerfund.api.utils.mappers.UserMapper;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.web.firewall.RequestRejectedException;
@@ -29,6 +31,8 @@ public class LoanServiceImpl implements LoanService {
     private final FundingRepository fundingRepo;
     private final FundingService fundingService;
     private final CashService cashService;
+    private final ModelMapper modelMapper;
+    private final LoanMapper loanMapper;
 
     @Override
     public Double getInterestPercent(Class aClass, Integer tenorMonth) {
@@ -86,29 +90,25 @@ public class LoanServiceImpl implements LoanService {
     }
 
     @Override
-    public Page<LoanResponse> getLoans(Principal principal, String sort, String order) {
+    public Page<LoanDto> getLoans(Principal principal, String sort, String order) {
         User user = UserMapper.principalToUser(principal);
         Pageable pageable = PageableHelper.getPageable(sort, order);
         Page<Loan> loanPage = loanRepo.findDistinctByLoanPaymentsNotEmpty(pageable);
-        Page<LoanResponse> loansResponse = loanPage.map(LoanMapper::entityToResponse);
 
-        setPageTransientValues(loanPage, loansResponse, user.getId());
-        return loansResponse;
+        return loanPage.map(loan -> loanMapper.entityToDto(loan, user.getId()));
     }
 
     @Override
-    public Page<LoanResponse> getMyLoans(Principal principal, String sort, String order) {
+    public Page<LoanDto> getMyLoans(Principal principal, String sort, String order) {
         User user = UserMapper.principalToUser(principal);
         Pageable pageable = PageableHelper.getPageable(sort, order);
         Page<Loan> loanPage = loanRepo.findByFundings_Lender_Id(user.getId(), pageable);
-        Page<LoanResponse> loansResponse = loanPage.map(LoanMapper::entityToResponse);
 
-        setPageTransientValues(loanPage, loansResponse, user.getId());
-        return loansResponse;
+        return loanPage.map(loan -> loanMapper.entityToDto(loan, user.getId()));
     }
 
     @Override
-    public LoanResponse fundLoan(Principal principal, FundLoan fundLoan)
+    public FundingDto fundLoan(Principal principal, FundLoan fundLoan)
             throws RequestRejectedException, EntityNotFoundException {
         User user = UserMapper.principalToUser(principal);
 
@@ -122,7 +122,7 @@ public class LoanServiceImpl implements LoanService {
             throw new EntityNotFoundException("LOAN_NOT_FOUND");
         Loan loan = optionalLoan.get();
 
-        if (!isFundable(loan))
+        if (!isAmountFundable(loan))
             throw new RequestRejectedException("LOAN_FUNDING_FULL");
         if (fundLoan.getFund() > loan.getTotalPayment()
                 || fundLoan.getFund() > loan.getTotalPayment() - fundingService.getTotalLoanFund(loan))
@@ -144,12 +144,10 @@ public class LoanServiceImpl implements LoanService {
 
         finishFund(loan);
 
-        LoanResponse loanResponse = LoanMapper.entityToResponse(loan);
-        setLoanTransientValues(loan, loanResponse, user.getId());
-        return loanResponse;
+        return modelMapper.map(funding, FundingDto.class);
     }
 
-    private boolean isFundable(Loan loan) {
+    private boolean isAmountFundable(Loan loan) {
         Long totalFund = fundingService.getTotalLoanFund(loan);
         return totalFund < loan.getTotalPayment();
     }
@@ -164,36 +162,12 @@ public class LoanServiceImpl implements LoanService {
     }
 
     private void finishFund(Loan loan) {
-        if (!isFundable(loan)) {
+        if (!isAmountFundable(loan)) {
             FinancialTransaction financialTransaction = new FinancialTransaction();
             financialTransaction.setNominal(loan.getTotalPayment() + loan.getDownPayment().doubleValue());
             financialTransactionRepo.save(financialTransaction);
             loan.getUserClass().setTransferredToBootcamp(financialTransaction);
             cashService.doCredit(financialTransaction);
         }
-    }
-
-    private double getLoanProgress(Loan loan) {
-        long funded = 0;
-        for (int i = 0; i < loan.getLoanPayments().size(); i++) {
-            if (i == 0)
-                continue;
-            funded += loan.getLoanPayments().get(i).getPayment().getFinancialTransaction().getNominal();
-        }
-        return (double) funded / (double) loan.getTotalPayment();
-    }
-
-    private void setPageTransientValues(Page<Loan> loanPage, Page<LoanResponse> loanResponse, long userId) {
-        for (int i = 0; i < loanPage.getContent().size(); i++) {
-            setLoanTransientValues(loanPage.getContent().get(i), loanResponse.getContent().get(i), userId);
-        }
-    }
-
-    private void setLoanTransientValues(Loan loan, LoanResponse loanResponse, long userId) {
-        loanResponse.setProgress(getLoanProgress(loan));
-        loanResponse.setMonthsPaid(loan.getLoanPayments().size() - 1);
-        loanResponse.setFundable(isFundable(loan));
-        loanResponse.setFundedByMe(loanRepo.existsByIdAndFundings_Lender_Id(loan.getId(), userId));
-        loanResponse.setFundLeft(loan.getTotalPayment() - fundingService.getTotalLoanFund(loan));
     }
 }

@@ -75,6 +75,6 @@ public class Loan extends Auditable {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @Transient
-    private Integer monthPaid;
+    private Integer monthsPaid;
 
 }

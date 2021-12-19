@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class LoanResponse {
+public class LoanDto {
     private Long id;
     private Borrower borrower;
     private Double interestPercent;

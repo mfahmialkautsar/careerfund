@@ -6,10 +6,14 @@ import id.careerfund.api.repositories.BankRepository;
 import id.careerfund.api.repositories.FinancialTransactionRepository;
 import id.careerfund.api.repositories.FundingRepository;
 import id.careerfund.api.repositories.WithdrawRepository;
+import id.careerfund.api.utils.mappers.FundingMapper;
 import id.careerfund.api.utils.mappers.UserMapper;
-import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.web.firewall.RequestRejectedException;
+import id.careerfund.api.domains.entities.Funding;
+import id.careerfund.api.domains.entities.Loan;
+import id.careerfund.api.domains.models.responses.FundingDto;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +29,20 @@ public class FundingServiceImpl implements FundingService {
     private final BankRepository bankRepo;
     private final FinancialTransactionRepository financialTransactionRepo;
     private final CashService cashService;
+    private final FundingMapper fundingMapper;
+
+    @Override
+    public Page<FundingDto> getMyFundings(Principal principal, String sort, String order) {
+        return null;
+    }
+
+    @Override
+    public FundingDto getMyFundingById(Principal principal, Long id) throws EntityNotFoundException {
+        User user = UserMapper.principalToUser(principal);
+        Funding funding = fundingRepo.findByIdAndLender_Id(id, user.getId());
+        if (funding == null) throw new EntityNotFoundException("FUNDING_NOT_FOUND");
+        return fundingMapper.entityToDto(funding);
+    }
 
     @Override
     public Long getTotalLoanFund(Loan loan) {

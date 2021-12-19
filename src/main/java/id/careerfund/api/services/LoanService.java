@@ -3,7 +3,8 @@ package id.careerfund.api.services;
 import id.careerfund.api.domains.entities.Class;
 import id.careerfund.api.domains.entities.Funding;
 import id.careerfund.api.domains.models.requests.FundLoan;
-import id.careerfund.api.domains.models.responses.LoanResponse;
+import id.careerfund.api.domains.models.responses.FundingDto;
+import id.careerfund.api.domains.models.responses.LoanDto;
 import org.springframework.data.domain.Page;
 import org.springframework.security.web.firewall.RequestRejectedException;
 
@@ -31,10 +32,11 @@ public interface LoanService {
 
     Double getLenderPayback(Funding funding);
 
-    Page<LoanResponse> getLoans(Principal principal, String sort, String order);
+    Page<LoanDto> getLoans(Principal principal, String sort, String order);
 
-    Page<LoanResponse> getMyLoans(Principal principal, String sort, String order);
+    Page<LoanDto> getMyLoans(Principal principal, String sort, String order);
 
-    LoanResponse fundLoan(Principal principal, FundLoan fundLoan)
+
+    FundingDto fundLoan(Principal principal, FundLoan fundLoan)
             throws RequestRejectedException, EntityNotFoundException;
 }
