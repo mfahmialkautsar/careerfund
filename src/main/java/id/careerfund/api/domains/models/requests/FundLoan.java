@@ -14,9 +14,6 @@ import javax.validation.constraints.Positive;
 public class FundLoan {
     @NotNull
     @Positive
-    private Long loanId;
-    @NotNull
-    @Positive
     @Min(100000)
     private Long fund;
 }

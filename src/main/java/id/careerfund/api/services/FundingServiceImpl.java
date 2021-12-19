@@ -6,9 +6,11 @@ import id.careerfund.api.repositories.BankRepository;
 import id.careerfund.api.repositories.FinancialTransactionRepository;
 import id.careerfund.api.repositories.FundingRepository;
 import id.careerfund.api.repositories.WithdrawRepository;
+import id.careerfund.api.utils.helpers.PageableHelper;
 import id.careerfund.api.utils.mappers.FundingMapper;
 import id.careerfund.api.utils.mappers.UserMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.web.firewall.RequestRejectedException;
 import id.careerfund.api.domains.entities.Funding;
 import id.careerfund.api.domains.entities.Loan;
@@ -33,7 +35,11 @@ public class FundingServiceImpl implements FundingService {
 
     @Override
     public Page<FundingDto> getMyFundings(Principal principal, String sort, String order) {
-        return null;
+        User user = UserMapper.principalToUser(principal);
+        Pageable pageable = PageableHelper.getPageable(sort, order);
+        Page<Funding> fundingPage = fundingRepo.findDistinctByLender_Id(user.getId(), pageable);
+
+        return fundingPage.map(fundingMapper::entityToDto);
     }
 
     @Override

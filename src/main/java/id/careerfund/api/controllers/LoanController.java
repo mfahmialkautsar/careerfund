@@ -38,17 +38,10 @@ public class LoanController extends HandlerController {
     }
 
     @Secured({ ERole.Constants.LENDER })
-    @GetMapping("/lender/my/loans")
-    public ResponseEntity<ApiResponse<List<LoanDto>>> getLenderLoans_ChangedSoon(
-            Principal principal) {
-        return ResponseEntity.ok(ApiResponse.<List<LoanDto>>builder()
-                .data(loanService.getMyLoans(principal, null, null).getContent()).build());
-    }
-
-    @Secured({ ERole.Constants.LENDER })
-    @PostMapping("/lender/loans/fund")
+    @PostMapping("/lender/loans/{loanId}/fund")
     public ResponseEntity<ApiResponse<FundingDto>> fundLoan(
             Principal principal,
+            @PathVariable Long loanId,
             @Valid @RequestBody FundLoan fundLoan) {
         try {
             URI uri = URI
@@ -56,7 +49,7 @@ public class LoanController extends HandlerController {
                             .toUriString());
             return ResponseEntity
                     .created(uri)
-                    .body(ApiResponse.<FundingDto>builder().data(loanService.fundLoan(principal, fundLoan)).build());
+                    .body(ApiResponse.<FundingDto>builder().data(loanService.fundLoan(principal, loanId, fundLoan)).build());
         } catch (RequestRejectedException e) {
             if (e.getMessage().equals("LOAN_FUNDING_FULL"))
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This loan has been fully funded",
@@ -77,6 +70,14 @@ public class LoanController extends HandlerController {
             throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED,
                     "Failed to fund a loan. Try again next time", e.getCause());
         }
+    }
+
+    @Secured({ ERole.Constants.LENDER })
+    @GetMapping("/lender/my/loans")
+    public ResponseEntity<ApiResponse<List<FundingDto>>> getLenderLoans_ChangedSoon(
+            Principal principal) {
+        return ResponseEntity.ok(ApiResponse.<List<FundingDto>>builder()
+                .data(fundingService.getMyFundings(principal, null, null).getContent()).build());
     }
 
     @Secured({ ERole.Constants.LENDER })

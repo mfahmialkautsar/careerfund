@@ -34,9 +34,6 @@ public interface LoanService {
 
     Page<LoanDto> getLoans(Principal principal, String sort, String order);
 
-    Page<LoanDto> getMyLoans(Principal principal, String sort, String order);
-
-
-    FundingDto fundLoan(Principal principal, FundLoan fundLoan)
+    FundingDto fundLoan(Principal principal, Long loanId, FundLoan fundLoan)
             throws RequestRejectedException, EntityNotFoundException;
 }

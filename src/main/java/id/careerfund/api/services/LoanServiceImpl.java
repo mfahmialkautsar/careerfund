@@ -99,16 +99,7 @@ public class LoanServiceImpl implements LoanService {
     }
 
     @Override
-    public Page<LoanDto> getMyLoans(Principal principal, String sort, String order) {
-        User user = UserMapper.principalToUser(principal);
-        Pageable pageable = PageableHelper.getPageable(sort, order);
-        Page<Loan> loanPage = loanRepo.findByFundings_Lender_Id(user.getId(), pageable);
-
-        return loanPage.map(loan -> loanMapper.entityToDto(loan, user.getId()));
-    }
-
-    @Override
-    public FundingDto fundLoan(Principal principal, FundLoan fundLoan)
+    public FundingDto fundLoan(Principal principal, Long loanId, FundLoan fundLoan)
             throws RequestRejectedException, EntityNotFoundException {
         User user = UserMapper.principalToUser(principal);
 
@@ -116,7 +107,7 @@ public class LoanServiceImpl implements LoanService {
         financialTransaction.setNominal(fundLoan.getFund().doubleValue());
         financialTransactionRepo.save(financialTransaction);
 
-        Optional<Loan> optionalLoan = loanRepo.findById(fundLoan.getLoanId());
+        Optional<Loan> optionalLoan = loanRepo.findById(loanId);
 
         if (!optionalLoan.isPresent())
             throw new EntityNotFoundException("LOAN_NOT_FOUND");
