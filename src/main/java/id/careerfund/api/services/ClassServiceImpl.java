@@ -26,7 +26,7 @@ public class ClassServiceImpl implements ClassService {
 
     @Override
     public Page<Class> getClasses(Principal principal, Collection<Long> categories, Collection<Long> institutions,
-            String name, Double priceStart, Double priceEnd, String sort, String order) {
+                                  String name, Double priceStart, Double priceEnd, String sort, String order) {
         Pageable pageable = PageableHelper.getPageable(sort, order);
         Page<Class> classes = classRepo
                 .findDistinctByBootcamp_Categories_IdInAndBootcamp_Institutions_IdInAndBootcamp_NameIsLikeIgnoreCaseOrBootcamp_NameIsLikeIgnoreCaseOrInstitutions_NameIsLikeIgnoreCaseAndPriceGreaterThanEqualAndPriceLessThanEqual(
@@ -36,7 +36,8 @@ public class ClassServiceImpl implements ClassService {
             classes.getContent()
                     .forEach(aClass -> user.getUserClasses().forEach(userClass -> {
                         if (Objects.equals(userClass.getAClass().getId(), aClass.getId())) aClass.setRegistered(true);
-                        aClass.setRegistered(false);
+                        else
+                            aClass.setRegistered(false);
                     }));
         }
 
