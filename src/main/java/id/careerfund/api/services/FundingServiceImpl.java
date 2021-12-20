@@ -77,7 +77,7 @@ public class FundingServiceImpl implements FundingService {
         User user = UserMapper.principalToUser(principal);
         Funding funding = fundingRepo.findByIdAndLender_Id(fundingId, user.getId());
         if (funding == null) throw new EntityNotFoundException("FUNDING_NOT_FOUND");
-        if (funding.getLoan().getLoanPayments().size() - 1 != funding.getLoan().getTenorMonth())
+        if (funding.getLoan().getLoanPayments().size() - 1 >= funding.getLoan().getTenorMonth())
             throw new RequestRejectedException("LOAN_UNFINISHED");
         if (funding.getWithdrawals() != null) throw new RequestRejectedException("WITHDRAWN");
 

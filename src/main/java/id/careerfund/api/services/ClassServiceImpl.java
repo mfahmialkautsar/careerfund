@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.security.Principal;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -33,7 +34,10 @@ public class ClassServiceImpl implements ClassService {
         if (principal != null) {
             User user = UserMapper.principalToUser(principal);
             classes.getContent()
-                    .forEach(aClass -> aClass.setRegistered(aClass.getUserClass().retainAll(user.getUserClasses())));
+                    .forEach(aClass -> user.getUserClasses().forEach(userClass -> {
+                        if (Objects.equals(userClass.getAClass().getId(), aClass.getId())) aClass.setRegistered(true);
+                        aClass.setRegistered(false);
+                    }));
         }
 
         return classes;
