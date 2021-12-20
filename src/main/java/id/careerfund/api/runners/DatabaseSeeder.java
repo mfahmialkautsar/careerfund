@@ -71,9 +71,6 @@ public class DatabaseSeeder implements ApplicationRunner {
         lender.setPassword(passwordEncoder.encode("pass1234"));
         lender.setRoles(Arrays.asList(roleRepository.findByName(ERole.ROLE_LENDER),
                 roleRepository.findByName(ERole.ROLE_USER)));
-        Balance lenderBalance = new Balance();
-        balanceRepository.save(lenderBalance);
-        lender.setBalance(lenderBalance);
         registerUserIfNotExists(lender);
 
         User Borrower = new User();
@@ -83,9 +80,6 @@ public class DatabaseSeeder implements ApplicationRunner {
         Borrower.setPassword(passwordEncoder.encode("pass1234"));
         Borrower.setRoles(Arrays.asList(roleRepository.findByName(ERole.ROLE_BORROWER),
                 roleRepository.findByName(ERole.ROLE_USER)));
-        Balance borrowerBalance = new Balance();
-        balanceRepository.save(borrowerBalance);
-        Borrower.setBalance(borrowerBalance);
         registerUserIfNotExists(Borrower);
 
         // User dump = new User();
@@ -583,6 +577,8 @@ public class DatabaseSeeder implements ApplicationRunner {
     private void registerUserIfNotExists(User user) {
         if (userRepository.findByEmail(user.getEmail()) == null) {
             try {
+                Balance balance = new Balance();
+                user.setBalance(balance);
                 userRepository.save(user);
             } catch (Exception e) {
                 e.printStackTrace();

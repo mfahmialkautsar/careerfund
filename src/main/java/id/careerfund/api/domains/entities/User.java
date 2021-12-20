@@ -154,7 +154,7 @@ public class User extends Auditable implements UserDetails {
     private Collection<Interest> interests;
 
     @JsonIgnore
-    @OneToOne(orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "balance_id")
     private Balance balance;
 }
