@@ -41,6 +41,7 @@ public class UserClass extends Auditable {
     private User user;
 
     @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @OneToOne(orphanRemoval = true)
     @JoinColumn(name = "transfered_to_bootcamp_id")
     private FinancialTransaction transferredToBootcamp;

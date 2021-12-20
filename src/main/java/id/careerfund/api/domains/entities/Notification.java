@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.util.UUID;
@@ -30,6 +32,7 @@ public class Notification extends Auditable {
     @Column(name = "entity_id")
     private Long entityId;
 
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id", nullable = false)

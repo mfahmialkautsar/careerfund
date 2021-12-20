@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
@@ -24,10 +26,12 @@ public class Payment extends Auditable {
     @JoinColumn(name = "payment_account_id")
     private PaymentAccount paymentAccount;
 
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     @OneToOne(mappedBy = "payment", orphanRemoval = true)
     private LoanPayment loanPayment;
 
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @OneToOne(optional = false, orphanRemoval = true)
     @JoinColumn(name = "financial_transaction_id", nullable = false)
     private FinancialTransaction financialTransaction;

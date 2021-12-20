@@ -50,7 +50,7 @@ public final class LoanMapper {
     public LoanDto entityToDto(Loan loan, Long userId) {
         LoanDto loanDto = modelMapper.map(loan, LoanDto.class);
         loanDto.setTargetFund(loanDto.getTotalPayment());
-        loanDto.setMonthsPaid(loan.getLoanPayments().size() - 1);
+        loanDto.setMonthsPaid(Math.max(loan.getLoanPayments().size() - 1, 0));
         loanDto.setProgress(getLoanProgress(loan));
         loanDto.setFundable(isFundable(loan));
         loanDto.setFundedByMe(loanRepo.existsByIdAndFundings_Lender_Id(loan.getId(), userId));

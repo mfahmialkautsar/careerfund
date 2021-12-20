@@ -27,6 +27,7 @@ public class Loan extends Auditable {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     @ManyToOne(optional = false)
     @JoinColumn(name = "borrower_id", nullable = false)
@@ -66,7 +67,6 @@ public class Loan extends Auditable {
     private List<LoanPayment> loanPayments = new ArrayList<>();
 
     @JsonIgnore
-    @OnDelete(action = OnDeleteAction.CASCADE)
     @OneToOne(mappedBy = "loan", orphanRemoval = true)
     private UserClass userClass;
 
