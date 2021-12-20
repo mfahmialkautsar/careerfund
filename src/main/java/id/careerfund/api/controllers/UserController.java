@@ -1,11 +1,13 @@
 package id.careerfund.api.controllers;
 
+import id.careerfund.api.domains.entities.Notification;
 import id.careerfund.api.domains.entities.Withdrawals;
 import id.careerfund.api.domains.models.reqres.AssessmentScore;
 import id.careerfund.api.domains.models.reqres.UpdateUser;
 import id.careerfund.api.domains.models.responses.ApiResponse;
 import id.careerfund.api.domains.models.responses.FileUrlResponse;
 import id.careerfund.api.domains.models.responses.MyProfile;
+import id.careerfund.api.services.NotificationService;
 import id.careerfund.api.services.UserService;
 import id.careerfund.api.services.WithdrawalService;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,7 @@ import java.util.List;
 public class UserController extends HandlerController {
     private final UserService userService;
     private final WithdrawalService withdrawalService;
+    private final NotificationService notificationService;
 
     @GetMapping("/profile/edit")
     public ResponseEntity<UpdateUser> getProfileEdit(Principal principal) {
@@ -98,5 +101,10 @@ public class UserController extends HandlerController {
             e.printStackTrace();
             throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Failed to get withdrawal. Try again later", e.getCause());
         }
+    }
+
+    @GetMapping("/notifications")
+    public ResponseEntity<ApiResponse<List<Notification>>> getNotifications(Principal principal) {
+        return ResponseEntity.ok(ApiResponse.<List<Notification>>builder().data(notificationService.getNotifications(principal)).build());
     }
 }

@@ -2,6 +2,7 @@ package id.careerfund.api.services;
 
 import id.careerfund.api.domains.entities.*;
 import id.careerfund.api.domains.entities.Class;
+import id.careerfund.api.domains.models.NotificationMyClassStatus;
 import id.careerfund.api.domains.models.requests.FundLoan;
 import id.careerfund.api.domains.models.responses.FundingDto;
 import id.careerfund.api.domains.models.responses.LoanDto;
@@ -31,6 +32,7 @@ public class LoanServiceImpl implements LoanService {
     private final FundingRepository fundingRepo;
     private final FundingService fundingService;
     private final CashService cashService;
+    private final NotificationService notificationService;
     private final ModelMapper modelMapper;
     private final LoanMapper loanMapper;
 
@@ -140,6 +142,7 @@ public class LoanServiceImpl implements LoanService {
         cashService.doDebit(financialTransaction);
 
         finishFund(loan);
+        notificationService.sendMyClassNotification(NotificationMyClassStatus.FUNDED, funding.getLoan().getUserClass().getId(), funding.getLoan().getBorrower());
 
         return modelMapper.map(funding, FundingDto.class);
     }
