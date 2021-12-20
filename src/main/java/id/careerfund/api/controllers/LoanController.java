@@ -1,6 +1,5 @@
 package id.careerfund.api.controllers;
 
-import id.careerfund.api.domains.ERole;
 import id.careerfund.api.domains.models.requests.FundLoan;
 import id.careerfund.api.domains.models.requests.WithdrawRequest;
 import id.careerfund.api.domains.models.responses.ApiResponse;
@@ -11,7 +10,6 @@ import id.careerfund.api.services.LoanService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.web.firewall.RequestRejectedException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -23,7 +21,6 @@ import java.net.URI;
 import java.security.Principal;
 import java.util.List;
 
-@Secured({ ERole.Constants.LENDER })
 @RestController
 @RequiredArgsConstructor
 public class LoanController extends HandlerController {

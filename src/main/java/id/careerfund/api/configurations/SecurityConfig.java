@@ -1,5 +1,6 @@
 package id.careerfund.api.configurations;
 
+import id.careerfund.api.domains.ERole;
 import id.careerfund.api.utils.filters.JwtFilter;
 import id.careerfund.api.services.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     private static final String[] AUTH_LIST = {
-            "/user/**", "/my/**", "/lender/**", "/profile/**", "/admin/**", "/password"
+            "/user/**", "/my/**", "/profile/**", "/admin/**", "/password"
     };
 
     @Override
@@ -52,6 +53,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().authorizeRequests()
                 .antMatchers(AUTH_LIST).authenticated()
+                .and()
+                .authorizeRequests()
+                .antMatchers("/lender/**").hasAnyAuthority(ERole.Constants.LENDER)
                 .anyRequest()
                 .permitAll()
                 .and().exceptionHandling()
