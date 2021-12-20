@@ -99,6 +99,12 @@ public class LoanServiceImpl implements LoanService {
     }
 
     @Override
+    public LoanDto getLoanById(Principal principal, Long id) {
+        User user = UserMapper.principalToUser(principal);
+        return loanMapper.entityToDto(loanRepo.getById(id), user.getId());
+    }
+
+    @Override
     public FundingDto fundLoan(Principal principal, Long loanId, FundLoan fundLoan)
             throws RequestRejectedException, EntityNotFoundException {
         User user = UserMapper.principalToUser(principal);

@@ -23,21 +23,28 @@ import java.net.URI;
 import java.security.Principal;
 import java.util.List;
 
+@Secured({ ERole.Constants.LENDER })
 @RestController
 @RequiredArgsConstructor
 public class LoanController extends HandlerController {
     private final LoanService loanService;
     private final FundingService fundingService;
 
-    @Secured({ ERole.Constants.LENDER })
     @GetMapping("/lender/loans")
-    public ResponseEntity<ApiResponse<List<LoanDto>>> getLenderMyLoans(
+    public ResponseEntity<ApiResponse<List<LoanDto>>> getLenderLoans(
             Principal principal) {
         return ResponseEntity.ok(ApiResponse.<List<LoanDto>>builder()
                 .data(loanService.getLoans(principal, null, null).getContent()).build());
     }
 
-    @Secured({ ERole.Constants.LENDER })
+    @GetMapping("/lender/loans/{loanId}")
+    public ResponseEntity<ApiResponse<LoanDto>> getLenderLoanById(
+            Principal principal,
+            @PathVariable Long loanId) {
+        return ResponseEntity.ok(ApiResponse.<LoanDto>builder()
+                .data(loanService.getLoanById(principal, loanId)).build());
+    }
+
     @PostMapping("/lender/loans/{loanId}/fund")
     public ResponseEntity<ApiResponse<FundingDto>> fundLoan(
             Principal principal,
@@ -72,17 +79,15 @@ public class LoanController extends HandlerController {
         }
     }
 
-    @Secured({ ERole.Constants.LENDER })
     @GetMapping("/lender/my/loans")
-    public ResponseEntity<ApiResponse<List<FundingDto>>> getLenderLoans_ChangedSoon(
+    public ResponseEntity<ApiResponse<List<FundingDto>>> getLenderMyLoans(
             Principal principal) {
         return ResponseEntity.ok(ApiResponse.<List<FundingDto>>builder()
                 .data(fundingService.getMyFundings(principal, null, null).getContent()).build());
     }
 
-    @Secured({ ERole.Constants.LENDER })
     @GetMapping("/lender/my/loans/{fundingId}")
-    public ResponseEntity<ApiResponse<FundingDto>> getMyLenderLoan(
+    public ResponseEntity<ApiResponse<FundingDto>> getLenderMyLoanById(
             Principal principal,
             @PathVariable Long fundingId) {
         try {
@@ -98,7 +103,6 @@ public class LoanController extends HandlerController {
         }
     }
 
-    @Secured({ ERole.Constants.LENDER })
     @PostMapping("/lender/my/loans/{fundingId}/withdraw")
     public ResponseEntity<ApiResponse> withdrawFunding(Principal principal, @PathVariable Long fundingId,
             @Valid @RequestBody WithdrawRequest withdrawRequest) {
