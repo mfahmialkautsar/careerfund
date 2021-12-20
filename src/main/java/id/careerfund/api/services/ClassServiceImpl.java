@@ -2,6 +2,7 @@ package id.careerfund.api.services;
 
 import id.careerfund.api.domains.entities.Class;
 import id.careerfund.api.domains.entities.User;
+import id.careerfund.api.domains.entities.UserClass;
 import id.careerfund.api.repositories.ClassRepository;
 import id.careerfund.api.utils.helpers.PageableHelper;
 import id.careerfund.api.utils.mappers.UserMapper;
@@ -34,11 +35,7 @@ public class ClassServiceImpl implements ClassService {
         if (principal != null) {
             User user = UserMapper.principalToUser(principal);
             classes.getContent()
-                    .forEach(aClass -> user.getUserClasses().forEach(userClass -> {
-                        if (Objects.equals(userClass.getAClass().getId(), aClass.getId())) aClass.setRegistered(true);
-                        else
-                            aClass.setRegistered(false);
-                    }));
+                    .forEach(aClass -> aClass.setRegistered(user.getUserClasses().retainAll(aClass.getUserClass())));
         }
 
         return classes;
@@ -51,11 +48,7 @@ public class ClassServiceImpl implements ClassService {
             throw new NotFoundException("Class not found");
         if (principal != null) {
             User user = UserMapper.principalToUser(principal);
-            user.getUserClasses().forEach(userClass -> {
-                if (Objects.equals(userClass.getAClass().getId(), aClass.get().getId())) aClass.get().setRegistered(true);
-                else
-                    aClass.get().setRegistered(false);
-            });
+            aClass.get().setRegistered(user.getUserClasses().retainAll(aClass.get().getUserClass()));
         }
 
         return aClass.get();
