@@ -25,7 +25,6 @@ public class OneTimePassword extends Auditable {
     private LocalDateTime expiredAt;
 
     @ManyToOne(optional = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 }

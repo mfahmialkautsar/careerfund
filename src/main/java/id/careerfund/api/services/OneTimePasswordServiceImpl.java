@@ -58,7 +58,7 @@ public class OneTimePasswordServiceImpl implements OneTimePasswordService {
         if (oneTimePasswordRepo.findByPassword(generatedPassword) != null)
             return generateOtp(user);
 
-        oneTimePasswordRepo.deleteByUser_Email(user.getEmail());
+//        oneTimePasswordRepo.deleteByUser_Email(user.getEmail());
 
         OneTimePassword oneTimePassword = new OneTimePassword();
         oneTimePassword.setPassword(generatedPassword);
