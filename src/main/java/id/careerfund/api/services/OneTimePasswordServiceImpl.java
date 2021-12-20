@@ -21,7 +21,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
-public class OneTimePasswordImpl implements OneTimePasswordService {
+public class OneTimePasswordServiceImpl implements OneTimePasswordService {
     private final OneTimePasswordRepository oneTimePasswordRepo;
     private final Environment environment;
 

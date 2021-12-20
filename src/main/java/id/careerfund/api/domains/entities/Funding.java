@@ -35,5 +35,5 @@ public class Funding extends Auditable {
 
     @JsonIgnore
     @OneToOne(mappedBy = "funding", orphanRemoval = true)
-    private Withdraw withdraw;
+    private Withdrawals withdrawals;
 }

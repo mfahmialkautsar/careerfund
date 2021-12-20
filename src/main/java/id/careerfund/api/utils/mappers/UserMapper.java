@@ -84,7 +84,7 @@ public final class UserMapper {
 
     private static Long getTotalAssets(User user) {
         long totalAssets = 0L;
-        for (Funding funding : user.getFundings().stream().filter(funding -> funding.getWithdraw() != null).collect(Collectors.toList())) {
+        for (Funding funding : user.getFundings().stream().filter(funding -> funding.getWithdrawals() != null).collect(Collectors.toList())) {
             totalAssets += funding.getFinancialTransaction().getNominal();
         }
         return totalAssets;

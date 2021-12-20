@@ -5,7 +5,7 @@ import id.careerfund.api.domains.models.requests.WithdrawRequest;
 import id.careerfund.api.repositories.BankRepository;
 import id.careerfund.api.repositories.FinancialTransactionRepository;
 import id.careerfund.api.repositories.FundingRepository;
-import id.careerfund.api.repositories.WithdrawRepository;
+import id.careerfund.api.repositories.WithdrawalsRepository;
 import id.careerfund.api.utils.helpers.PageableHelper;
 import id.careerfund.api.utils.mappers.FundingMapper;
 import id.careerfund.api.utils.mappers.UserMapper;
@@ -27,7 +27,7 @@ import java.security.Principal;
 @RequiredArgsConstructor
 public class FundingServiceImpl implements FundingService {
     private final FundingRepository fundingRepo;
-    private final WithdrawRepository withdrawRepo;
+    private final WithdrawalsRepository withdrawRepo;
     private final BankRepository bankRepo;
     private final FinancialTransactionRepository financialTransactionRepo;
     private final CashService cashService;
@@ -71,13 +71,13 @@ public class FundingServiceImpl implements FundingService {
         if (funding == null) throw new EntityNotFoundException("FUNDING_NOT_FOUND");
         if (funding.getLoan().getLoanPayments().size() - 1 != funding.getLoan().getTenorMonth())
             throw new RequestRejectedException("LOAN_UNFINISHED");
-        if (funding.getWithdraw() != null) throw new RequestRejectedException("WITHDRAWN");
+        if (funding.getWithdrawals() != null) throw new RequestRejectedException("WITHDRAWN");
 
-        Withdraw withdraw = new Withdraw();
-        withdraw.setFunding(funding);
-        withdraw.setBank(bankRepo.getById(withdrawRequest.getBankId()));
-        withdraw.setAccountNumber(withdrawRequest.getAccountNumber());
-        withdrawRepo.save(withdraw);
+        Withdrawals withdrawals = new Withdrawals();
+        withdrawals.setFunding(funding);
+        withdrawals.setBank(bankRepo.getById(withdrawRequest.getBankId()));
+        withdrawals.setAccountNumber(withdrawRequest.getAccountNumber());
+        withdrawRepo.save(withdrawals);
 
         FinancialTransaction financialTransaction = new FinancialTransaction();
         financialTransaction.setNominal(funding.getFinancialTransaction().getNominal());

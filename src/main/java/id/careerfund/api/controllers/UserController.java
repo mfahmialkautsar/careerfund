@@ -1,11 +1,13 @@
 package id.careerfund.api.controllers;
 
+import id.careerfund.api.domains.entities.Withdrawals;
 import id.careerfund.api.domains.models.reqres.AssessmentScore;
 import id.careerfund.api.domains.models.reqres.UpdateUser;
 import id.careerfund.api.domains.models.responses.ApiResponse;
 import id.careerfund.api.domains.models.responses.FileUrlResponse;
 import id.careerfund.api.domains.models.responses.MyProfile;
 import id.careerfund.api.services.UserService;
+import id.careerfund.api.services.WithdrawalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,11 +15,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 public class UserController extends HandlerController {
     private final UserService userService;
+    private final WithdrawalService withdrawalService;
 
     @GetMapping("/profile/edit")
     public ResponseEntity<UpdateUser> getProfileEdit(Principal principal) {
@@ -72,5 +76,11 @@ public class UserController extends HandlerController {
     public ResponseEntity<ApiResponse<AssessmentScore>> getAssessmentScore(Principal principal) {
         return ResponseEntity
                 .ok(ApiResponse.<AssessmentScore>builder().data(userService.getAssessmentScore(principal)).build());
+    }
+
+    @GetMapping("/lender/withdrawals")
+    public ResponseEntity<ApiResponse<List<Withdrawals>>> getWithdrawal(Principal principal) {
+        return ResponseEntity
+                .ok(ApiResponse.<List<Withdrawals>>builder().data(withdrawalService.getWithdrawals(principal, null, null).getContent()).build());
     }
 }
