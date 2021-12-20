@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.security.Principal;
 
 @Service
@@ -24,5 +25,13 @@ public class WithdrawalServiceImpl implements WithdrawalService {
         User user = UserMapper.principalToUser(principal);
         Pageable pageable = PageableHelper.getPageable(sort, order);
         return withdrawalsRepo.findDistinctByFunding_Lender_IdAndCreatedAtIn(user.getId(), null, pageable);
+    }
+
+    @Override
+    public Withdrawals getWithdrawalById(Principal principal, Long withdrawalId) throws EntityNotFoundException {
+        User user = UserMapper.principalToUser(principal);
+        Withdrawals withdrawals = withdrawalsRepo.findByFunding_Lender_IdAndId(user.getId(), withdrawalId);
+        if (withdrawals == null) throw new EntityNotFoundException("WITHDRAWAL_NOT_FOUND");
+        return withdrawals;
     }
 }

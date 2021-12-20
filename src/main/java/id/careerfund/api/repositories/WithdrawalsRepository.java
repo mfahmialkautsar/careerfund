@@ -15,4 +15,7 @@ public interface WithdrawalsRepository extends JpaRepository<Withdrawals, Long> 
     @Query("select distinct w from Withdrawals w where w.funding.lender.id = :userId and (cast(:createdAts as timestamp) is null or w.createdAt in (:createdAts))")
     Page<Withdrawals> findDistinctByFunding_Lender_IdAndCreatedAtIn(@Param("userId") Long userId,
             @Param("createdAts") @Nullable Collection<LocalDateTime> createdAts, Pageable pageable);
+
+    @Nullable
+    Withdrawals findByFunding_Lender_IdAndId(Long userId, Long withdrawalId);
 }

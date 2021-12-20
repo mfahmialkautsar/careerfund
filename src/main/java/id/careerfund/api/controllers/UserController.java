@@ -9,10 +9,13 @@ import id.careerfund.api.domains.models.responses.MyProfile;
 import id.careerfund.api.services.UserService;
 import id.careerfund.api.services.WithdrawalService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
@@ -82,5 +85,18 @@ public class UserController extends HandlerController {
     public ResponseEntity<ApiResponse<List<Withdrawals>>> getWithdrawal(Principal principal) {
         return ResponseEntity
                 .ok(ApiResponse.<List<Withdrawals>>builder().data(withdrawalService.getWithdrawals(principal, null, null).getContent()).build());
+    }
+
+    @GetMapping("/lender/withdrawals/{withdrawalId}")
+    public ResponseEntity<ApiResponse<Withdrawals>> getWithdrawal(Principal principal, @PathVariable Long withdrawalId) {
+        try {
+            return ResponseEntity
+                    .ok(ApiResponse.<Withdrawals>builder().data(withdrawalService.getWithdrawalById(principal, withdrawalId)).build());
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Withdrawal not found", e.getCause());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Failed to get withdrawal. Try again later", e.getCause());
+        }
     }
 }
