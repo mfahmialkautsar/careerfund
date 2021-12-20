@@ -6,9 +6,13 @@ import com.bastiaanjansen.otp.TOTPGenerator;
 import id.careerfund.api.domains.entities.OneTimePassword;
 import id.careerfund.api.domains.entities.User;
 import id.careerfund.api.repositories.OneTimePasswordRepository;
+import id.careerfund.api.repositories.UserRepository;
 import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.passay.CharacterRule;
+import org.passay.EnglishCharacterData;
+import org.passay.PasswordGenerator;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +27,7 @@ import java.util.Objects;
 @Slf4j
 public class OneTimePasswordServiceImpl implements OneTimePasswordService {
     private final OneTimePasswordRepository oneTimePasswordRepo;
+    private final UserRepository userRepo;
     private final Environment environment;
 
     private TOTPGenerator getGenerator() {
@@ -33,6 +38,17 @@ public class OneTimePasswordServiceImpl implements OneTimePasswordService {
                 .withAlgorithm(HMACAlgorithm.SHA256)
                 .withPeriod(Duration.ofMinutes(5));
         return builder.build();
+    }
+
+    private String getGeneratedStringToken(int length) {
+        CharacterRule digits = new CharacterRule(EnglishCharacterData.Alphabetical);
+
+        PasswordGenerator passwordGenerator = new PasswordGenerator();
+        return passwordGenerator.generatePassword(length, digits);
+    }
+
+    private String getGeneratedStringToken() {
+        return getGeneratedStringToken(99);
     }
 
     @Override
@@ -64,5 +80,28 @@ public class OneTimePasswordServiceImpl implements OneTimePasswordService {
 
         oneTimePasswordRepo.delete(oneTimePassword);
         return oneTimePassword;
+    }
+
+    @Override
+    public String getResetPasswordToken(User user) {
+        String password = getGeneratedStringToken();
+        user.setOtp(password);
+        user.setOtpExpiredDate(LocalDateTime.now().plusDays(1));
+        log.info("Generating Reset Password Token: {} for {}", password, user.getEmail());
+        return password;
+    }
+
+    @Override
+    public User verifyResetPasswordToken(String password) throws NotFoundException, TokenExpiredException {
+        User user = userRepo.findByOtp(password);
+        if (user == null) throw new NotFoundException("OTP_NOT_FOUND");
+        if (user.getOtpExpiredDate().isBefore(LocalDateTime.now())) throw new TokenExpiredException("TOKEN_EXPIRED");
+        return user;
+    }
+
+    @Override
+    public void deleteResetPasswordToken(User user) {
+        user.setOtp(null);
+        user.setOtpExpiredDate(null);
     }
 }

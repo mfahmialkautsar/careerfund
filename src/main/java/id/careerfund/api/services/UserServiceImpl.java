@@ -160,6 +160,22 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
+    public void sendResetPasswordEmail(EmailRequest emailRequest) throws MessagingException, NotFoundException {
+        User user = getUser(emailRequest.getEmail());
+        if (user == null)
+            throw new NotFoundException("USER_NOT_FOUND");
+        String token = oneTimePasswordService.getResetPasswordToken(user);
+        emailService.sendResetPasswordEmail(user, token);
+    }
+
+    @Override
+    public void resetPassword(ResetPassword resetPassword) throws NotFoundException {
+        User user = oneTimePasswordService.verifyResetPasswordToken(resetPassword.getToken());
+        user.setPassword(passwordEncoder.encode(resetPassword.getNewPassword()));
+        oneTimePasswordService.deleteResetPasswordToken(user);
+    }
+
+    @Override
     public TokenResponse signIn(SignInRequest signInRequest) throws Exception {
         String email = signInRequest.getEmail();
         String password = signInRequest.getPassword();

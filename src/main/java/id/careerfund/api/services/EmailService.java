@@ -10,4 +10,6 @@ public interface EmailService {
     void send(String to, String subject, String content, String from) throws MessagingException;
 
     void sendVerificationEmail(User user, String otp) throws MessagingException;
+
+    void sendResetPasswordEmail(User user, String resetUrl) throws MessagingException;
 }

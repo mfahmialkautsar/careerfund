@@ -9,9 +9,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 @Table(name = "users")
@@ -137,14 +137,11 @@ public class User extends Auditable implements UserDetails {
     private String verifyToken;
 
     @JsonIgnore
-    private Date expiredVerifyToken;
-
-    @JsonIgnore
     @Column(length = 100)
     private String otp;
 
     @JsonIgnore
-    private Date otpExpiredDate;
+    private LocalDateTime otpExpiredDate;
 
     // add one to many users
     @JsonIgnore

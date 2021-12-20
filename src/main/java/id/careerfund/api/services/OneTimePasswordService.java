@@ -9,4 +9,10 @@ public interface OneTimePasswordService {
     String generateOtp(User user);
 
     OneTimePassword verifyOtp(String otp) throws NotFoundException, TokenExpiredException;
+
+    String getResetPasswordToken(User user);
+
+    User verifyResetPasswordToken(String password) throws NotFoundException, TokenExpiredException;
+
+    void deleteResetPasswordToken(User user);
 }

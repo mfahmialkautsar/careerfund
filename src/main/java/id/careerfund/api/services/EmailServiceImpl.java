@@ -25,7 +25,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void send(String to, String subject, String content) {
-        send(to, subject, content, this.environment.getProperty("spring.mail.sender.mail"));
+        send(to, subject, content, environment.getProperty("spring.mail.sender.mail"));
     }
 
     @Override
@@ -50,8 +50,18 @@ public class EmailServiceImpl implements EmailService {
         ctx.setVariable("name", user.getName());
         ctx.setVariable("otp", otp);
 
-        final String htmlContent = this.templateEngine.process("html/email-verification.html", ctx);
+        final String htmlContent = templateEngine.process("html/email-verification.html", ctx);
         send(user.getEmail(), "Verification Email", htmlContent);
     }
 
+
+    @Override
+    public void sendResetPasswordEmail(User user, String resetUrl) {
+        final Context ctx = new Context();
+        ctx.setVariable("name", user.getName());
+        ctx.setVariable("reset_link", String.format("%s/reset-password?token=%s", environment.getProperty("app.client.url"), resetUrl));
+
+        final String htmlContent = templateEngine.process("html/reset-password.html", ctx);
+        send(user.getEmail(), "Reset Password", htmlContent);
+    }
 }

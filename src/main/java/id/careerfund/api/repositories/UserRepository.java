@@ -12,8 +12,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Nullable
     User findByEmail(String email);
 
-    @Query("FROM User u WHERE u.otp = ?1")
-    User findOneByOTP(String otp);
-
     List<User> findByIdVerificationStatusIs(EIdVerificationStatus idVerificationStatus);
+
+    @Nullable
+    User findByOtp(String otp);
 }

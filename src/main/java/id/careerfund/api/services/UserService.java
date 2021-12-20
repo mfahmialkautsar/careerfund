@@ -43,6 +43,10 @@ public interface UserService {
 
     void sendVerificationEmail(EmailRequest emailRequest) throws MessagingException, NotFoundException;
 
+    void sendResetPasswordEmail(EmailRequest emailRequest) throws MessagingException, NotFoundException;
+
+    void resetPassword(ResetPassword resetPassword) throws NotFoundException;
+
     TokenResponse signIn(SignInRequest signInRequest) throws Exception;
 
     void changePassword(Principal principal, PasswordChangeRequest passwordChangeRequest) throws BadCredentialsException;
