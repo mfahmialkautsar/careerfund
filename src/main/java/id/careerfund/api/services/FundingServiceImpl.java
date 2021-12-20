@@ -21,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.security.Principal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -40,6 +42,12 @@ public class FundingServiceImpl implements FundingService {
         Page<Funding> fundingPage = fundingRepo.findDistinctByLender_Id(user.getId(), pageable);
 
         return fundingPage.map(fundingMapper::entityToDto);
+    }
+
+    @Override
+    public List<FundingDto> getWithdrawableFundings(Principal principal) {
+        Page<FundingDto> fundingPage = getMyFundings(principal, null, null);
+        return fundingPage.getContent().stream().filter(fundingDto -> fundingDto.getLoan().getMonthsPaid() >= fundingDto.getLoan().getLoanPayments().size() - 1).collect(Collectors.toList());
     }
 
     @Override

@@ -78,7 +78,9 @@ public class LoanController extends HandlerController {
 
     @GetMapping("/lender/my/loans")
     public ResponseEntity<ApiResponse<List<FundingDto>>> getLenderMyLoans(
-            Principal principal) {
+            Principal principal,
+            @RequestParam(required = false) Integer withdrawable) {
+        if (withdrawable != null) return ResponseEntity.ok(ApiResponse.<List<FundingDto>>builder().data(fundingService.getWithdrawableFundings(principal)).build());
         return ResponseEntity.ok(ApiResponse.<List<FundingDto>>builder()
                 .data(fundingService.getMyFundings(principal, null, null).getContent()).build());
     }

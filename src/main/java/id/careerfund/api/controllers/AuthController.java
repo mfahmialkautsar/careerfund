@@ -102,7 +102,7 @@ public class AuthController extends HandlerController {
     @PostMapping("/signup/otp/request-email")
     public ResponseEntity<ApiResponse> requestSignUpOTP(@Valid @RequestBody EmailRequest emailRequest) {
         try {
-            this.userService.sendVerificationEmail(emailRequest);
+            userService.sendVerificationEmail(emailRequest);
         } catch (MessagingException e) {
             e.printStackTrace();
             throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Failed sending email, try again",

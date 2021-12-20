@@ -9,9 +9,12 @@ import org.springframework.security.web.firewall.RequestRejectedException;
 
 import javax.persistence.EntityNotFoundException;
 import java.security.Principal;
+import java.util.List;
 
 public interface FundingService {
     Page<FundingDto> getMyFundings(Principal principal, String sort, String order);
+
+    List<FundingDto> getWithdrawableFundings(Principal principal);
 
     FundingDto getMyFundingById(Principal principal, Long id) throws EntityNotFoundException;
 

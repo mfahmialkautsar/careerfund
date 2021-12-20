@@ -54,7 +54,6 @@ public class EmailServiceImpl implements EmailService {
         send(user.getEmail(), "Verification Email", htmlContent);
     }
 
-
     @Override
     public void sendResetPasswordEmail(User user, String resetUrl) {
         final Context ctx = new Context();
