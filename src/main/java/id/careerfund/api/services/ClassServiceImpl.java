@@ -51,7 +51,11 @@ public class ClassServiceImpl implements ClassService {
             throw new NotFoundException("Class not found");
         if (principal != null) {
             User user = UserMapper.principalToUser(principal);
-            aClass.get().setRegistered(aClass.get().getUserClass().retainAll(user.getUserClasses()));
+            user.getUserClasses().forEach(userClass -> {
+                if (Objects.equals(userClass.getAClass().getId(), aClass.get().getId())) aClass.get().setRegistered(true);
+                else
+                    aClass.get().setRegistered(false);
+            });
         }
 
         return aClass.get();
