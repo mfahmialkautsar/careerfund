@@ -22,6 +22,7 @@ import id.careerfund.api.utils.mappers.UserMapper;
 import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -41,14 +42,23 @@ import java.util.stream.Collectors;
 @Transactional
 @Slf4j
 public class UserServiceImpl implements UserService, UserDetailsService {
+    @Lazy
     private final UserRepository userRepo;
+    @Lazy
     private final RoleRepository roleRepo;
+    @Lazy
     private final InterestRepository interestRepo;
+    @Lazy
     private final PasswordEncoder passwordEncoder;
+    @Lazy
     private final BalanceService balanceService;
+    @Lazy
     private final TokenService tokenService;
+    @Lazy
     private final EmailService emailService;
+    @Lazy
     private final OneTimePasswordService oneTimePasswordService;
+    @Lazy
     private final StorageService storageService;
 
     @Override
