@@ -47,7 +47,7 @@ public class FundingServiceImpl implements FundingService {
     @Override
     public List<FundingDto> getWithdrawableFundings(Principal principal) {
         Page<FundingDto> fundingPage = getMyFundings(principal, null, null);
-        return fundingPage.getContent().stream().filter(fundingDto -> fundingDto.getLoan().getMonthsPaid() >= fundingDto.getLoan().getLoanPayments().size() - 1 && fundingDto.getWithdrawals() == null).collect(Collectors.toList());
+        return fundingPage.getContent().stream().filter(fundingDto -> fundingDto.getLoan().getMonthsPaid() >= fundingDto.getLoan().getLoanPayments().size() - 1 && fundingDto.getWithdrawals() == null && fundingDto.getLoan().getLoanPayments().size() - 1 >= fundingDto.getLoan().getTenorMonth()).collect(Collectors.toList());
     }
 
     @Override
