@@ -21,7 +21,7 @@ CareerFund is a P2P lending platform to support Learners in Indonesia.
 
 Type the following command from the root directory of the project to run the application:
 
-- Copy and rename `application-prod.properties` to `application-dev.properties`
+- Copy and rename `application-example.properties` to `application-dev.properties`
 - Run:
 
 ```
@@ -35,7 +35,7 @@ Start the app and go to [http://localhost:8080/v1/swagger-ui.html](http://localh
 ## SDK
 
 - Java 8-17
-- Maven
+- Maven 3
 
 ## Collaborators
 
